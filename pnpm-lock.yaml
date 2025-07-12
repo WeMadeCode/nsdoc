@@ -125,6 +125,9 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
+      dsbridge:
+        specifier: ^3.1.4
+        version: 3.1.4
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1
@@ -1234,6 +1237,9 @@ packages:
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
+
+  dsbridge@3.1.4:
+    resolution: {integrity: sha512-0PczJDk+SRiJjyfTRIVvAsdmC4CbSb4nbfa/ajr3ZbluCpkIiiftDLBITygj0KIKvNvXHqMdXbBQGn99rWKT9A==}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -3127,6 +3133,8 @@ snapshots:
   devlop@1.1.0:
     dependencies:
       dequal: 2.0.3
+
+  dsbridge@3.1.4: {}
 
   entities@4.5.0: {}
 

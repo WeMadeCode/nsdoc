@@ -1,15 +1,18 @@
-// import React from "react";
-
 import { EditorContent, useEditor } from '@tiptap/react'
 import styles from './index.module.scss'
+import { setupBridge } from '../bridge'
 
 import { extensions } from '../extensions/index'
+import { useEffect } from 'react'
 
 const Editor = () => {
   const editor = useEditor({
     extensions: extensions,
-    // content: content,
   })
+
+  useEffect(() => {
+    setupBridge(editor)
+  }, [editor])
 
   return (
     <div

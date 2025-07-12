@@ -49,6 +49,7 @@
     "@tiptap/pm": "^2.25.0",
     "@tiptap/react": "^2.25.0",
     "classnames": "^2.5.1",
+    "dsbridge": "^3.1.4",
     "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
     "react": "^19.1.0",

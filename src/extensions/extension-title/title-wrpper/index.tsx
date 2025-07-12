@@ -1,7 +1,7 @@
 import { NodeViewContent, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
 import { memo } from 'react'
 
-const TitleWrapper = (props: ReactNodeViewProps) => {
+const TitleWrapper = (_props: ReactNodeViewProps) => {
   return (
     <NodeViewWrapper>
       <NodeViewContent />
