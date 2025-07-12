@@ -30,14 +30,13 @@ import Typography from '@tiptap/extension-typography'
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
 import { Document } from './extensions-document'
-import { Placeholder } from '@tiptap/extension-placeholder'
-// import { Markdown } from 'tiptap-markdown'
+import { Placeholder } from './extensions-placeholder'
 
 export const extensions = [
   Document,
   Paragraph,
   Title,
-  // Placeholder,
+  Placeholder,
   Bold,
   BulletList,
   Code,
