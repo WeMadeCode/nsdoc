@@ -4,12 +4,11 @@ import dsbridge from 'dsbridge'
 import type { NodeActiveType } from '../hooks/useNodeActive'
 
 export const headingListener = (type: NodeActiveType) => {
-  console.log('type = ', type)
   const obj = {
     active: type.active,
     level: type.attributes?.level,
   }
-  dsbridge.call('headingActive', obj)
+  dsbridge.call('headingActive', JSON.stringify(obj))
 }
 
 export const setupBridge = (editor: Editor | null) => {
