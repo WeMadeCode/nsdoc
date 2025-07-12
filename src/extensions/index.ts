@@ -30,7 +30,7 @@ import Typography from '@tiptap/extension-typography'
 import Placeholder from '@tiptap/extension-placeholder'
 
 import { CodeBlockLowlight } from './extension-code-block'
-import { Markdown } from 'tiptap-markdown'
+// import { Markdown } from 'tiptap-markdown'
 
 export const extensions = [
   Placeholder.configure({
@@ -75,7 +75,7 @@ export const extensions = [
   TaskItem,
   TextStyle,
   CodeBlockLowlight,
-  Markdown.configure({
-    linkify: true,
-  }),
+  // Markdown.configure({
+  //   linkify: true,
+  // }),
 ]

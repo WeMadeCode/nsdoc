@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@douyinfe/semi-ui": "^2.82.1",
     "@tiptap/core": "^2.26.0",
     "@tiptap/extension-blockquote": "^2.25.0",
     "@tiptap/extension-bold": "^2.25.0",

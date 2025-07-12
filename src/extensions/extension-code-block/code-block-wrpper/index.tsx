@@ -1,13 +1,15 @@
 import { memo } from 'react'
 
 import { NodeViewContent, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
+
 const CodeBlockWrapper = (params: ReactNodeViewProps) => {
-  const { node, updateAttributes, extension } = params
+  const { node } = params
   const defaultLanguage = (node.attrs.language as string | undefined) ?? ''
 
   return (
     <NodeViewWrapper className={'code-block'}>
-      <select
+      <span className="code-block-language">{defaultLanguage}</span>
+      {/* <select
         contentEditable={false}
         defaultValue={defaultLanguage}
         onChange={event => {
@@ -22,7 +24,7 @@ const CodeBlockWrapper = (params: ReactNodeViewProps) => {
             {lang}
           </option>
         ))}
-      </select>
+      </select> */}
       <pre>
         <NodeViewContent as="code" />
       </pre>
