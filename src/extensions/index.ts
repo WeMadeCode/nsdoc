@@ -3,7 +3,6 @@ import Bold from '@tiptap/extension-bold'
 import BulletList from '@tiptap/extension-bullet-list'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
-import Document from '@tiptap/extension-document'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
@@ -27,26 +26,18 @@ import TaskItem from '@tiptap/extension-task-item'
 import Highlight from '@tiptap/extension-highlight'
 import TextStyle from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
-import Placeholder from '@tiptap/extension-placeholder'
 
 import { CodeBlockLowlight } from './extension-code-block'
+import { Title } from './extension-title'
+import { Document } from './extensions-document'
+import { Placeholder } from '@tiptap/extension-placeholder'
 // import { Markdown } from 'tiptap-markdown'
 
 export const extensions = [
-  Placeholder.configure({
-    // Use a placeholder:
-    placeholder: 'Write something …',
-    // Use different placeholders depending on the node type:
-    // placeholder: ({ node }) => {
-    //   if (node.type.name === 'heading') {
-    //     return 'What’s the title?'
-    //   }
-
-    //   return 'Can you add some further context?'
-    // },
-  }),
   Document,
   Paragraph,
+  Title,
+  // Placeholder,
   Bold,
   BulletList,
   Code,

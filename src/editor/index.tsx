@@ -28,7 +28,7 @@ const Editor = () => {
 
   const editor = useEditor({
     extensions: extensions,
-    content: content,
+    // content: content,
   })
 
   return (
