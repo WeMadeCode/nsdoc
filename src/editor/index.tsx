@@ -1,14 +1,19 @@
 import { EditorContent, useEditor } from '@tiptap/react'
 import styles from './index.module.scss'
-import { setupBridge } from '../bridge'
+import { setupBridge, headingListener } from '../bridge'
 
 import { extensions } from '../extensions/index'
 import { useEffect } from 'react'
+import { useNodeActive } from '../hooks/useNodeActive'
+import Heading from '@tiptap/extension-heading'
 
 const Editor = () => {
   const editor = useEditor({
     extensions: extensions,
   })
+
+  const isHeadingState = useNodeActive(editor, Heading.name)
+  headingListener(isHeadingState)
 
   useEffect(() => {
     setupBridge(editor)
