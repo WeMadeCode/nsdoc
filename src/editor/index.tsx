@@ -29,7 +29,7 @@ const Editor = () => {
   // - [ ] dssd
   // `;
 
-  //   const tableHTML = `
+  //   const content = `
   //   <table style="width:100%">
   //     <tr>
   //       <th>Firstname</th>
@@ -53,6 +53,7 @@ const Editor = () => {
   //     </tr>
   //   </table>
   // `;
+
   const editor = useEditor({
     extensions: extensions,
     // content: tableHTML,
