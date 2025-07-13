@@ -41,4 +41,14 @@ export const setupBridge = (editor: Editor | null) => {
   dsbridge.register('toggleBlockquote', () => {
     return editor.chain().focus().toggleBlockquote().run()
   })
+
+  // 获取文档内容
+  dsbridge.register('getContent', () => {
+    return editor.getJSON()
+  })
+
+  // 设置文档内容
+  dsbridge.register('setContent', (content: string) => {
+    editor.chain().focus().setContent(content).run()
+  })
 }
