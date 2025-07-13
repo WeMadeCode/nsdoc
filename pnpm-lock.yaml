@@ -32,9 +32,6 @@ importers:
       '@tiptap/extension-code-block-lowlight':
         specifier: ^2.26.0
         version: 2.26.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))(@tiptap/extension-code-block@2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))(@tiptap/pm@2.25.0))(@tiptap/pm@2.25.0)(highlight.js@11.11.1)(lowlight@3.3.0)
-      '@tiptap/extension-color':
-        specifier: ^3.0.1
-        version: 3.0.1(@tiptap/extension-text-style@2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0)))
       '@tiptap/extension-document':
         specifier: ^2.25.0
         version: 2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))
@@ -797,11 +794,6 @@ packages:
     resolution: {integrity: sha512-rRp6X2aNNnvo7Fbqc3olZ0vLb52FlCPPfetr9gy6/M9uQdVYDhJcFOPuRuXtZ8M8X+WpCZBV29BvZFeDqfw8bw==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
-
-  '@tiptap/extension-color@3.0.1':
-    resolution: {integrity: sha512-/I5Tjgiiw7rYkPx4r+AG95UlhQB8D0NJ8/OQTicvsklYmVmSuTCNZe/1TqjvlEEcwAO+7Y85ervjRQ7J34S9yg==}
-    peerDependencies:
-      '@tiptap/extension-text-style': ^3.0.1
 
   '@tiptap/extension-document@2.25.0':
     resolution: {integrity: sha512-3gEZlQKUSIRrC6Az8QS7SJi4CvhMWrA7RBChM1aRl9vMNN8Ul7dZZk5StYJGPjL/koTiceMqx9pNmTCBprsbvQ==}
@@ -2683,10 +2675,6 @@ snapshots:
   '@tiptap/extension-code@2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))':
     dependencies:
       '@tiptap/core': 2.26.0(@tiptap/pm@2.25.0)
-
-  '@tiptap/extension-color@3.0.1(@tiptap/extension-text-style@2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0)))':
-    dependencies:
-      '@tiptap/extension-text-style': 2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))
 
   '@tiptap/extension-document@2.25.0(@tiptap/core@2.26.0(@tiptap/pm@2.25.0))':
     dependencies:

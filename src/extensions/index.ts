@@ -27,7 +27,6 @@ import Highlight from '@tiptap/extension-highlight'
 import TextStyle from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import History from '@tiptap/extension-history'
-import Color from '@tiptap/extension-color'
 
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
@@ -68,5 +67,5 @@ export const extensions = [
   TextStyle,
   CodeBlockLowlight,
   History,
-  Color,
+  TaskItem,
 ]

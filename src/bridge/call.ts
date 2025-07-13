@@ -32,3 +32,22 @@ export const bulletListener = (type: NodeActiveType) => {
   dsbridge.call('bulletActive', JSON.stringify(obj))
 }
 
+
+export const taskListener = (type: NodeActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('taskActive', JSON.stringify(obj))
+}
+
+
+export const codeBlockListener = (type: NodeActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('codeBlockActive', JSON.stringify(obj))
+}
+
+
+
+

@@ -18,7 +18,6 @@
     "@tiptap/extension-code": "^2.25.0",
     "@tiptap/extension-code-block": "^2.25.0",
     "@tiptap/extension-code-block-lowlight": "^2.26.0",
-    "@tiptap/extension-color": "^3.0.1",
     "@tiptap/extension-document": "^2.25.0",
     "@tiptap/extension-dropcursor": "^2.25.0",
     "@tiptap/extension-gapcursor": "^2.25.0",

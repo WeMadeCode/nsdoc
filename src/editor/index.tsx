@@ -1,6 +1,14 @@
 import { EditorContent, useEditor } from '@tiptap/react'
 import styles from './index.module.scss'
-import { setupBridge, headingListener, paragraphListener, orderedListener, bulletListener } from '../bridge'
+import {
+  setupBridge,
+  headingListener,
+  paragraphListener,
+  orderedListener,
+  bulletListener,
+  taskListener,
+  codeBlockListener,
+} from '../bridge'
 
 import { extensions } from '../extensions/index'
 import { useEffect } from 'react'
@@ -10,6 +18,8 @@ import Paragraph from '@tiptap/extension-paragraph'
 import OrderedList from '@tiptap/extension-ordered-list'
 import BulletList from '@tiptap/extension-bullet-list'
 import { MenuBar } from '../menu-bar'
+import TaskList from '@tiptap/extension-task-list'
+import CodeBlock from '@tiptap/extension-code-block'
 
 const Editor = () => {
   const editor = useEditor({
@@ -20,7 +30,11 @@ const Editor = () => {
   const isParagraphState = useNodeActive(editor, Paragraph.name)
   const isOrderState = useNodeActive(editor, OrderedList.name)
   const isButtetState = useNodeActive(editor, BulletList.name)
+  const isTaskState = useNodeActive(editor, TaskList.name)
+  const isCodeBlockState = useNodeActive(editor, CodeBlock.name)
 
+  codeBlockListener(isCodeBlockState)
+  taskListener(isTaskState)
   headingListener(isHeadingState)
   paragraphListener(isParagraphState)
   orderedListener(isOrderState)

@@ -8,8 +8,8 @@ export const setupBridge = (editor: Editor | null) => {
   }
 
   // 插入标题
-  dsbridge.register('insertHeading', (level: Level) => {
-    return editor.chain().focus().setHeading({ level }).run()
+  dsbridge.register('toggleHeading', (level: Level) => {
+    return editor.chain().focus().toggleHeading({ level }).run()
   })
 
   // 清空段落
@@ -25,5 +25,15 @@ export const setupBridge = (editor: Editor | null) => {
   // 无序列表
   dsbridge.register('toggleBulletList', () => {
     return editor.chain().focus().toggleBulletList().run()
+  })
+
+  // 任务列表
+  dsbridge.register('toggleTaskList', () => {
+    return editor.chain().focus().toggleTaskList().run()
+  })
+
+  // 代码块
+  dsbridge.register('toggleCodeBlcok', () => {
+    return editor.chain().focus().toggleCodeBlock().run()
   })
 }
