@@ -36,4 +36,9 @@ export const setupBridge = (editor: Editor | null) => {
   dsbridge.register('toggleCodeBlcok', () => {
     return editor.chain().focus().toggleCodeBlock().run()
   })
+
+  // 引用
+  dsbridge.register('toggleBlockquote', () => {
+    return editor.chain().focus().toggleBlockquote().run()
+  })
 }

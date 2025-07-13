@@ -8,6 +8,7 @@ import {
   bulletListener,
   taskListener,
   codeBlockListener,
+  blockQuoteListener,
 } from '../bridge'
 
 import { extensions } from '../extensions/index'
@@ -20,6 +21,7 @@ import BulletList from '@tiptap/extension-bullet-list'
 import { MenuBar } from '../menu-bar'
 import TaskList from '@tiptap/extension-task-list'
 import CodeBlock from '@tiptap/extension-code-block'
+import Blockquote from '@tiptap/extension-blockquote'
 
 const Editor = () => {
   const editor = useEditor({
@@ -32,7 +34,9 @@ const Editor = () => {
   const isButtetState = useNodeActive(editor, BulletList.name)
   const isTaskState = useNodeActive(editor, TaskList.name)
   const isCodeBlockState = useNodeActive(editor, CodeBlock.name)
+  const isBlockquoteState = useNodeActive(editor, Blockquote.name)
 
+  blockQuoteListener(isBlockquoteState)
   codeBlockListener(isCodeBlockState)
   taskListener(isTaskState)
   headingListener(isHeadingState)

@@ -48,6 +48,14 @@ export const codeBlockListener = (type: NodeActiveType) => {
   dsbridge.call('codeBlockActive', JSON.stringify(obj))
 }
 
+export const blockQuoteListener = (type: NodeActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('blockQuoteActive', JSON.stringify(obj))
+}
+
+
 
 
 
