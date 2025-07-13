@@ -18,6 +18,7 @@
     "@tiptap/extension-code": "^2.25.0",
     "@tiptap/extension-code-block": "^2.25.0",
     "@tiptap/extension-code-block-lowlight": "^2.26.0",
+    "@tiptap/extension-color": "^3.0.1",
     "@tiptap/extension-document": "^2.25.0",
     "@tiptap/extension-dropcursor": "^2.25.0",
     "@tiptap/extension-gapcursor": "^2.25.0",
@@ -53,8 +54,7 @@
     "highlight.js": "^11.11.1",
     "lowlight": "^3.3.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "tiptap-markdown": "^0.8.10"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

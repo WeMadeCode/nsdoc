@@ -9,7 +9,7 @@ import Heading from '@tiptap/extension-heading'
 import Paragraph from '@tiptap/extension-paragraph'
 import OrderedList from '@tiptap/extension-ordered-list'
 import BulletList from '@tiptap/extension-bullet-list'
-// import { Button } from '@douyinfe/semi-ui'
+import { MenuBar } from '../menu-bar'
 
 const Editor = () => {
   const editor = useEditor({
@@ -40,14 +40,7 @@ const Editor = () => {
         editor?.chain().focus().run()
       }}
     >
-      {/* <Button
-        onClick={() => {
-          console.log('1-----')
-          editor?.chain().focus().toggleOrderedList().run()
-        }}
-      >
-        我是按钮
-      </Button> */}
+      <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </div>
   )
