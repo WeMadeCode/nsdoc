@@ -49,6 +49,6 @@ export const setupBridge = (editor: Editor | null) => {
 
   // 设置文档内容
   dsbridge.register('setContent', (content: string) => {
-    editor.chain().focus().setContent(content).run()
+    editor.chain().focus().setContent(JSON.parse(content)).run()
   })
 }

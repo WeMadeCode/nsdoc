@@ -16,12 +16,47 @@ export const MenuBar = (props: Props) => {
       <div className="button-group">
         <button
           onClick={() => {
-            editor.chain().focus().toggleOrderedList().run()
-            // editor.chain().focus().toggleBulletList().run()
-            // editor.chain().setContent().run()
+            console.log(editor.getJSON())
           }}
         >
           我是按钮
+        </button>
+        <button
+          onClick={() => {
+            const obj = {
+              type: 'doc',
+              content: [
+                {
+                  type: 'title',
+                  content: [
+                    {
+                      type: 'text',
+                      text: '111',
+                    },
+                  ],
+                },
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: 'bbb',
+                    },
+                  ],
+                },
+                {
+                  type: 'paragraph',
+                },
+              ],
+            }
+            editor
+              .chain()
+              .focus()
+              .setContent(JSON.parse(JSON.stringify(obj)))
+              .run()
+          }}
+        >
+          我是按钮2
         </button>
       </div>
     </div>
