@@ -3,25 +3,25 @@ import styles from './index.module.scss'
 import {
   setupBridge,
   headingListener,
-  paragraphListener,
-  orderedListener,
-  bulletListener,
-  taskListener,
-  codeBlockListener,
-  blockQuoteListener,
+  // paragraphListener,
+  // orderedListener,
+  // bulletListener,
+  // taskListener,
+  // codeBlockListener,
+  // blockQuoteListener,
 } from '../bridge'
 
 import { extensions } from '../extensions/index'
 import { useEffect } from 'react'
 import { useNodeActive } from '../hooks/useNodeActive'
 import Heading from '@tiptap/extension-heading'
-import Paragraph from '@tiptap/extension-paragraph'
-import OrderedList from '@tiptap/extension-ordered-list'
-import BulletList from '@tiptap/extension-bullet-list'
+// import Paragraph from '@tiptap/extension-paragraph'
+// import OrderedList from '@tiptap/extension-ordered-list'
+// import BulletList from '@tiptap/extension-bullet-list'
 // import { MenuBar } from '../menu-bar'
-import TaskList from '@tiptap/extension-task-list'
-import CodeBlock from '@tiptap/extension-code-block'
-import Blockquote from '@tiptap/extension-blockquote'
+// import TaskList from '@tiptap/extension-task-list'
+// import CodeBlock from '@tiptap/extension-code-block'
+// import Blockquote from '@tiptap/extension-blockquote'
 
 const Editor = () => {
   const editor = useEditor({
@@ -29,20 +29,22 @@ const Editor = () => {
   })
 
   const isHeadingState = useNodeActive(editor, Heading.name)
-  const isParagraphState = useNodeActive(editor, Paragraph.name)
-  const isOrderState = useNodeActive(editor, OrderedList.name)
-  const isButtetState = useNodeActive(editor, BulletList.name)
-  const isTaskState = useNodeActive(editor, TaskList.name)
-  const isCodeBlockState = useNodeActive(editor, CodeBlock.name)
-  const isBlockquoteState = useNodeActive(editor, Blockquote.name)
+  // const isParagraphState = useNodeActive(editor, Paragraph.name)
+  // const isOrderState = useNodeActive(editor, OrderedList.name)
+  // const isButtetState = useNodeActive(editor, BulletList.name)
+  // const isTaskState = useNodeActive(editor, TaskList.name)
+  // const isCodeBlockState = useNodeActive(editor, CodeBlock.name)
+  // const isBlockquoteState = useNodeActive(editor, Blockquote.name)
 
-  blockQuoteListener(isBlockquoteState)
-  codeBlockListener(isCodeBlockState)
-  taskListener(isTaskState)
-  headingListener(isHeadingState)
-  paragraphListener(isParagraphState)
-  orderedListener(isOrderState)
-  bulletListener(isButtetState)
+  useEffect(() => {
+    headingListener(isHeadingState)
+  }, [])
+  // blockQuoteListener(isBlockquoteState)
+  // codeBlockListener(isCodeBlockState)
+  // taskListener(isTaskState)
+  // paragraphListener(isParagraphState)
+  // orderedListener(isOrderState)
+  // bulletListener(isButtetState)
 
   useEffect(() => {
     setupBridge(editor)

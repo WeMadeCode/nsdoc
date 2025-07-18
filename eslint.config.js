@@ -20,6 +20,7 @@ export default tseslint.config([
     },
     rules: {
       'prettier/prettier': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
 ])

@@ -48,7 +48,17 @@ export const setupBridge = (editor: Editor | null) => {
   })
 
   // 设置文档内容
-  dsbridge.register('setContent', (content: string) => {
-    editor.chain().focus().setContent(JSON.parse(content)).run()
+  dsbridge.register('setContent', (param: { content: string; isFocus: boolean }) => {
+    const { content, isFocus } = param
+    if (isFocus) {
+      editor.chain().focus().setContent(JSON.parse(content)).run()
+    } else {
+      editor.chain().setContent(JSON.parse(content)).run()
+    }
+  })
+
+  // 获取文档标题
+  dsbridge.register('getDocTitle', () => {
+    return editor.state.doc.firstChild?.textContent ?? ''
   })
 }

@@ -23,37 +23,9 @@ export const MenuBar = (props: Props) => {
         </button>
         <button
           onClick={() => {
-            const obj = {
-              type: 'doc',
-              content: [
-                {
-                  type: 'title',
-                  content: [
-                    {
-                      type: 'text',
-                      text: '111',
-                    },
-                  ],
-                },
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      type: 'text',
-                      text: 'bbb',
-                    },
-                  ],
-                },
-                {
-                  type: 'paragraph',
-                },
-              ],
-            }
-            editor
-              .chain()
-              .focus()
-              .setContent(JSON.parse(JSON.stringify(obj)))
-              .run()
+            // nodeBetW
+            const firstNode = editor.state.doc.firstChild
+            console.log('xx = ', firstNode?.textContent)
           }}
         >
           我是按钮2
