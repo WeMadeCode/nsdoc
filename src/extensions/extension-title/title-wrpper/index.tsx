@@ -1,10 +1,10 @@
-import { NodeViewContent, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
+import { NodeViewContent, NodeViewWrapper } from '@tiptap/react'
 import { memo } from 'react'
 import styles from './index.module.scss'
 import writer from '../../../assets/writer.svg'
 import { Image } from '@douyinfe/semi-ui'
 
-const TitleWrapper = (_props: ReactNodeViewProps) => {
+const TitleWrapper = () => {
   return (
     <NodeViewWrapper>
       <NodeViewContent />

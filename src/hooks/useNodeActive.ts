@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react'
 
 export type NodeActiveType = {
   active: boolean
-  attributes: Record<string, any> | undefined
+  attributes: Record<string, unknown> | undefined
 }
 
 export const useNodeActive = (editor: Editor | null, name: string) => {
   const [active, setActive] = useState(false)
-  const [attributes, setAttributes] = useState<Record<string, any> | undefined>(undefined)
+  const [attributes, setAttributes] = useState<Record<string, unknown> | undefined>(undefined)
 
   useEffect(() => {
     const func = () => {
@@ -24,7 +24,7 @@ export const useNodeActive = (editor: Editor | null, name: string) => {
       editor?.off('focus', func)
       editor?.off('selectionUpdate', func)
     }
-  }, [])
+  }, [editor, name])
 
   return {
     active: active,
