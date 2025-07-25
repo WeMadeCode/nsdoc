@@ -106,4 +106,9 @@ export const setupBridge = (editor: Editor | null) => {
   dsbridge.register('setTextAlign', (alignment: 'left' | 'right' | 'center' | 'justify') => {
     return editor.chain().focus().setTextAlign(alignment).run()
   })
+
+  // 插入表格
+  dsbridge.register('insertTable', () => {
+    return editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+  })
 }

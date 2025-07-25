@@ -17,7 +17,6 @@ import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
-// import { TableCell, TableKit } from '@tiptap/extension-table'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Highlight from '@tiptap/extension-highlight'
@@ -28,8 +27,10 @@ import TextAlign from '@tiptap/extension-text-align'
 
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
-import { Document } from './extensions-document'
-import { Placeholder } from './extensions-placeholder'
+import { Document } from './extension-document'
+import { Placeholder } from './extension-placeholder'
+import { TableKit } from '@tiptap/extension-table'
+import { TableCell } from './extension-table-cell'
 
 export const extensions = [
   Document,
@@ -67,4 +68,9 @@ export const extensions = [
   TextAlign.configure({
     types: ['heading', 'paragraph'],
   }),
+  TableKit.configure({
+    table: { resizable: true },
+    tableCell: false,
+  }),
+  TableCell,
 ]
