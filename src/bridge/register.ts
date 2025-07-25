@@ -92,7 +92,6 @@ export const setupBridge = (editor: Editor | null) => {
       return editor.chain().focus().setColor(color).run()
     }
   })
-
   // 设置背景色
   dsbridge.register('setBackgroundColor', (param: { color?: string; clear?: boolean }) => {
     const { clear, color } = param
@@ -101,5 +100,10 @@ export const setupBridge = (editor: Editor | null) => {
     } else if (color) {
       return editor.chain().focus().setBackgroundColor(color).run()
     }
+  })
+
+  // 设置对齐方式
+  dsbridge.register('setTextAlign', (alignment: 'left' | 'right' | 'center' | 'justify') => {
+    return editor.chain().focus().setTextAlign(alignment).run()
   })
 }

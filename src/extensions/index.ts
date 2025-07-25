@@ -27,6 +27,7 @@ import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import History from '@tiptap/extension-history'
 import { Color, TextStyle, BackgroundColor } from '@tiptap/extension-text-style'
+import TextAlign from '@tiptap/extension-text-align'
 
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
@@ -70,4 +71,7 @@ export const extensions = [
   TaskItem,
   Color,
   BackgroundColor,
+  TextAlign.configure({
+    types: ['heading', 'paragraph'],
+  }),
 ]

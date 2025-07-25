@@ -18,10 +18,10 @@ export const useNodeActive = (editor: Editor | null, name: string) => {
       setAttributes(attrs)
     }
 
-    editor?.on('focus', func)
+    editor?.on('update', func)
     editor?.on('selectionUpdate', func)
     return () => {
-      editor?.off('focus', func)
+      editor?.off('update', func)
       editor?.off('selectionUpdate', func)
     }
   }, [editor, name])

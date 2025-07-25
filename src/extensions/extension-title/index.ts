@@ -39,13 +39,9 @@ export const Title = Node.create({
             const { $from } = selection
             const node = $from.parent
             const isTitle = node.type.name === 'title'
-            console.log('isTitle = ', isTitle)
             if (isTitle) {
               const paragraph = state.schema.nodes.paragraph.create()
-              console.log('paragraph = ', paragraph)
               const to = node.nodeSize
-              console.log('to = ', to)
-
               const tr = state.tr.insert(to, paragraph)
               tr.setSelection(Selection.near(tr.doc.resolve(to)))
               dispatch(tr)

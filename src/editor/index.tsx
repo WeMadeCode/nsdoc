@@ -18,7 +18,7 @@ import Heading from '@tiptap/extension-heading'
 import Paragraph from '@tiptap/extension-paragraph'
 import OrderedList from '@tiptap/extension-ordered-list'
 import BulletList from '@tiptap/extension-bullet-list'
-import { MenuBar } from '../menu-bar'
+// import { MenuBar } from '../menu-bar'
 import TaskList from '@tiptap/extension-task-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import Blockquote from '@tiptap/extension-blockquote'
@@ -82,7 +82,7 @@ const Editor = () => {
         editor?.chain().focus().run()
       }}
     >
-      <MenuBar editor={editor} />
+      {/* <MenuBar editor={editor} /> */}
       <EditorContent editor={editor} />
     </div>
   )

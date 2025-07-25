@@ -6,7 +6,6 @@ export const headingListener = (type: NodeActiveType) => {
     active: type.active,
     level: type.attributes?.level,
   }
-  console.log('headingActive = ', obj)
   dsbridge.call('headingActive', JSON.stringify(obj))
 }
 
