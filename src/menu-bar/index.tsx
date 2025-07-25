@@ -16,19 +16,10 @@ export const MenuBar = (props: Props) => {
       <div className="button-group">
         <button
           onClick={() => {
-            console.log(editor.getJSON())
+            editor.chain().focus().toggleCode().run()
           }}
         >
           我是按钮
-        </button>
-        <button
-          onClick={() => {
-            // nodeBetW
-            const firstNode = editor.state.doc.firstChild
-            console.log('xx = ', firstNode?.textContent)
-          }}
-        >
-          我是按钮2
         </button>
       </div>
     </div>

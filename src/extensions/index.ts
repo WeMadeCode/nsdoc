@@ -17,16 +17,16 @@ import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
-import Table from '@tiptap/extension-table'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
+// import Table from '@tiptap/extension-table'
+// import TableCell from '@tiptap/extension-table-cell'
+// import TableHeader from '@tiptap/extension-table-header'
+// import TableRow from '@tiptap/extension-table-row'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Highlight from '@tiptap/extension-highlight'
-import TextStyle from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import History from '@tiptap/extension-history'
+import { Color, TextStyle, BackgroundColor } from '@tiptap/extension-text-style'
 
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
@@ -58,14 +58,16 @@ export const extensions = [
   Subscript,
   Superscript,
   Underline,
-  Table,
-  TableCell,
-  TableHeader,
-  TableRow,
+  // Table,
+  // TableCell,
+  // TableHeader,
+  // TableRow,
   TaskList,
   TaskItem,
   TextStyle,
   CodeBlockLowlight,
   History,
   TaskItem,
+  Color,
+  BackgroundColor,
 ]

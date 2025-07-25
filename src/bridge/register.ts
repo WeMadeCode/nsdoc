@@ -61,4 +61,45 @@ export const setupBridge = (editor: Editor | null) => {
   dsbridge.register('getDocTitle', () => {
     return editor.state.doc.firstChild?.textContent ?? ''
   })
+
+  // 设置粗体
+  dsbridge.register('toggleBold', () => {
+    return editor.chain().focus().toggleBold().run()
+  })
+
+  // 设置斜体
+  dsbridge.register('toggleItalic', () => {
+    return editor.chain().focus().toggleItalic().run()
+  })
+  // 设置下划线
+  dsbridge.register('toggleUnderline', () => {
+    return editor.chain().focus().toggleUnderline().run()
+  })
+  // 设置删除线
+  dsbridge.register('toggleStrike', () => {
+    return editor.chain().focus().toggleStrike().run()
+  })
+  // 设置代码
+  dsbridge.register('toggleCode', () => {
+    return editor.chain().focus().toggleCode().run()
+  })
+  // 设置前景颜色
+  dsbridge.register('setColor', (param: { color?: string; clear?: boolean }) => {
+    const { clear, color } = param
+    if (clear) {
+      return editor.chain().focus().unsetColor().run()
+    } else if (color) {
+      return editor.chain().focus().setColor(color).run()
+    }
+  })
+
+  // 设置背景色
+  dsbridge.register('setBackgroundColor', (param: { color?: string; clear?: boolean }) => {
+    const { clear, color } = param
+    if (clear) {
+      return editor.chain().focus().unsetBackgroundColor().run()
+    } else if (color) {
+      return editor.chain().focus().setBackgroundColor(color).run()
+    }
+  })
 }
