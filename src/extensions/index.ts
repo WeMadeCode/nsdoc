@@ -17,10 +17,7 @@ import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
 import Text from '@tiptap/extension-text'
 import Underline from '@tiptap/extension-underline'
-// import Table from '@tiptap/extension-table'
-// import TableCell from '@tiptap/extension-table-cell'
-// import TableHeader from '@tiptap/extension-table-header'
-// import TableRow from '@tiptap/extension-table-row'
+// import { TableCell, TableKit } from '@tiptap/extension-table'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Highlight from '@tiptap/extension-highlight'
@@ -59,10 +56,6 @@ export const extensions = [
   Subscript,
   Superscript,
   Underline,
-  // Table,
-  // TableCell,
-  // TableHeader,
-  // TableRow,
   TaskList,
   TaskItem,
   TextStyle,

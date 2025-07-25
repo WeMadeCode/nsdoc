@@ -10,7 +10,9 @@ const CodeBlockWrapper = (params: ReactNodeViewProps) => {
     <NodeViewWrapper className={'code-block'}>
       <span className="code-block-language">{defaultLanguage}</span>
       <pre>
-        <NodeViewContent as="code" />
+        <code>
+          <NodeViewContent />
+        </code>
       </pre>
     </NodeViewWrapper>
   )
