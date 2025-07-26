@@ -6,47 +6,47 @@ export const headingListener = (type: NodeActiveType) => {
     active: type.active,
     level: type.attributes?.level,
   }
-  dsbridge.call('headingActive', JSON.stringify(obj))
+  dsbridge.call('headingActive', obj)
 }
 
 export const paragraphListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('paragraphActive', JSON.stringify(obj))
+  dsbridge.call('paragraphActive', obj)
 }
 
 export const orderedListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('orderedActive', JSON.stringify(obj))
+  dsbridge.call('orderedActive', obj)
 }
 
 export const bulletListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('bulletActive', JSON.stringify(obj))
+  dsbridge.call('bulletActive', obj)
 }
 
 export const taskListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('taskActive', JSON.stringify(obj))
+  dsbridge.call('taskActive', obj)
 }
 
 export const codeBlockListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('codeBlockActive', JSON.stringify(obj))
+  dsbridge.call('codeBlockActive', obj)
 }
 
 export const blockQuoteListener = (type: NodeActiveType) => {
   const obj = {
     active: type.active,
   }
-  dsbridge.call('blockQuoteActive', JSON.stringify(obj))
+  dsbridge.call('blockQuoteActive', obj)
 }

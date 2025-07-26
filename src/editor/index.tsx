@@ -76,10 +76,10 @@ const Editor = () => {
     <div
       className={styles.wrap}
       onClick={() => {
-        editor?.chain().focus().run()
+        editor?.chain().focus(3).run()
       }}
       onTouchEnd={() => {
-        editor?.chain().focus().run()
+        editor?.chain().focus(3).run()
       }}
     >
       {/* <MenuBar editor={editor} /> */}
