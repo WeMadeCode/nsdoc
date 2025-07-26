@@ -5,7 +5,6 @@ import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
-import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Image from '@tiptap/extension-image'
 import Italic from '@tiptap/extension-italic'
 import Link from '@tiptap/extension-link'
@@ -24,6 +23,7 @@ import Typography from '@tiptap/extension-typography'
 import History from '@tiptap/extension-history'
 import { Color, TextStyle, BackgroundColor } from '@tiptap/extension-text-style'
 import TextAlign from '@tiptap/extension-text-align'
+import { TrailingNode } from '@tiptap/extensions'
 
 import { CodeBlockLowlight } from './extension-code-block'
 import { Title } from './extension-title'
@@ -31,23 +31,23 @@ import { Document } from './extension-document'
 import { Placeholder } from './extension-placeholder'
 import { TableKit } from '@tiptap/extension-table'
 import { TableCell } from './extension-table-cell'
+import { HorizontalRule } from './extension-horizontal-rule'
 
 export const extensions = [
   Document,
   Paragraph,
   Title,
+  Text,
   Placeholder,
   Bold,
   BulletList,
   Code,
   CodeBlock,
   HardBreak,
-  Text,
   Highlight,
   Typography,
   Blockquote,
   Heading,
-  HorizontalRule,
   Image,
   Italic,
   Link,
@@ -73,4 +73,6 @@ export const extensions = [
     tableCell: false,
   }),
   TableCell,
+  HorizontalRule,
+  TrailingNode,
 ]

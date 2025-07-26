@@ -16,7 +16,7 @@ export const MenuBar = (props: Props) => {
       <div className="button-group">
         <button
           onClick={() => {
-            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+            editor.chain().focus().setHorizontalRule().run()
           }}
         >
           我是按钮1

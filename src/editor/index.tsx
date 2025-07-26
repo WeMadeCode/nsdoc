@@ -18,7 +18,7 @@ import Heading from '@tiptap/extension-heading'
 import Paragraph from '@tiptap/extension-paragraph'
 import OrderedList from '@tiptap/extension-ordered-list'
 import BulletList from '@tiptap/extension-bullet-list'
-// import { MenuBar } from '../menu-bar'
+import { MenuBar } from '../menu-bar'
 import TaskList from '@tiptap/extension-task-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import Blockquote from '@tiptap/extension-blockquote'
@@ -27,6 +27,9 @@ const Editor = () => {
   const editor = useEditor({
     extensions: extensions,
   })
+
+  // @ts-expect-error 为了方便调试
+  window.editor = editor
 
   const isHeadingState = useNodeActive(editor, Heading.name)
   const isParagraphState = useNodeActive(editor, Paragraph.name)
@@ -76,13 +79,13 @@ const Editor = () => {
     <div
       className={styles.wrap}
       onClick={() => {
-        editor?.chain().focus(3).run()
+        editor?.chain().focus().run()
       }}
       onTouchEnd={() => {
-        editor?.chain().focus(3).run()
+        editor?.chain().focus().run()
       }}
     >
-      {/* <MenuBar editor={editor} /> */}
+      <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </div>
   )

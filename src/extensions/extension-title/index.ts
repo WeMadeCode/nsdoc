@@ -9,7 +9,7 @@ export const Title = Node.create({
   defining: true,
   isolating: true,
   priority: 1000,
-  content: 'inline*',
+  content: 'text*',
   group: 'block',
 
   addOptions() {
@@ -21,6 +21,7 @@ export const Title = Node.create({
   parseHTML() {
     return [{ tag: 'div[data-type="title"]' }]
   },
+
   renderHTML({ HTMLAttributes }) {
     return ['div', { ...HTMLAttributes, 'data-type': 'title' }, 0]
   },

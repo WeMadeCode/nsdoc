@@ -111,4 +111,9 @@ export const setupBridge = (editor: Editor | null) => {
   dsbridge.register('insertTable', () => {
     return editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
   })
+
+  // 插入横线
+  dsbridge.register('setHorizontalRule', () => {
+    return editor.chain().setHorizontalRule().run()
+  })
 }

@@ -52,11 +52,11 @@ body {
   margin: 0;
 }
 
-:first-child {
-  margin-top: 0;
-}
-
 .tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
   caret-color: var(--purple);
   margin: 1rem;
 
