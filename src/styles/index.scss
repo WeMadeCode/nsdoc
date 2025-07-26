@@ -1,4 +1,5 @@
 @use './reset.scss';
+@use './var.scss';
 @use './editor.scss';
 @use './codeBlock.scss';
 @use './placeholder.scss';
@@ -6,3 +7,4 @@
 @use './list.scss';
 @use './table.scss';
 @use './horizontalRule.scss';
+@use './blockQuote.scss';

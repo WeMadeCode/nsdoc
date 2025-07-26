@@ -114,6 +114,6 @@ export const setupBridge = (editor: Editor | null) => {
 
   // 插入横线
   dsbridge.register('setHorizontalRule', () => {
-    return editor.chain().setHorizontalRule().run()
+    return editor.chain().focus().setHorizontalRule().run()
   })
 }

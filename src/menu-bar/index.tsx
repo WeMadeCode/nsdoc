@@ -16,10 +16,11 @@ export const MenuBar = (props: Props) => {
       <div className="button-group">
         <button
           onClick={() => {
-            editor.chain().focus().setHorizontalRule().run()
+            editor.chain().focus().toggleBlockquote().run()
+            // editor.chain().focus().setHorizontalRule().run()
           }}
         >
-          我是按钮1
+          我是按钮
         </button>
       </div>
     </div>
