@@ -1,12 +1,12 @@
 import type { Editor } from '@tiptap/core'
 import { useEffect, useState } from 'react'
 
-export type NodeActiveType = {
+export type ActiveType = {
   active: boolean
   attributes: Record<string, unknown> | undefined
 }
 
-export const useNodeActive = (editor: Editor | null, name: string) => {
+export function useActive(editor: Editor | null, name: string) {
   const [active, setActive] = useState(false)
   const [attributes, setAttributes] = useState<Record<string, unknown> | undefined>(undefined)
 

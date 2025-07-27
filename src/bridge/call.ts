@@ -1,7 +1,15 @@
 import dsbridge from 'dsbridge'
-import type { NodeActiveType } from '../hooks/useNodeActive'
+import type { ActiveType } from '../hooks/useActive'
 
-export const headingListener = (type: NodeActiveType) => {
+export const boldListener = (type: ActiveType) => {
+  const obj = {
+    active: type.active,
+    level: type.attributes?.level,
+  }
+  dsbridge.call('boldActive', obj)
+}
+
+export const headingListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
     level: type.attributes?.level,
@@ -9,42 +17,42 @@ export const headingListener = (type: NodeActiveType) => {
   dsbridge.call('headingActive', obj)
 }
 
-export const paragraphListener = (type: NodeActiveType) => {
+export const paragraphListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }
   dsbridge.call('paragraphActive', obj)
 }
 
-export const orderedListener = (type: NodeActiveType) => {
+export const orderedListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }
   dsbridge.call('orderedActive', obj)
 }
 
-export const bulletListener = (type: NodeActiveType) => {
+export const bulletListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }
   dsbridge.call('bulletActive', obj)
 }
 
-export const taskListener = (type: NodeActiveType) => {
+export const taskListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }
   dsbridge.call('taskActive', obj)
 }
 
-export const codeBlockListener = (type: NodeActiveType) => {
+export const codeBlockListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }
   dsbridge.call('codeBlockActive', obj)
 }
 
-export const blockQuoteListener = (type: NodeActiveType) => {
+export const blockQuoteListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
   }

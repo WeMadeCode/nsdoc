@@ -16,7 +16,8 @@ export const MenuBar = (props: Props) => {
       <div className="button-group">
         <button
           onClick={() => {
-            editor.chain().focus().toggleBlockquote().run()
+            editor.chain().focus().toggleBold().run()
+            // editor.chain().focus().toggleBlockquote().run()
             // editor.chain().focus().setHorizontalRule().run()
           }}
         >

@@ -8,7 +8,6 @@ export const Placeholder = PlaceholderTiptap.configure({
   placeholder(props) {
     const { node } = props
     const name = node.type.name
-    console.log('name = ', name)
     if (name === TaskList.name || name === OrderedList.name || name === Table.name) {
       return ''
     } else if (name === Title.name) {
