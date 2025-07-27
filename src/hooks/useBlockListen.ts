@@ -19,7 +19,13 @@ import {
   codeBlockListener,
   blockQuoteListener,
   boldListener,
+  italicListener,
+  underlineListener,
+  codeListener,
 } from '../bridge'
+import Italic from '@tiptap/extension-italic'
+import Underline from '@tiptap/extension-underline'
+import Code from '@tiptap/extension-code'
 
 export type ActiveType = {
   active: boolean
@@ -35,6 +41,21 @@ export function useBlockListen(editor: Editor | null) {
   const isCodeBlockState = useActive(editor, CodeBlock.name)
   const isBlockquoteState = useActive(editor, Blockquote.name)
   const isBoldActive = useActive(editor, Bold.name)
+  const isItalicActive = useActive(editor, Italic.name)
+  const isUnderlineActive = useActive(editor, Underline.name)
+  const isCodeActive = useActive(editor, Code.name)
+
+  useEffect(() => {
+    codeListener(isCodeActive)
+  }, [isCodeActive])
+
+  useEffect(() => {
+    underlineListener(isUnderlineActive)
+  }, [isUnderlineActive])
+
+  useEffect(() => {
+    italicListener(isItalicActive)
+  }, [isItalicActive])
 
   useEffect(() => {
     boldListener(isBoldActive)

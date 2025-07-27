@@ -1,10 +1,30 @@
 import dsbridge from 'dsbridge'
 import type { ActiveType } from '../hooks/useActive'
 
+export const codeListener = (type: ActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('codeActive', obj)
+}
+
+export const underlineListener = (type: ActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('underlineActive', obj)
+}
+
+export const italicListener = (type: ActiveType) => {
+  const obj = {
+    active: type.active,
+  }
+  dsbridge.call('italicActive', obj)
+}
+
 export const boldListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
-    level: type.attributes?.level,
   }
   dsbridge.call('boldActive', obj)
 }
