@@ -1,4 +1,4 @@
-import { EditorContent, useEditor } from '@tiptap/react'
+import { EditorContent, isAndroid, useEditor } from '@tiptap/react'
 import styles from './index.module.scss'
 import { setupBridge } from '../bridge'
 
@@ -7,6 +7,8 @@ import { useEffect } from 'react'
 import { useBlockListen } from '../hooks/useBlockListen'
 
 import { MenuBar } from '../menu-bar'
+
+import { isiOS } from '@tiptap/react'
 
 const Editor = () => {
   const editor = useEditor({
@@ -29,7 +31,7 @@ const Editor = () => {
         editor?.chain().focus().run()
       }}
     >
-      <MenuBar editor={editor} />
+      {!(isiOS() || isAndroid()) && <MenuBar editor={editor} />}
       <EditorContent editor={editor} />
     </div>
   )

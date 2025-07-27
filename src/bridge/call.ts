@@ -1,6 +1,22 @@
 import dsbridge from 'dsbridge'
 import type { ActiveType } from '../hooks/useActive'
 
+export const tableListener = (type: ActiveType) => {
+  dsbridge.call('tableActive', type)
+}
+
+export const textAlignListener = (type: ActiveType) => {
+  dsbridge.call('textAlignActive', type)
+}
+
+export const horizontalRuleListener = (type: ActiveType) => {
+  dsbridge.call('horizontalRuleActive', type)
+}
+
+export const textStyleListener = (type: ActiveType) => {
+  dsbridge.call('textStyleActive', type)
+}
+
 export const codeListener = (type: ActiveType) => {
   const obj = {
     active: type.active,
