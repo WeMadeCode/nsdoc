@@ -24,7 +24,6 @@ import {
   codeListener,
   textStyleListener,
   horizontalRuleListener,
-  textAlignListener,
   tableListener,
 } from '../bridge'
 import Italic from '@tiptap/extension-italic'
@@ -32,7 +31,6 @@ import Underline from '@tiptap/extension-underline'
 import Code from '@tiptap/extension-code'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { HorizontalRule } from '../extensions/extension-horizontal-rule'
-import TextAlign from '@tiptap/extension-text-align'
 import { Table } from '@tiptap/extension-table'
 
 export type ActiveType = {
@@ -54,16 +52,13 @@ export function useBlockListen(editor: Editor | null) {
   const isCodeActive = useActive(editor, Code.name)
   const isTextStyleActive = useActive(editor, TextStyle.name)
   const isHorizontalRuleActive = useActive(editor, HorizontalRule.name)
-  const isTextAlignActive = useActive(editor, TextAlign.name)
   const isTableActive = useActive(editor, Table.name)
+
+  console.log('isParagraphState = ', isParagraphState)
 
   useEffect(() => {
     tableListener(isTableActive)
   }, [isTableActive])
-
-  useEffect(() => {
-    textAlignListener(isTextAlignActive)
-  }, [isTextAlignActive])
 
   useEffect(() => {
     horizontalRuleListener(isHorizontalRuleActive)
@@ -92,10 +87,6 @@ export function useBlockListen(editor: Editor | null) {
   useEffect(() => {
     headingListener(isHeadingState)
   }, [isHeadingState])
-
-  useEffect(() => {
-    paragraphListener(isParagraphState)
-  }, [isParagraphState])
 
   useEffect(() => {
     paragraphListener(isParagraphState)

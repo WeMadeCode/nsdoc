@@ -1,3 +1,5 @@
+import { Divider } from '@douyinfe/semi-ui'
+
 import type { Editor } from '@tiptap/core'
 
 interface Props {
@@ -34,7 +36,7 @@ export const MenuBar = (props: Props) => {
       >
         右边对齐
       </button>
-      <br></br>
+      <Divider margin="10px" />
       <button
         onClick={() => {
           editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
@@ -42,6 +44,17 @@ export const MenuBar = (props: Props) => {
       >
         插入表格
       </button>
+      <Divider margin="10px" />
+      <button
+        onClick={() => {
+          editor.chain().focus().setBold().run()
+        }}
+      >
+        Bold
+      </button>
+      <button onClick={() => editor.chain().focus().toggleItalic().run()}>Italic</button>
+      <button onClick={() => editor.chain().focus().toggleStrike().run()}>Strike</button>
+      <Divider margin="10px" />
     </div>
   )
 }

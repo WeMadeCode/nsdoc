@@ -27,8 +27,12 @@ const Editor = () => {
   return (
     <div
       className={styles.wrap}
-      onClick={() => {
-        editor?.chain().focus().run()
+      onClick={e => {
+        const target = e.target as HTMLElement
+        const res = editor?.view.dom.contains(target)
+        if (!res) {
+          editor?.chain().focus().run()
+        }
       }}
     >
       {!(isiOS() || isAndroid()) && <MenuBar editor={editor} />}

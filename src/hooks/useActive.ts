@@ -18,10 +18,10 @@ export function useActive(editor: Editor | null, name: string) {
       setAttributes(attrs)
     }
 
-    editor?.on('update', func)
+    editor?.on('transaction', func)
     editor?.on('selectionUpdate', func)
     return () => {
-      editor?.off('update', func)
+      editor?.off('transaction', func)
       editor?.off('selectionUpdate', func)
     }
   }, [editor, name])

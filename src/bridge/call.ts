@@ -5,10 +5,6 @@ export const tableListener = (type: ActiveType) => {
   dsbridge.call('tableActive', type)
 }
 
-export const textAlignListener = (type: ActiveType) => {
-  dsbridge.call('textAlignActive', type)
-}
-
 export const horizontalRuleListener = (type: ActiveType) => {
   dsbridge.call('horizontalRuleActive', type)
 }
@@ -54,10 +50,7 @@ export const headingListener = (type: ActiveType) => {
 }
 
 export const paragraphListener = (type: ActiveType) => {
-  const obj = {
-    active: type.active,
-  }
-  dsbridge.call('paragraphActive', obj)
+  dsbridge.call('paragraphActive', type)
 }
 
 export const orderedListener = (type: ActiveType) => {
