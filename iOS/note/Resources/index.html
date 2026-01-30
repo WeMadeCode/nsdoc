@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SwiftUI WebView 示例</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #007AFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>欢迎使用 SwiftUI WebView</h1>
+        <p>这是一个在 SwiftUI 应用中嵌入的网页示例。</p>
+        
+        <div id="messageArea" style="margin: 20px 0; padding: 10px; background: #f8f8f8; border-radius: 8px;">
+            <!-- 消息将显示在这里 -->
+        </div>
+        
+        <button onclick="showMessage('来自页面的消息')">显示消息</button>
+    </div>
+
+    <script>
+        // 页面函数 - 可以被 SwiftUI 调用
+        function showMessage(text) {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<p><strong>消息:</strong> ${text}</p>`;
+        }
+        
+        // 另一个示例函数
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString();
+        }
+    </script>
+</body>
+</html>
