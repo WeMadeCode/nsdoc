@@ -16,7 +16,8 @@ struct noteApp: App {
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,
-            isStoredInMemoryOnly: false
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .private(CloudKitConfig.containerIdentifier)
         )
 
         do {

@@ -11,10 +11,10 @@ import SwiftData
 @Model
 final class Article {
     
-    var title: String
-    var markdownText: String
-    var createDate: Date
-    var updateDate: Date
+    var title: String = ""
+    var markdownText: String = ""
+    var createDate: Date = Date()
+    var updateDate: Date = Date()
     
     init(title: String = "", markdownText: String = "", createDate: Date = Date(), updateDate: Date = Date()) {
         self.title = title
