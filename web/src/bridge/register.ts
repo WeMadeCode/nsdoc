@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
 import dsbridge from 'dsbridge'
+import { ensureDocumentTitle } from '@/tiptap-editor/lib/document-content'
 
 export const setupBridge = (editor: Editor | null) => {
   if (!editor) {
@@ -50,10 +51,11 @@ export const setupBridge = (editor: Editor | null) => {
   // 设置文档内容
   dsbridge.register('setContent', (param: { content: string; isFocus: boolean }) => {
     const { content, isFocus } = param
+    const nextContent = ensureDocumentTitle(JSON.parse(content))
     if (isFocus) {
-      editor.chain().focus().setContent(JSON.parse(content)).run()
+      editor.chain().focus().setContent(nextContent).run()
     } else {
-      editor.chain().setContent(JSON.parse(content)).run()
+      editor.chain().setContent(nextContent).run()
     }
   })
 
