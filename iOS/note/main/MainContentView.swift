@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainContentView: View {
     var body: some View {
-        EditorView(article: nil, showsCloseButton: false)
+        ListView()
     }
 }
 
