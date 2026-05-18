@@ -1,4 +1,4 @@
-import { NotionEditor } from './tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor'
+import { NotionEditor } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor'
 
 const App = () => {
   return (

@@ -20,15 +20,15 @@ export function SetupErrorMessage({ aiSetupError, collabSetupError }: SetupError
   if (collabSetupError) {
     environmentVariables.push(
       {
-        name: 'TIPTAP_COLLAB_DOC_PREFIX',
+        name: 'VITE_TIPTAP_COLLAB_DOC_PREFIX',
         description: 'Prefix for identifying collaborative documents',
       },
       {
-        name: 'TIPTAP_COLLAB_APP_ID',
+        name: 'VITE_TIPTAP_COLLAB_APP_ID',
         description: 'Your Document Server App ID',
       },
       {
-        name: 'TIPTAP_COLLAB_TOKEN',
+        name: 'VITE_TIPTAP_COLLAB_TOKEN',
         description: 'JWT token for accessing Collaboration services (do not use in production)',
       }
     )
@@ -37,11 +37,11 @@ export function SetupErrorMessage({ aiSetupError, collabSetupError }: SetupError
   if (aiSetupError) {
     environmentVariables.push(
       {
-        name: 'TIPTAP_AI_APP_ID',
+        name: 'VITE_TIPTAP_AI_APP_ID',
         description: 'Your AI App ID',
       },
       {
-        name: 'TIPTAP_AI_TOKEN',
+        name: 'VITE_TIPTAP_AI_TOKEN',
         description: 'JWT token for accessing AI services (do not use in production)',
       }
     )
