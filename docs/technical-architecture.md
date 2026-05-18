@@ -13,7 +13,7 @@
 
 架构目标：
 
-- 原生优先：导航、列表、统计、存储、同步等能力由 iOS 原生层负责。
+- 原生优先：导航、列表、文件夹、搜索、存储、同步等能力由 iOS 原生层负责。
 - 编辑器专业化：复杂富文本编辑能力由 Web 编辑器负责，避免在 SwiftUI 中重复实现编辑内核。
 - 本地优先：所有笔记读写先落本地，网络和 CloudKit 同步不阻塞用户编辑。
 - 隐私优先：不建设产品方笔记内容服务器，用户笔记内容只进入设备本地容器和 CloudKit。
@@ -26,8 +26,8 @@
 
 - iOS 应用：SwiftUI。
 - 本地数据：SwiftData，当前模型为 `Article`。
-- 主界面：`TabView`，包含“最近”和“统计”两个 Tab。
-- 笔记列表：SwiftUI `List` + SwiftData `@Query`。
+- 主界面：`NavigationStack` 承载单一笔记首页。
+- 笔记首页：SwiftUI 自定义首页 + SwiftData `@Query`。
 - 编辑页面：SwiftUI `EditorView` 承载 WebView。
 - WebView：自定义 `DWKWebView`/`WKWebView`，通过 DSBridge 与 Web 编辑器通信。
 - Web 编辑器：React + Tiptap + Vite。
@@ -97,7 +97,7 @@ flowchart TB
 
 职责：
 
-- 管理应用导航、Tab、列表、统计、设置、编辑页入口。
+- 管理应用导航、列表、文件夹、搜索、设置、编辑页入口。
 - 展示 CloudKit 状态、同步状态和错误提示。
 - 响应用户操作，例如新建、编辑、删除、搜索。
 - 在编辑页中承载 WebView 和原生工具栏。
@@ -106,11 +106,10 @@ flowchart TB
 
 | 模块 | 职责 |
 | --- | --- |
-| `MainContentView` | 应用主框架，管理 Tab |
-| `ListView` | 笔记列表、新建入口、删除入口 |
+| `MainContentView` | 应用主框架，承载笔记首页 |
+| `ListView` | 笔记首页、文件夹入口、搜索入口、新建入口、删除入口 |
 | `EditorView` | 编辑页面宿主，管理保存、返回、键盘和工具栏 |
 | `Tools` / `EditorViewModel` | 原生编辑工具栏状态 |
-| `YearCalendarView` / `MonthCalendarView` | 日历与统计 |
 | `SettingsView` | CloudKit、隐私与同步状态 |
 
 ### 5.2 iOS 业务层
@@ -122,7 +121,7 @@ flowchart TB
 | 服务 | 职责 |
 | --- | --- |
 | `CloudKitAccountService` | 系统 Apple ID 与 CloudKit 可用性、系统设置入口 |
-| `ArticleService` | 笔记查询、创建、更新、删除、统计 |
+| `ArticleService` | 笔记查询、创建、更新、删除 |
 | `EditorContentService` | Tiptap JSON 正文、标题、摘要、纯文本索引派生 |
 | `SyncService` | CloudKit 同步状态、冲突检测、重试 |
 | `AttachmentService` | 图片和附件的保存、引用、清理 |
