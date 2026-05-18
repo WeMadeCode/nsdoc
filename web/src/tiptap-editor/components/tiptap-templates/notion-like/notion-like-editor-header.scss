@@ -1,0 +1,47 @@
+:root {
+  --tt-notion-like-editor-header-border: var(--tt-gray-light-a-200);
+  --tt-notion-like-editor-header-bg: var(--white);
+}
+
+.dark {
+  --tt-notion-like-editor-header-border: var(--tt-gray-dark-a-200);
+  --tt-notion-like-editor-header-bg: var(--black);
+}
+
+.notion-like-editor-header {
+  --content-width: minmax(auto, 708px);
+  --margin-width: minmax(96px, 1fr);
+
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--margin-left-width, var(--margin-width))
+    [content-start] var(--content-width)
+    [content-end] var(--margin-right-width, var(--margin-width))
+    [full-end];
+  width: 100%;
+  background-color: var(--tt-notion-like-editor-header-bg);
+  border-bottom: 1px solid var(--tt-notion-like-editor-header-border);
+  padding: 0.5rem 0;
+
+  &-toolbar.tiptap-toolbar[data-variant="fixed"] {
+    grid-column: content-start / content-end;
+    position: static;
+    min-height: 3.25rem;
+    border: 0;
+    background: transparent;
+    padding: 0 0.75rem;
+
+    .tiptap-toolbar-group {
+      gap: 0.25rem;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .notion-like-editor-header {
+    --margin-width: minmax(1rem, 1fr);
+  }
+}
