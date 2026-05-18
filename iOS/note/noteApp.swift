@@ -27,24 +27,10 @@ struct noteApp: App {
         }
     }()
     
-    @Environment(\.scenePhase) var scenePhase
-
     var body: some Scene {
         WindowGroup {
             MainContentView()
         }
         .modelContainer(sharedModelContainer)
-        .onChange(of: scenePhase) { oldPhase, newPhase in
-            switch newPhase {
-            case .active:
-                SwifterServer.shared.start()
-            case .inactive:
-                SwifterServer.shared.stop()
-            case .background:
-                break
-            @unknown default:
-                break
-            }
-        }
     }
 }

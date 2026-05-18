@@ -10,24 +10,32 @@ import SwiftUI
 struct EditorView: View {
     
     let article: Article?
+    let showsCloseButton: Bool
     
     @StateObject var viewModel = EditorViewModel()
     @Environment(\.modelContext) private var modelContext
     @State private var isKeyboardShow: Bool = false
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
+
+    init(article: Article?, showsCloseButton: Bool = true) {
+        self.article = article
+        self.showsCloseButton = showsCloseButton
+    }
     
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             mainView
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(content: {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "arrow.left")
+            if showsCloseButton {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "arrow.left")
+                    }
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -48,25 +56,29 @@ struct EditorView: View {
     
     private var mainView: some View {
         VStack {
-            // 使用 manager 中的 webView
-            SLWebView(url: URL(string: "http://localhost:8080/index.html")!, javaScriptCommand: $javaScriptCommand) {
-                Task {
-                    try await Task.sleep(nanoseconds: 300_000_000) // 0.1秒
-                    await MainActor.run {
-                        guard let content = article?.markdownText else {
-                            return
+            if let editorURL = Self.editorURL {
+                SLWebView(url: editorURL, javaScriptCommand: $javaScriptCommand) {
+                    Task {
+                        try await Task.sleep(nanoseconds: 300_000_000)
+                        await MainActor.run {
+                            guard let content = article?.markdownText else {
+                                return
+                            }
+                            javaScriptCommand = JavaScriptCommand(
+                                methodName: "setContent",
+                                arguments: [[
+                                    "content": content,
+                                    "isFocus": false
+                                ]]
+                            )
                         }
-                        javaScriptCommand = JavaScriptCommand(
-                            methodName: "setContent",
-                            arguments: [[
-                                "content": content,
-                                "isFocus": false
-                            ]]
-                        )
                     }
+                } toolsUpdate: { activeTools in
+                    viewModel.updateSelected(activeTools: activeTools)
                 }
-            } toolsUpdate: { activeTools in
-                viewModel.updateSelected(activeTools: activeTools)
+            } else {
+                Text("文档编辑器资源未找到")
+                    .foregroundStyle(.secondary)
             }
 
             Spacer()
@@ -74,6 +86,10 @@ struct EditorView: View {
                 Tools(javaScriptCommand: $javaScriptCommand, viewModel: viewModel)
             }
         }
+    }
+
+    private static var editorURL: URL? {
+        URL(string: "http://localhost:5173/")
     }
     
     private func saveInfo() {

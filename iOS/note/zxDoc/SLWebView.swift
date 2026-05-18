@@ -8,13 +8,10 @@
 import SwiftUI
 import WebKit
 
-class MyWKWebView: DWKWebView {
-    
-    // 去除键盘上方的上下按钮和done按钮
+final class MyWKWebView: WKWebView {
     override var inputAccessoryView: UIView? {
         return nil
     }
-
 }
 
 struct JavaScriptCommand {
@@ -27,7 +24,6 @@ struct JavaScriptCommand {
 struct SLWebView: UIViewRepresentable {
     
     let url: URL
-    let jsBridge = JSBridge()
     @Binding var javaScriptCommand: JavaScriptCommand?
     let isLoadFinsh: (() -> Void)?
     let toolsUpdate: (([ToolType: Bool]) -> Void)?
@@ -44,13 +40,12 @@ struct SLWebView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> MyWKWebView {
-        let wkWebView = MyWKWebView()
+        let configuration = WKWebViewConfiguration()
+        let wkWebView = MyWKWebView(frame: .zero, configuration: configuration)
         wkWebView.navigationDelegate = context.coordinator
         wkWebView.isOpaque = false
         wkWebView.backgroundColor = .clear
         wkWebView.isInspectable = true
-        jsBridge.setup(toolsUpdate: toolsUpdate)
-        wkWebView.addJavascriptObject(jsBridge, namespace: nil)
         let request = URLRequest(url: url)
         wkWebView.load(request)
         return wkWebView
@@ -58,13 +53,8 @@ struct SLWebView: UIViewRepresentable {
     
     func updateUIView(_ uiView: MyWKWebView, context: Context) {
         if let javaScriptCommand {
-            uiView.callHandler(
-                javaScriptCommand.methodName,
-                arguments: javaScriptCommand.arguments
-            ) { result in
-                javaScriptCommand.completion?(result)
-                self.javaScriptCommand = nil
-            }
+            javaScriptCommand.completion?(nil)
+            self.javaScriptCommand = nil
         }
     }
     
