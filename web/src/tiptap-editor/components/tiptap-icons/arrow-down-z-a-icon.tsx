@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const ArrowDownZAIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M7.00017 3C7.55242 3.00004 8.00017 3.44774 8.00017 4V17.5859L10.2931 15.293C10.6837 14.9025 11.3167 14.9025 11.7072 15.293C12.0976 15.6835 12.0976 16.3165 11.7072 16.707L7.7072 20.707C7.66067 20.7536 7.60881 20.7944 7.55388 20.8311C7.51475 20.8572 7.47445 20.8804 7.43279 20.9004C7.38729 20.9223 7.34018 20.9412 7.29118 20.9561C7.27445 20.9611 7.25734 20.9646 7.2404 20.9688C7.2248 20.9726 7.20941 20.9774 7.19353 20.9805C7.18643 20.9819 7.17916 20.9822 7.17204 20.9834C7.1161 20.9931 7.05889 21 7.00017 21L6.89763 20.9951C6.87615 20.9929 6.85521 20.9879 6.83415 20.9844C6.82375 20.9826 6.81326 20.9816 6.8029 20.9795C6.7914 20.9772 6.78008 20.9744 6.76872 20.9717C6.74815 20.9668 6.72749 20.9622 6.7072 20.9561C6.65855 20.9412 6.61176 20.9222 6.56658 20.9004C6.5247 20.8802 6.48381 20.8574 6.4445 20.8311C6.39008 20.7946 6.3393 20.7532 6.29314 20.707L2.29314 16.707C1.90261 16.3165 1.90261 15.6835 2.29314 15.293C2.68367 14.9025 3.3167 14.9025 3.7072 15.293L6.00017 17.5859V4C6.00017 3.44772 6.44788 3 7.00017 3Z"
         fill="currentColor"
@@ -31,4 +23,4 @@ export const ArrowDownZAIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-ArrowDownZAIcon.displayName = "ArrowDownZAIcon"
+ArrowDownZAIcon.displayName = 'ArrowDownZAIcon'

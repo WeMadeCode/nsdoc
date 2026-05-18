@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseDeleteNodeConfig } from "@/tiptap-editor/components/tiptap-ui/delete-node-button"
-import {
-  DELETE_NODE_SHORTCUT_KEY,
-  useDeleteNode,
-} from "@/tiptap-editor/components/tiptap-ui/delete-node-button"
+import type { UseDeleteNodeConfig } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
+import { DELETE_NODE_SHORTCUT_KEY, useDeleteNode } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface DeleteNodeButtonProps
-  extends Omit<ButtonProps, "type">, UseDeleteNodeConfig {
+export interface DeleteNodeButtonProps extends Omit<ButtonProps, 'type'>, UseDeleteNodeConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface DeleteNodeButtonProps
   showShortcut?: boolean
 }
 
-export function DeleteNodeShortcutBadge({
-  shortcutKeys = DELETE_NODE_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function DeleteNodeShortcutBadge({ shortcutKeys = DELETE_NODE_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,30 +38,17 @@ export function DeleteNodeShortcutBadge({
  *
  * For custom button implementations, use the `useDeleteNode` hook instead.
  */
-export const DeleteNodeButton = forwardRef<
-  HTMLButtonElement,
-  DeleteNodeButtonProps
->(
+export const DeleteNodeButton = forwardRef<HTMLButtonElement, DeleteNodeButtonProps>(
   (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onDeleted,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
-    },
+    { editor: providedEditor, text, hideWhenUnavailable = false, onDeleted, showShortcut = false, onClick, children, ...buttonProps },
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleDeleteNode, label, shortcutKeys, Icon } =
-      useDeleteNode({
-        editor,
-        hideWhenUnavailable,
-        onDeleted,
-      })
+    const { isVisible, handleDeleteNode, label, shortcutKeys, Icon } = useDeleteNode({
+      editor,
+      hideWhenUnavailable,
+      onDeleted,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,9 +79,7 @@ export const DeleteNodeButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <DeleteNodeShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <DeleteNodeShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -110,4 +87,4 @@ export const DeleteNodeButton = forwardRef<
   }
 )
 
-DeleteNodeButton.displayName = "DeleteNodeButton"
+DeleteNodeButton.displayName = 'DeleteNodeButton'

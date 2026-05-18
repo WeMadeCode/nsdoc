@@ -1,40 +1,34 @@
-"use client"
+'use client'
 
-import { useCallback } from "react"
-import type { Editor } from "@tiptap/react"
+import { useCallback } from 'react'
+import type { Editor } from '@tiptap/react'
 
 // --- Icons ---
-import { CodeBlockIcon } from "@/tiptap-editor/components/tiptap-icons/code-block-icon"
-import { HeadingOneIcon } from "@/tiptap-editor/components/tiptap-icons/heading-one-icon"
-import { HeadingTwoIcon } from "@/tiptap-editor/components/tiptap-icons/heading-two-icon"
-import { HeadingThreeIcon } from "@/tiptap-editor/components/tiptap-icons/heading-three-icon"
-import { ImageIcon } from "@/tiptap-editor/components/tiptap-icons/image-icon"
-import { ListIcon } from "@/tiptap-editor/components/tiptap-icons/list-icon"
-import { ListOrderedIcon } from "@/tiptap-editor/components/tiptap-icons/list-ordered-icon"
-import { BlockquoteIcon } from "@/tiptap-editor/components/tiptap-icons/blockquote-icon"
-import { ListTodoIcon } from "@/tiptap-editor/components/tiptap-icons/list-todo-icon"
-import { AiSparklesIcon } from "@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon"
-import { MinusIcon } from "@/tiptap-editor/components/tiptap-icons/minus-icon"
-import { TypeIcon } from "@/tiptap-editor/components/tiptap-icons/type-icon"
-import { AtSignIcon } from "@/tiptap-editor/components/tiptap-icons/at-sign-icon"
-import { SmilePlusIcon } from "@/tiptap-editor/components/tiptap-icons/smile-plus-icon"
-import { TableIcon } from "@/tiptap-editor/components/tiptap-icons/table-icon"
-import { ListIndentedIcon } from "@/tiptap-editor/components/tiptap-icons/list-indented-icon"
+import { CodeBlockIcon } from '@/tiptap-editor/components/tiptap-icons/code-block-icon'
+import { HeadingOneIcon } from '@/tiptap-editor/components/tiptap-icons/heading-one-icon'
+import { HeadingTwoIcon } from '@/tiptap-editor/components/tiptap-icons/heading-two-icon'
+import { HeadingThreeIcon } from '@/tiptap-editor/components/tiptap-icons/heading-three-icon'
+import { ImageIcon } from '@/tiptap-editor/components/tiptap-icons/image-icon'
+import { ListIcon } from '@/tiptap-editor/components/tiptap-icons/list-icon'
+import { ListOrderedIcon } from '@/tiptap-editor/components/tiptap-icons/list-ordered-icon'
+import { BlockquoteIcon } from '@/tiptap-editor/components/tiptap-icons/blockquote-icon'
+import { ListTodoIcon } from '@/tiptap-editor/components/tiptap-icons/list-todo-icon'
+import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
+import { MinusIcon } from '@/tiptap-editor/components/tiptap-icons/minus-icon'
+import { TypeIcon } from '@/tiptap-editor/components/tiptap-icons/type-icon'
+import { AtSignIcon } from '@/tiptap-editor/components/tiptap-icons/at-sign-icon'
+import { SmilePlusIcon } from '@/tiptap-editor/components/tiptap-icons/smile-plus-icon'
+import { TableIcon } from '@/tiptap-editor/components/tiptap-icons/table-icon'
+import { ListIndentedIcon } from '@/tiptap-editor/components/tiptap-icons/list-indented-icon'
 
 // --- Lib ---
-import {
-  isExtensionAvailable,
-  isNodeInSchema,
-} from "@/tiptap-editor/lib/tiptap-utils"
-import {
-  findSelectionPosition,
-  hasContentAbove,
-} from "@/tiptap-editor/lib/tiptap-advanced-utils"
+import { isExtensionAvailable, isNodeInSchema } from '@/tiptap-editor/lib/tiptap-utils'
+import { findSelectionPosition, hasContentAbove } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 // --- Tiptap UI ---
-import type { SuggestionItem } from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu"
-import { addEmojiTrigger } from "@/tiptap-editor/components/tiptap-ui/emoji-trigger-button"
-import { addMentionTrigger } from "@/tiptap-editor/components/tiptap-ui/mention-trigger-button"
+import type { SuggestionItem } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { addEmojiTrigger } from '@/tiptap-editor/components/tiptap-ui/emoji-trigger-button'
+import { addMentionTrigger } from '@/tiptap-editor/components/tiptap-ui/mention-trigger-button'
 
 export interface SlashMenuConfig {
   enabledItems?: SlashMenuItemType[]
@@ -48,137 +42,129 @@ export interface SlashMenuConfig {
 const texts = {
   // AI
   continue_writing: {
-    title: "Continue Writing",
-    subtext: "Continue writing from the current position",
-    keywords: ["continue", "write", "continue writing", "ai"],
+    title: 'Continue Writing',
+    subtext: 'Continue writing from the current position',
+    keywords: ['continue', 'write', 'continue writing', 'ai'],
     badge: AiSparklesIcon,
-    group: "AI",
+    group: 'AI',
   },
   ai_ask_button: {
-    title: "Ask AI",
-    subtext: "Ask AI to generate content",
-    keywords: ["ai", "ask", "generate"],
+    title: 'Ask AI',
+    subtext: 'Ask AI to generate content',
+    keywords: ['ai', 'ask', 'generate'],
     badge: AiSparklesIcon,
-    group: "AI",
+    group: 'AI',
   },
 
   // Style
   text: {
-    title: "Text",
-    subtext: "Regular text paragraph",
-    keywords: ["p", "paragraph", "text"],
+    title: 'Text',
+    subtext: 'Regular text paragraph',
+    keywords: ['p', 'paragraph', 'text'],
     badge: TypeIcon,
-    group: "Style",
+    group: 'Style',
   },
   heading_1: {
-    title: "Heading 1",
-    subtext: "Top-level heading",
-    keywords: ["h", "heading1", "h1"],
+    title: 'Heading 1',
+    subtext: 'Top-level heading',
+    keywords: ['h', 'heading1', 'h1'],
     badge: HeadingOneIcon,
-    group: "Style",
+    group: 'Style',
   },
   heading_2: {
-    title: "Heading 2",
-    subtext: "Key section heading",
-    keywords: ["h2", "heading2", "subheading"],
+    title: 'Heading 2',
+    subtext: 'Key section heading',
+    keywords: ['h2', 'heading2', 'subheading'],
     badge: HeadingTwoIcon,
-    group: "Style",
+    group: 'Style',
   },
   heading_3: {
-    title: "Heading 3",
-    subtext: "Subsection and group heading",
-    keywords: ["h3", "heading3", "subheading"],
+    title: 'Heading 3',
+    subtext: 'Subsection and group heading',
+    keywords: ['h3', 'heading3', 'subheading'],
     badge: HeadingThreeIcon,
-    group: "Style",
+    group: 'Style',
   },
   bullet_list: {
-    title: "Bullet List",
-    subtext: "List with unordered items",
-    keywords: ["ul", "li", "list", "bulletlist", "bullet list"],
+    title: 'Bullet List',
+    subtext: 'List with unordered items',
+    keywords: ['ul', 'li', 'list', 'bulletlist', 'bullet list'],
     badge: ListIcon,
-    group: "Style",
+    group: 'Style',
   },
   ordered_list: {
-    title: "Numbered List",
-    subtext: "List with ordered items",
-    keywords: ["ol", "li", "list", "numberedlist", "numbered list"],
+    title: 'Numbered List',
+    subtext: 'List with ordered items',
+    keywords: ['ol', 'li', 'list', 'numberedlist', 'numbered list'],
     badge: ListOrderedIcon,
-    group: "Style",
+    group: 'Style',
   },
   task_list: {
-    title: "To-do list",
-    subtext: "List with tasks",
-    keywords: ["tasklist", "task list", "todo", "checklist"],
+    title: 'To-do list',
+    subtext: 'List with tasks',
+    keywords: ['tasklist', 'task list', 'todo', 'checklist'],
     badge: ListTodoIcon,
-    group: "Style",
+    group: 'Style',
   },
   quote: {
-    title: "Blockquote",
-    subtext: "Blockquote block",
-    keywords: ["quote", "blockquote"],
+    title: 'Blockquote',
+    subtext: 'Blockquote block',
+    keywords: ['quote', 'blockquote'],
     badge: BlockquoteIcon,
-    group: "Style",
+    group: 'Style',
   },
   code_block: {
-    title: "Code Block",
-    subtext: "Code block with syntax highlighting",
-    keywords: ["code", "pre"],
+    title: 'Code Block',
+    subtext: 'Code block with syntax highlighting',
+    keywords: ['code', 'pre'],
     badge: CodeBlockIcon,
-    group: "Style",
+    group: 'Style',
   },
 
   // Insert
   mention: {
-    title: "Mention",
-    subtext: "Mention a user or item",
-    keywords: ["mention", "user", "item", "tag"],
+    title: 'Mention',
+    subtext: 'Mention a user or item',
+    keywords: ['mention', 'user', 'item', 'tag'],
     badge: AtSignIcon,
-    group: "Insert",
+    group: 'Insert',
   },
   emoji: {
-    title: "Emoji",
-    subtext: "Insert an emoji",
-    keywords: ["emoji", "emoticon", "smiley"],
+    title: 'Emoji',
+    subtext: 'Insert an emoji',
+    keywords: ['emoji', 'emoticon', 'smiley'],
     badge: SmilePlusIcon,
-    group: "Insert",
+    group: 'Insert',
   },
   table: {
-    title: "Table",
-    subtext: "Insert a table",
-    aliases: ["table", "insertTable"],
+    title: 'Table',
+    subtext: 'Insert a table',
+    aliases: ['table', 'insertTable'],
     badge: TableIcon,
-    group: "Insert",
+    group: 'Insert',
   },
   divider: {
-    title: "Separator",
-    subtext: "Horizontal line to separate content",
-    keywords: ["hr", "horizontalRule", "line", "separator"],
+    title: 'Separator',
+    subtext: 'Horizontal line to separate content',
+    keywords: ['hr', 'horizontalRule', 'line', 'separator'],
     badge: MinusIcon,
-    group: "Insert",
+    group: 'Insert',
   },
   toc: {
-    title: "Table of contents",
-    subtext: "Insert a table of contents",
-    keywords: ["toc", "tableofcontents", "table of contents"],
+    title: 'Table of contents',
+    subtext: 'Insert a table of contents',
+    keywords: ['toc', 'tableofcontents', 'table of contents'],
     badge: ListIndentedIcon,
-    group: "Insert",
+    group: 'Insert',
   },
 
   // Upload
   image: {
-    title: "Image",
-    subtext: "Resizable image with caption",
-    keywords: [
-      "image",
-      "imageUpload",
-      "upload",
-      "img",
-      "picture",
-      "media",
-      "url",
-    ],
+    title: 'Image',
+    subtext: 'Resizable image with caption',
+    keywords: ['image', 'imageUpload', 'upload', 'img', 'picture', 'media', 'url'],
     badge: ImageIcon,
-    group: "Upload",
+    group: 'Upload',
   },
 }
 
@@ -190,10 +176,7 @@ const getItemImplementations = () => {
     continue_writing: {
       check: (editor: Editor) => {
         const { hasContent } = hasContentAbove(editor)
-        const extensionsReady = isExtensionAvailable(editor, [
-          "ai",
-          "aiAdvanced",
-        ])
+        const extensionsReady = isExtensionAvailable(editor, ['ai', 'aiAdvanced'])
         return extensionsReady && hasContent
       },
       action: ({ editor }: { editor: Editor }) => {
@@ -212,28 +195,18 @@ const getItemImplementations = () => {
         requestAnimationFrame(() => {
           const { hasContent, content } = hasContentAbove(editor)
 
-          const snippet =
-            content.length > 500 ? `...${content.slice(-500)}` : content
+          const snippet = content.length > 500 ? `...${content.slice(-500)}` : content
 
           const prompt = hasContent
             ? `Context: ${snippet}\n\nContinue writing from where the text above ends. Write ONLY ONE SENTENCE. DONT REPEAT THE TEXT.`
-            : "Start writing a new paragraph. Write ONLY ONE SENTENCE."
+            : 'Start writing a new paragraph. Write ONLY ONE SENTENCE.'
 
-          editor
-            .chain()
-            .focus()
-            .aiTextPrompt({
-              stream: true,
-              format: "rich-text",
-              text: prompt,
-            })
-            .run()
+          console.warn('AI continuation is unavailable in this local build.', { prompt })
         })
       },
     },
     ai_ask_button: {
-      check: (editor: Editor) =>
-        isExtensionAvailable(editor, ["ai", "aiAdvanced"]),
+      check: (editor: Editor) => isExtensionAvailable(editor, ['ai', 'aiAdvanced']),
       action: ({ editor }: { editor: Editor }) => {
         const editorChain = editor.chain().focus()
 
@@ -251,85 +224,83 @@ const getItemImplementations = () => {
 
     // Style
     text: {
-      check: (editor: Editor) => isNodeInSchema("paragraph", editor),
+      check: (editor: Editor) => isNodeInSchema('paragraph', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().setParagraph().run()
       },
     },
     heading_1: {
-      check: (editor: Editor) => isNodeInSchema("heading", editor),
+      check: (editor: Editor) => isNodeInSchema('heading', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleHeading({ level: 1 }).run()
       },
     },
     heading_2: {
-      check: (editor: Editor) => isNodeInSchema("heading", editor),
+      check: (editor: Editor) => isNodeInSchema('heading', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleHeading({ level: 2 }).run()
       },
     },
     heading_3: {
-      check: (editor: Editor) => isNodeInSchema("heading", editor),
+      check: (editor: Editor) => isNodeInSchema('heading', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleHeading({ level: 3 }).run()
       },
     },
     bullet_list: {
-      check: (editor: Editor) => isNodeInSchema("bulletList", editor),
+      check: (editor: Editor) => isNodeInSchema('bulletList', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleBulletList().run()
       },
     },
     ordered_list: {
-      check: (editor: Editor) => isNodeInSchema("orderedList", editor),
+      check: (editor: Editor) => isNodeInSchema('orderedList', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleOrderedList().run()
       },
     },
     task_list: {
-      check: (editor: Editor) => isNodeInSchema("taskList", editor),
+      check: (editor: Editor) => isNodeInSchema('taskList', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleTaskList().run()
       },
     },
     quote: {
-      check: (editor: Editor) => isNodeInSchema("blockquote", editor),
+      check: (editor: Editor) => isNodeInSchema('blockquote', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().toggleBlockquote().run()
       },
     },
     code_block: {
-      check: (editor: Editor) => isNodeInSchema("codeBlock", editor),
+      check: (editor: Editor) => isNodeInSchema('codeBlock', editor),
       action: ({ editor }: { editor: Editor }) => {
-        editor.chain().focus().toggleNode("codeBlock", "paragraph").run()
+        editor.chain().focus().toggleNode('codeBlock', 'paragraph').run()
       },
     },
 
     // Insert
     mention: {
-      check: (editor: Editor) =>
-        isExtensionAvailable(editor, ["mention", "mentionAdvanced"]),
+      check: (editor: Editor) => isExtensionAvailable(editor, ['mention', 'mentionAdvanced']),
       action: ({ editor }: { editor: Editor }) => addMentionTrigger(editor),
     },
     emoji: {
-      check: (editor: Editor) =>
-        isExtensionAvailable(editor, ["emoji", "emojiPicker"]),
+      check: (editor: Editor) => isExtensionAvailable(editor, ['emoji', 'emojiPicker']),
       action: ({ editor }: { editor: Editor }) => addEmojiTrigger(editor),
     },
     divider: {
-      check: (editor: Editor) => isNodeInSchema("horizontalRule", editor),
+      check: (editor: Editor) => isNodeInSchema('horizontalRule', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().setHorizontalRule().run()
       },
     },
     toc: {
-      check: (editor: Editor) => isNodeInSchema("tocNode", editor),
+      check: (editor: Editor) => isNodeInSchema('tocNode', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().insertTocNode().run()
       },
     },
     table: {
-      check: (editor: Editor) => isNodeInSchema("table", editor),
+      check: (editor: Editor) => isNodeInSchema('table', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor
           .chain()
@@ -345,13 +316,13 @@ const getItemImplementations = () => {
 
     // Upload
     image: {
-      check: (editor: Editor) => isNodeInSchema("image", editor),
+      check: (editor: Editor) => isNodeInSchema('image', editor),
       action: ({ editor }: { editor: Editor }) => {
         editor
           .chain()
           .focus()
           .insertContent({
-            type: "imageUpload",
+            type: 'imageUpload',
           })
           .run()
       },
@@ -359,19 +330,16 @@ const getItemImplementations = () => {
   }
 }
 
-function organizeItemsByGroups(
-  items: SuggestionItem[],
-  showGroups: boolean
-): SuggestionItem[] {
+function organizeItemsByGroups(items: SuggestionItem[], showGroups: boolean): SuggestionItem[] {
   if (!showGroups) {
-    return items.map((item) => ({ ...item, group: "" }))
+    return items.map(item => ({ ...item, group: '' }))
   }
 
   const groups: { [groupLabel: string]: SuggestionItem[] } = {}
 
   // Group items
-  items.forEach((item) => {
-    const groupLabel = item.group || ""
+  items.forEach(item => {
+    const groupLabel = item.group || ''
     if (!groups[groupLabel]) {
       groups[groupLabel] = []
     }
@@ -395,13 +363,12 @@ export function useSlashDropdownMenu(config?: SlashMenuConfig) {
     (editor: Editor) => {
       const items: SuggestionItem[] = []
 
-      const enabledItems =
-        config?.enabledItems || (Object.keys(texts) as SlashMenuItemType[])
+      const enabledItems = config?.enabledItems || (Object.keys(texts) as SlashMenuItemType[])
       const showGroups = config?.showGroups !== false
 
       const itemImplementations = getItemImplementations()
 
-      enabledItems.forEach((itemType) => {
+      enabledItems.forEach(itemType => {
         const itemImpl = itemImplementations[itemType]
         const itemText = texts[itemType]
 
@@ -414,7 +381,7 @@ export function useSlashDropdownMenu(config?: SlashMenuConfig) {
           if (config?.itemGroups?.[itemType]) {
             item.group = config.itemGroups[itemType]
           } else if (!showGroups) {
-            item.group = ""
+            item.group = ''
           }
 
           items.push(item)

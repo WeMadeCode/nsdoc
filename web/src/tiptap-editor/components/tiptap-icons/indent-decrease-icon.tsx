@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const IndentDecreaseIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M9 18.5C9.55228 18.5 10 18.9477 10 19.5C10 20.0523 9.55228 20.5 9 20.5H3C2.44772 20.5 2 20.0523 2 19.5C2 18.9477 2.44772 18.5 3 18.5H9Z"
         fill="currentColor"
@@ -37,4 +29,4 @@ export const IndentDecreaseIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-IndentDecreaseIcon.displayName = "IndentDecreaseIcon"
+IndentDecreaseIcon.displayName = 'IndentDecreaseIcon'

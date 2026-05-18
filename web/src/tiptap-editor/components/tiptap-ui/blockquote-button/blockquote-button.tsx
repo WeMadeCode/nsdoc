@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Tiptap UI ---
-import type { UseBlockquoteConfig } from "@/tiptap-editor/components/tiptap-ui/blockquote-button"
-import {
-  BLOCKQUOTE_SHORTCUT_KEY,
-  useBlockquote,
-} from "@/tiptap-editor/components/tiptap-ui/blockquote-button"
+import type { UseBlockquoteConfig } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
+import { BLOCKQUOTE_SHORTCUT_KEY, useBlockquote } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface BlockquoteButtonProps
-  extends Omit<ButtonProps, "type">, UseBlockquoteConfig {
+export interface BlockquoteButtonProps extends Omit<ButtonProps, 'type'>, UseBlockquoteConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface BlockquoteButtonProps
   showShortcut?: boolean
 }
 
-export function BlockquoteShortcutBadge({
-  shortcutKeys = BLOCKQUOTE_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function BlockquoteShortcutBadge({ shortcutKeys = BLOCKQUOTE_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,33 +38,13 @@ export function BlockquoteShortcutBadge({
  *
  * For custom button implementations, use the `useBlockquote` hook instead.
  */
-export const BlockquoteButton = forwardRef<
-  HTMLButtonElement,
-  BlockquoteButtonProps
->(
+export const BlockquoteButton = forwardRef<HTMLButtonElement, BlockquoteButtonProps>(
   (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
-    },
+    { editor: providedEditor, text, hideWhenUnavailable = false, onToggled, showShortcut = false, onClick, children, ...buttonProps },
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useBlockquote({
+    const { isVisible, canToggle, isActive, handleToggle, label, shortcutKeys, Icon } = useBlockquote({
       editor,
       hideWhenUnavailable,
       onToggled,
@@ -95,7 +67,7 @@ export const BlockquoteButton = forwardRef<
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canToggle}
@@ -111,9 +83,7 @@ export const BlockquoteButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <BlockquoteShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <BlockquoteShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -121,4 +91,4 @@ export const BlockquoteButton = forwardRef<
   }
 )
 
-BlockquoteButton.displayName = "BlockquoteButton"
+BlockquoteButton.displayName = 'BlockquoteButton'

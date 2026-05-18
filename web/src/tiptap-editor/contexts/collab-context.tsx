@@ -1,10 +1,13 @@
 'use client'
 
-import { TiptapCollabProvider } from '@tiptap-pro/provider'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Doc as YDoc } from 'yjs'
 
-import { fetchCollabToken, getUrlParam, TIPTAP_COLLAB_APP_ID,TIPTAP_COLLAB_DOC_PREFIX } from '@/tiptap-editor/lib/tiptap-collab-utils'
+import { fetchCollabToken, getUrlParam, TIPTAP_COLLAB_APP_ID, TIPTAP_COLLAB_DOC_PREFIX } from '@/tiptap-editor/lib/tiptap-collab-utils'
+
+type TiptapCollabProvider = {
+  destroy: () => void
+}
 
 export type CollabContextValue = {
   provider: TiptapCollabProvider | null
@@ -71,18 +74,14 @@ export const useCollaboration = (room: string) => {
     const documentName = room ? `${docPrefix}${room}` : docPrefix
     const appId = TIPTAP_COLLAB_APP_ID
 
-    const newProvider = new TiptapCollabProvider({
-      name: documentName,
+    console.warn('Tiptap collaboration provider is unavailable in this local build; using local editing mode.', {
+      documentName,
       appId,
       token: collabToken,
       document: ydoc,
     })
-
-    setProvider(newProvider)
-
-    return () => {
-      newProvider.destroy()
-    }
+    setProvider(null)
+    setHasCollab(false)
   }, [collabToken, ydoc, room, hasCollab])
 
   return { provider, ydoc, hasCollab, setupError }

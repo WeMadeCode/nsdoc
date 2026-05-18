@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseEmojiTriggerConfig } from "@/tiptap-editor/components/tiptap-ui/emoji-trigger-button"
-import {
-  EMOJI_TRIGGER_SHORTCUT_KEY,
-  useEmojiTrigger,
-} from "@/tiptap-editor/components/tiptap-ui/emoji-trigger-button"
+import type { UseEmojiTriggerConfig } from '@/tiptap-editor/components/tiptap-ui/emoji-trigger-button'
+import { EMOJI_TRIGGER_SHORTCUT_KEY, useEmojiTrigger } from '@/tiptap-editor/components/tiptap-ui/emoji-trigger-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface EmojiTriggerButtonProps
-  extends Omit<ButtonProps, "type">, UseEmojiTriggerConfig {
+export interface EmojiTriggerButtonProps extends Omit<ButtonProps, 'type'>, UseEmojiTriggerConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface EmojiTriggerButtonProps
   showShortcut?: boolean
 }
 
-export function EmojiTriggerShortcutBadge({
-  shortcutKeys = EMOJI_TRIGGER_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function EmojiTriggerShortcutBadge({ shortcutKeys = EMOJI_TRIGGER_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,17 +38,14 @@ export function EmojiTriggerShortcutBadge({
  *
  * For custom button implementations, use the `useEmojiTrigger` hook instead.
  */
-export const EmojiTriggerButton = forwardRef<
-  HTMLButtonElement,
-  EmojiTriggerButtonProps
->(
+export const EmojiTriggerButton = forwardRef<HTMLButtonElement, EmojiTriggerButtonProps>(
   (
     {
       editor: providedEditor,
       node,
       nodePos,
       text,
-      trigger = ":",
+      trigger = ':',
       hideWhenUnavailable = false,
       onTriggerApplied,
       showShortcut = false,
@@ -67,14 +56,7 @@ export const EmojiTriggerButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canAddTrigger,
-      handleAddTrigger,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useEmojiTrigger({
+    const { isVisible, canAddTrigger, handleAddTrigger, label, shortcutKeys, Icon } = useEmojiTrigger({
       editor,
       node,
       nodePos,
@@ -114,9 +96,7 @@ export const EmojiTriggerButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <EmojiTriggerShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <EmojiTriggerShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -124,4 +104,4 @@ export const EmojiTriggerButton = forwardRef<
   }
 )
 
-EmojiTriggerButton.displayName = "EmojiTriggerButton"
+EmojiTriggerButton.displayName = 'EmojiTriggerButton'

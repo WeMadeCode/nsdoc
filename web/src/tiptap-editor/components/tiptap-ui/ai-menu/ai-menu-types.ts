@@ -1,4 +1,4 @@
-import type { Language, Tone } from "@tiptap-pro/extension-ai"
+import type { Language, Tone } from '@tiptap-pro/extension-ai'
 
 export interface AiMenuPosition {
   element: HTMLElement | null
@@ -17,9 +17,6 @@ export interface AiMenuState {
 export interface AiMenuStateContextValue {
   state: AiMenuState
   updateState: (updates: Partial<AiMenuState>) => void
-  setFallbackAnchor: (
-    element: HTMLElement | null,
-    rect?: DOMRect | null
-  ) => void
+  setFallbackAnchor: (element: HTMLElement | null, rect?: DOMRect | null) => void
   reset: () => void
 }

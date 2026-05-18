@@ -1,21 +1,18 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { isNodeSelection, type Editor } from "@tiptap/react"
-import { useHotkeys } from "react-hotkeys-hook"
+import { useCallback, useEffect, useState } from 'react'
+import { isNodeSelection, type Editor } from '@tiptap/react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 // --- Lib ---
-import {
-  isExtensionAvailable,
-  isNodeTypeSelected,
-} from "@/tiptap-editor/lib/tiptap-utils"
+import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { AiSparklesIcon } from "@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon"
+import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
 
 export interface UseAiAskConfig {
   /**
@@ -33,18 +30,14 @@ export interface UseAiAskConfig {
   onAiAsked?: () => void
 }
 
-export const AI_ASK_SHORTCUT_KEY = "mod+j"
-export const AI_EXTENSIONS = ["aiGeneration", "ai"]
-export const EXCLUDED_SELECTION_TYPES = ["codeBlock", "image", "imageUpload"]
+export const AI_ASK_SHORTCUT_KEY = 'mod+j'
+export const AI_EXTENSIONS = ['aiGeneration', 'ai']
+export const EXCLUDED_SELECTION_TYPES = ['codeBlock', 'image', 'imageUpload']
 
 export const canPerformAiAsk = (editor: Editor | null): boolean => {
   if (!editor || !editor.isEditable) return false
   // TODO: Wait until AI extensions support for image
-  if (
-    !isExtensionAvailable(editor, AI_EXTENSIONS) ||
-    isNodeTypeSelected(editor, ["image", "horizontalRule", "tocNode"])
-  )
-    return false
+  if (!isExtensionAvailable(editor, AI_EXTENSIONS) || isNodeTypeSelected(editor, ['image', 'horizontalRule', 'tocNode'])) return false
 
   const { selection } = editor.state
   if (!selection || selection.empty) return false
@@ -59,10 +52,7 @@ export const canPerformAiAsk = (editor: Editor | null): boolean => {
   return true
 }
 
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -75,7 +65,7 @@ export function shouldShowButton(props: {
 
   if (!isExtensionAvailable(editor, AI_EXTENSIONS)) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canPerformAiAsk(editor)
   }
 
@@ -111,11 +101,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useAiAsk(config: UseAiAskConfig = {}) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onAiAsked,
-  } = config
+  const { editor: providedEditor, hideWhenUnavailable = false, onAiAsked } = config
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -144,16 +130,16 @@ export function useAiAsk(config: UseAiAskConfig = {}) {
 
     updateVisibility()
 
-    editor.on("selectionUpdate", updateVisibility)
+    editor.on('selectionUpdate', updateVisibility)
 
     return () => {
-      editor.off("selectionUpdate", updateVisibility)
+      editor.off('selectionUpdate', updateVisibility)
     }
   }, [editor, hideWhenUnavailable])
 
   useHotkeys(
     AI_ASK_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault()
       handleAiAsk()
     },
@@ -168,7 +154,7 @@ export function useAiAsk(config: UseAiAskConfig = {}) {
     isVisible,
     handleAiAsk,
     canAiAsk,
-    label: "Ask AI Assistant",
+    label: 'Ask AI Assistant',
     shortcutKeys: AI_ASK_SHORTCUT_KEY,
     Icon: AiSparklesIcon,
   }

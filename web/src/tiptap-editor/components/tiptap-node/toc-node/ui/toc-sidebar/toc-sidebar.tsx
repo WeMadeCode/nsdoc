@@ -1,15 +1,12 @@
-"use client"
+'use client'
 
-import { useCallback, useMemo, useEffect, useRef, useState } from "react"
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react'
 
-import { cn } from "@/tiptap-editor/lib/tiptap-utils"
-import { useToc } from "@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context"
-import type {
-  TableOfContentData,
-  TableOfContentDataItem,
-} from "@tiptap/extension-table-of-contents"
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
+import { useToc } from '@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context'
+import type { TableOfContentData, TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
 
-import "./toc-sidebar.scss"
+import './toc-sidebar.scss'
 
 export interface TocSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -24,12 +21,7 @@ export interface TocSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   topOffset?: number
 }
 
-export function TocSidebar({
-  className,
-  maxShowCount = 20,
-  topOffset = 0,
-  ...props
-}: TocSidebarProps) {
+export function TocSidebar({ className, maxShowCount = 20, topOffset = 0, ...props }: TocSidebarProps) {
   const { tocContent, navigateToHeading, normalizeHeadingDepths } = useToc()
   const hasRestoredHashRef = useRef(false)
 
@@ -41,20 +33,11 @@ export function TocSidebar({
   // and selection-based active states while it's set.
   const [manualActiveId, setManualActiveId] = useState<string | null>(null)
 
-  const headingList = useMemo<TableOfContentData>(
-    () => tocContent ?? [],
-    [tocContent]
-  )
+  const headingList = useMemo<TableOfContentData>(() => tocContent ?? [], [tocContent])
 
-  const visibleHeadings = useMemo(
-    () => headingList.slice(0, maxShowCount),
-    [headingList, maxShowCount]
-  )
+  const visibleHeadings = useMemo(() => headingList.slice(0, maxShowCount), [headingList, maxShowCount])
 
-  const normalizedDepths = useMemo(
-    () => normalizeHeadingDepths(visibleHeadings),
-    [visibleHeadings, normalizeHeadingDepths]
-  )
+  const normalizedDepths = useMemo(() => normalizeHeadingDepths(visibleHeadings), [visibleHeadings, normalizeHeadingDepths])
 
   const depthById = useMemo(() => {
     const map = new Map<string, number>()
@@ -66,15 +49,12 @@ export function TocSidebar({
 
   // Scroll-based highlighted heading (using isActive)
   const highlightedHeading = useMemo<TableOfContentDataItem | null>(
-    () => [...headingList].reverse().find((h) => h.isActive) ?? null,
+    () => [...headingList].reverse().find(h => h.isActive) ?? null,
     [headingList]
   )
 
   // Selection-based active heading (isActive)
-  const selectionActiveId = useMemo(
-    () => headingList.find((h) => h.isActive)?.id ?? null,
-    [headingList]
-  )
+  const selectionActiveId = useMemo(() => headingList.find(h => h.isActive)?.id ?? null, [headingList])
 
   // Decide which heading is "active" for UI purposes
   const activeContentId = useMemo(() => {
@@ -120,20 +100,16 @@ export function TocSidebar({
    * Restore scroll position from URL hash on initial load
    */
   useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      hasRestoredHashRef.current ||
-      !headingList.length
-    ) {
+    if (typeof window === 'undefined' || hasRestoredHashRef.current || !headingList.length) {
       return
     }
 
-    const hash = window.location.hash.replace(/^#/, "")
+    const hash = window.location.hash.replace(/^#/, '')
     if (!hash) return
 
-    const target = headingList.find((h) => h.id === hash)
+    const target = headingList.find(h => h.id === hash)
     if (target?.dom) {
-      navigateToHeading(target, { topOffset, behavior: "auto" })
+      navigateToHeading(target, { topOffset, behavior: 'auto' })
       hasRestoredHashRef.current = true
     }
   }, [headingList, navigateToHeading, topOffset])
@@ -166,7 +142,7 @@ export function TocSidebar({
    * programmatic scroll from a click).
    */
   useEffect(() => {
-    if (typeof window === "undefined") return
+    if (typeof window === 'undefined') return
 
     const handleScroll = () => {
       const now = Date.now()
@@ -183,49 +159,40 @@ export function TocSidebar({
       }
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [manualActiveId])
 
   const hasHeadings = headingList.length > 0
 
   return (
-    <div className={cn("toc-sidebar", className)} {...props}>
+    <div className={cn('toc-sidebar', className)} {...props}>
       <div className="toc-sidebar-wrapper">
         <div className="toc-sidebar-inner">
           {/* Progress rail */}
           <div className="toc-sidebar-progress">
-            {visibleHeadings.map((item) => {
+            {visibleHeadings.map(item => {
               const depth = depthById.get(item.id) ?? 1
               const isActive = activeContentId === item.id
 
               return (
                 <div
                   key={item.id}
-                  className={cn(
-                    "toc-sidebar-progress-line",
-                    isActive && "toc-sidebar-progress-line--active"
-                  )}
+                  className={cn('toc-sidebar-progress-line', isActive && 'toc-sidebar-progress-line--active')}
                   data-depth={depth}
-                  style={{ "--toc-depth": depth } as React.CSSProperties}
+                  style={{ '--toc-depth': depth } as React.CSSProperties}
                 />
               )
             })}
           </div>
 
           {/* TOC nav */}
-          <nav
-            className={cn(
-              "toc-sidebar-nav",
-              !hasHeadings && "toc-sidebar-nav--hidden"
-            )}
-            aria-label="Table of contents"
-          >
+          <nav className={cn('toc-sidebar-nav', !hasHeadings && 'toc-sidebar-nav--hidden')} aria-label="Table of contents">
             <div className="toc-sidebar-popover">
-              {visibleHeadings.map((item) => {
+              {visibleHeadings.map(item => {
                 const depth = depthById.get(item.id) ?? 1
                 const isActive = activeContentId === item.id
 
@@ -234,14 +201,11 @@ export function TocSidebar({
                     key={item.id}
                     href={`#${item.id}`}
                     rel="noopener noreferrer"
-                    className={cn(
-                      "toc-sidebar-item notranslate",
-                      isActive && "toc-sidebar-item--active"
-                    )}
+                    className={cn('toc-sidebar-item notranslate', isActive && 'toc-sidebar-item--active')}
                     data-depth={depth}
-                    style={{ "--toc-depth": depth } as React.CSSProperties}
-                    onClick={(e) => handleContentClick(e, item)}
-                    aria-current={isActive ? "location" : undefined}
+                    style={{ '--toc-depth': depth } as React.CSSProperties}
+                    onClick={e => handleContentClick(e, item)}
+                    aria-current={isActive ? 'location' : undefined}
                   >
                     {item.textContent}
                   </a>

@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseResetAllFormattingConfig } from "@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button"
-import {
-  RESET_ALL_FORMATTING_SHORTCUT_KEY,
-  useResetAllFormatting,
-} from "@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button"
+import type { UseResetAllFormattingConfig } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
+import { RESET_ALL_FORMATTING_SHORTCUT_KEY, useResetAllFormatting } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface ResetAllFormattingButtonProps
-  extends Omit<ButtonProps, "type">, UseResetAllFormattingConfig {
+export interface ResetAllFormattingButtonProps extends Omit<ButtonProps, 'type'>, UseResetAllFormattingConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface ResetAllFormattingButtonProps
   showShortcut?: boolean
 }
 
-export function ResetAllFormattingShortcutBadge({
-  shortcutKeys = RESET_ALL_FORMATTING_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function ResetAllFormattingShortcutBadge({ shortcutKeys = RESET_ALL_FORMATTING_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -47,16 +39,13 @@ export function ResetAllFormattingShortcutBadge({
  *
  * For custom button implementations, use the `useResetAllFormatting` hook instead.
  */
-export const ResetAllFormattingButton = forwardRef<
-  HTMLButtonElement,
-  ResetAllFormattingButtonProps
->(
+export const ResetAllFormattingButton = forwardRef<HTMLButtonElement, ResetAllFormattingButtonProps>(
   (
     {
       editor: providedEditor,
       text,
       hideWhenUnavailable = false,
-      preserveMarks = ["inlineThread"],
+      preserveMarks = ['inlineThread'],
       onResetAllFormatting,
       showShortcut = false,
       onClick,
@@ -66,14 +55,7 @@ export const ResetAllFormattingButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canReset,
-      handleResetFormatting,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useResetAllFormatting({
+    const { isVisible, canReset, handleResetFormatting, label, shortcutKeys, Icon } = useResetAllFormatting({
       editor,
       preserveMarks,
       hideWhenUnavailable,
@@ -112,9 +94,7 @@ export const ResetAllFormattingButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <ResetAllFormattingShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <ResetAllFormattingShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -122,4 +102,4 @@ export const ResetAllFormattingButton = forwardRef<
   }
 )
 
-ResetAllFormattingButton.displayName = "ResetAllFormattingButton"
+ResetAllFormattingButton.displayName = 'ResetAllFormattingButton'

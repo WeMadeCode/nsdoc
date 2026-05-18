@@ -1,13 +1,9 @@
-import { mergeAttributes, Node } from "@tiptap/react"
-import { ReactNodeViewRenderer } from "@tiptap/react"
-import { ImageUploadNode as ImageUploadNodeComponent } from "@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node"
-import type { NodeType } from "@tiptap/pm/model"
+import { mergeAttributes, Node } from '@tiptap/react'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import { ImageUploadNode as ImageUploadNodeComponent } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node'
+import type { NodeType } from '@tiptap/pm/model'
 
-export type UploadFunction = (
-  file: File,
-  onProgress?: (event: { progress: number }) => void,
-  abortSignal?: AbortSignal
-) => Promise<string>
+export type UploadFunction = (file: File, onProgress?: (event: { progress: number }) => void, abortSignal?: AbortSignal) => Promise<string>
 
 export interface ImageUploadNodeOptions {
   /**
@@ -51,7 +47,7 @@ export interface ImageUploadNodeOptions {
   HTMLAttributes: Record<string, any>
 }
 
-declare module "@tiptap/react" {
+declare module '@tiptap/react' {
   interface Commands<ReturnType> {
     imageUpload: {
       setImageUploadNode: (options?: ImageUploadNodeOptions) => ReturnType
@@ -64,9 +60,9 @@ declare module "@tiptap/react" {
  * @see registry/tiptap-node/image-upload-node/image-upload-node
  */
 export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
-  name: "imageUpload",
+  name: 'imageUpload',
 
-  group: "block",
+  group: 'block',
 
   draggable: true,
 
@@ -76,8 +72,8 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
 
   addOptions() {
     return {
-      type: "image",
-      accept: "image/*",
+      type: 'image',
+      accept: 'image/*',
       limit: 1,
       maxSize: 0,
       upload: undefined,
@@ -106,10 +102,7 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return [
-      "div",
-      mergeAttributes({ "data-type": "image-upload" }, HTMLAttributes),
-    ]
+    return ['div', mergeAttributes({ 'data-type': 'image-upload' }, HTMLAttributes)]
   },
 
   addNodeView() {
@@ -119,7 +112,7 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
   addCommands() {
     return {
       setImageUploadNode:
-        (options) =>
+        options =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
@@ -138,11 +131,7 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
         const { selection } = editor.state
         const { nodeAfter } = selection.$from
 
-        if (
-          nodeAfter &&
-          nodeAfter.type.name === "imageUpload" &&
-          editor.isActive("imageUpload")
-        ) {
+        if (nodeAfter && nodeAfter.type.name === 'imageUpload' && editor.isActive('imageUpload')) {
           const nodeEl = editor.view.nodeDOM(selection.$from.pos)
           if (nodeEl && nodeEl instanceof HTMLElement) {
             // Since NodeViewWrapper is wrapped with a div, we need to click the first child

@@ -1,12 +1,6 @@
-import type { Orientation } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
-import {
-  offset,
-  size,
-  useFloating,
-  useTransitionStyles,
-  type Placement,
-} from "@floating-ui/react"
-import { useEffect, useMemo, useCallback } from "react"
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { offset, size, useFloating, useTransitionStyles, type Placement } from '@floating-ui/react'
+import { useEffect, useMemo, useCallback } from 'react'
 
 interface TableExtendRowColumnButtonPositionResult {
   isMounted: boolean
@@ -21,12 +15,12 @@ interface TableExtendRowColumnButtonsPositioningResult {
 
 const ORIENTATION_CONFIG = {
   row: {
-    placement: "bottom" as Placement,
-    sizeProperty: "width",
+    placement: 'bottom' as Placement,
+    sizeProperty: 'width',
   },
   column: {
-    placement: "right" as Placement,
-    sizeProperty: "height",
+    placement: 'right' as Placement,
+    sizeProperty: 'height',
   },
 } as const
 
@@ -79,7 +73,7 @@ function useTableExtendRowColumnButtonPosition(
       isMounted,
       ref: refs.setFloating,
       style: {
-        display: "flex",
+        display: 'flex',
         ...styles,
         ...floatingStyles,
       } as React.CSSProperties,
@@ -96,17 +90,9 @@ export function useTableExtendRowColumnButtonsPositioning(
   showAddOrRemoveRowsButton: boolean,
   referencePosTable: DOMRect | null
 ): TableExtendRowColumnButtonsPositioningResult {
-  const rowButton = useTableExtendRowColumnButtonPosition(
-    "row",
-    showAddOrRemoveRowsButton,
-    referencePosTable
-  )
+  const rowButton = useTableExtendRowColumnButtonPosition('row', showAddOrRemoveRowsButton, referencePosTable)
 
-  const columnButton = useTableExtendRowColumnButtonPosition(
-    "column",
-    showAddOrRemoveColumnsButton,
-    referencePosTable
-  )
+  const columnButton = useTableExtendRowColumnButtonPosition('column', showAddOrRemoveColumnsButton, referencePosTable)
 
   return useMemo(
     () => ({

@@ -1,67 +1,49 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useRef } from "react"
-import { type Editor } from "@tiptap/react"
+import { useCallback, useEffect, useRef } from 'react'
+import { type Editor } from '@tiptap/react'
 
-import { AiMenuItems } from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items"
+import { AiMenuItems } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items'
 
 // -- Hooks --
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useUiEditorState } from "@/tiptap-editor/hooks/use-ui-editor-state"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
 
 // -- Utils --
-import {
-  getSelectedDOMElement,
-  selectionHasText,
-} from "@/tiptap-editor/lib/tiptap-advanced-utils"
+import { getSelectedDOMElement, selectionHasText } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 // -- Tiptap UI --
-import { AiMenuInputTextarea } from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-input/ai-menu-input"
-import { AiMenuActions } from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-actions/ai-menu-actions"
+import { AiMenuInputTextarea } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-input/ai-menu-input'
+import { AiMenuActions } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-actions/ai-menu-actions'
 
 // -- UI Primitives --
-import {
-  Menu,
-  MenuContent,
-  useFloatingMenuStore,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/menu"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import {
-  ComboboxList,
-  ComboboxPopover,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/combobox"
-import { Card } from "@/tiptap-editor/components/tiptap-ui-primitive/card/card"
+import { Menu, MenuContent, useFloatingMenuStore } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { ComboboxList, ComboboxPopover } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+import { Card } from '@/tiptap-editor/components/tiptap-ui-primitive/card/card'
 
 import {
   getContextAndInsertAt,
   getSelectionRangeRect,
   createVirtualAnchor,
   createEditorWidthAnchorRect,
-} from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils"
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
 import {
   useAiContentTracker,
   useAiMenuState,
   useAiMenuStateProvider,
   useTextSelectionTracker,
-} from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-hooks"
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-hooks'
 
 // -- Icons --
-import { StopCircle2Icon } from "@/tiptap-editor/components/tiptap-icons/stop-circle-2-icon"
+import { StopCircle2Icon } from '@/tiptap-editor/components/tiptap-icons/stop-circle-2-icon'
 
-import "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu.scss"
+import '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu.scss'
 
-export function AiMenuStateProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export function AiMenuStateProvider({ children }: { children: React.ReactNode }) {
   const { value, AiMenuStateContext } = useAiMenuStateProvider()
 
-  return (
-    <AiMenuStateContext.Provider value={value}>
-      {children}
-    </AiMenuStateContext.Provider>
-  )
+  return <AiMenuStateContext.Provider value={value}>{children}</AiMenuStateContext.Provider>
 }
 
 export function AiMenuContent({
@@ -74,8 +56,7 @@ export function AiMenuContent({
   const { editor } = useTiptapEditor(providedEditor)
   const { state, updateState, setFallbackAnchor, reset } = useAiMenuState()
   const { show, store } = useFloatingMenuStore()
-  const { aiGenerationIsLoading, aiGenerationActive, aiGenerationHasMessage } =
-    useUiEditorState(editor)
+  const { aiGenerationIsLoading, aiGenerationActive, aiGenerationHasMessage } = useUiEditorState(editor)
   const tiptapAiPromptInputRef = useRef<HTMLDivElement | null>(null)
 
   const closeAiMenu = useCallback(() => {
@@ -91,9 +72,7 @@ export function AiMenuContent({
 
       const { context } = getContextAndInsertAt(editor)
       // if context, add it to the user prompt
-      const promptWithContext = context
-        ? `${context}\n\n${userPrompt}`
-        : userPrompt
+      const promptWithContext = context ? `${context}\n\n${userPrompt}` : userPrompt
 
       // Ensure fallback anchor is set before submitting
       if (!state.fallbackAnchor.element || !state.fallbackAnchor.rect) {
@@ -101,10 +80,7 @@ export function AiMenuContent({
           const selectionRect = getSelectionRangeRect(editor)
 
           if (selectionRect) {
-            const anchorRect = createEditorWidthAnchorRect(
-              editor.view.dom,
-              selectionRect
-            )
+            const anchorRect = createEditorWidthAnchorRect(editor.view.dom, selectionRect)
 
             const anchor = createVirtualAnchor(anchorRect, editor.view.dom)
             setFallbackAnchor(anchor, anchorRect)
@@ -125,18 +101,11 @@ export function AiMenuContent({
           insert: true,
           stream: true,
           tone: state.tone,
-          format: "rich-text",
+          format: 'rich-text',
         })
         .run()
     },
-    [
-      editor,
-      state.fallbackAnchor.element,
-      state.fallbackAnchor.rect,
-      state.tone,
-      anchorToSelection,
-      setFallbackAnchor,
-    ]
+    [editor, state.fallbackAnchor.element, state.fallbackAnchor.rect, state.tone, anchorToSelection, setFallbackAnchor]
   )
 
   const setAnchorElement = useCallback(
@@ -168,7 +137,7 @@ export function AiMenuContent({
   const handleInputOnClose = useCallback(() => {
     if (!editor) return
     if (aiGenerationIsLoading) {
-      editor.commands.aiReject({ type: "reset" })
+      editor.commands.aiReject({ type: 'reset' })
     } else {
       editor.commands.aiAccept()
     }
@@ -195,7 +164,7 @@ export function AiMenuContent({
     editor,
     aiGenerationActive,
     showMenuAtElement: show,
-    setMenuVisible: (visible) => updateState({ isOpen: visible }),
+    setMenuVisible: visible => updateState({ isOpen: visible }),
     onSelectionChange: handleSelectionChange,
     prevent: aiGenerationIsLoading,
     anchorToSelection,
@@ -216,9 +185,9 @@ export function AiMenuContent({
   const smoothFocusAndScroll = (element: HTMLElement | null) => {
     element?.focus()
     element?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "nearest",
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
     })
 
     // Ensure the menu back to focus after focusing on the popover
@@ -226,9 +195,7 @@ export function AiMenuContent({
     return false
   }
 
-  const shouldShowList =
-    selectionHasText(editor) ||
-    (aiGenerationHasMessage && state.shouldShowInput && state.inputIsFocused)
+  const shouldShowList = selectionHasText(editor) || (aiGenerationHasMessage && state.shouldShowInput && state.inputIsFocused)
 
   if (!editor || !state.isOpen || !aiGenerationActive) {
     return null
@@ -236,35 +203,27 @@ export function AiMenuContent({
 
   return (
     <Menu open={state.isOpen} placement="bottom-start" store={store}>
-      <MenuContent
-        onClickOutside={handleClickOutside}
-        className="tiptap-ai-menu"
-        flip={false}
-      >
+      <MenuContent onClickOutside={handleClickOutside} className="tiptap-ai-menu" flip={false}>
         <Card>
           {aiGenerationIsLoading && <AiMenuProgress editor={editor} />}
 
           {!aiGenerationIsLoading && (
             <AiMenuInputTextarea
               ref={tiptapAiPromptInputRef}
-              showPlaceholder={
-                !aiGenerationIsLoading &&
-                aiGenerationHasMessage &&
-                !state.shouldShowInput
-              }
+              showPlaceholder={!aiGenerationIsLoading && aiGenerationHasMessage && !state.shouldShowInput}
               onInputFocus={() => updateState({ inputIsFocused: true })}
               onInputBlur={() => updateState({ inputIsFocused: false })}
               onClose={handleInputOnClose}
               onPlaceholderClick={() => updateState({ shouldShowInput: true })}
-              onInputSubmit={(value) => handlePromptSubmit(value)}
-              onToneChange={(tone) => updateState({ tone })}
+              onInputSubmit={value => handlePromptSubmit(value)}
+              onToneChange={tone => updateState({ tone })}
             />
           )}
 
           {aiGenerationHasMessage && !aiGenerationIsLoading && (
             <AiMenuActions
               editor={editor}
-              options={{ tone: state.tone, format: "rich-text" }}
+              options={{ tone: state.tone, format: 'rich-text' }}
               onAccept={handleOnAccept}
               onReject={handleOnReject}
             />
@@ -280,14 +239,10 @@ export function AiMenuContent({
             autoFocusOnShow={smoothFocusAndScroll}
             autoFocusOnHide={smoothFocusAndScroll}
             getAnchorRect={() => {
-              return (
-                tiptapAiPromptInputRef.current?.getBoundingClientRect() || null
-              )
+              return tiptapAiPromptInputRef.current?.getBoundingClientRect() || null
             }}
           >
-            <ComboboxList
-              style={{ display: shouldShowList ? "block" : "none" }}
-            >
+            <ComboboxList style={{ display: shouldShowList ? 'block' : 'none' }}>
               <AiMenuItems />
             </ComboboxList>
           </ComboboxPopover>
@@ -303,7 +258,7 @@ export function AiMenuProgress({ editor }: { editor: Editor }) {
   const handleStop = useCallback(() => {
     if (!editor) return
 
-    editor.chain().aiReject({ type: "reset" }).run()
+    editor.chain().aiReject({ type: 'reset' }).run()
     reset()
     editor.commands.resetUiState()
   }, [editor, reset])
@@ -326,13 +281,7 @@ export function AiMenuProgress({ editor }: { editor: Editor }) {
   )
 }
 
-export function AiMenu({
-  editor,
-  anchorToSelection,
-}: {
-  editor?: Editor | null
-  anchorToSelection?: boolean
-}) {
+export function AiMenu({ editor, anchorToSelection }: { editor?: Editor | null; anchorToSelection?: boolean }) {
   return (
     <AiMenuStateProvider>
       <AiMenuContent editor={editor} anchorToSelection={anchorToSelection} />

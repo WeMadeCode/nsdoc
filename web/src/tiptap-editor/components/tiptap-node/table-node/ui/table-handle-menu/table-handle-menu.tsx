@@ -1,51 +1,39 @@
-"use client"
+'use client'
 
-import {
-  useCallback,
-  useMemo,
-  useState,
-  createContext,
-  useContext,
-} from "react"
-import type { Editor } from "@tiptap/react"
-import { TableMap } from "@tiptap/pm/tables"
-import type { Node } from "@tiptap/pm/model"
+import { useCallback, useMemo, useState, createContext, useContext } from 'react'
+import type { Editor } from '@tiptap/react'
+import { TableMap } from '@tiptap/pm/tables'
+import type { Node } from '@tiptap/pm/model'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { cn, isValidPosition, SR_ONLY } from "@/tiptap-editor/lib/tiptap-utils"
-import type { Orientation } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
-import { selectCellsByCoords } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { cn, isValidPosition, SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { selectCellsByCoords } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 // --- Icons ---
-import { MoreVerticalIcon } from "@/tiptap-editor/components/tiptap-icons/more-vertical-icon"
+import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
 
 // --- UI Primitives ---
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Combobox, ComboboxList } from "@/tiptap-editor/components/tiptap-ui-primitive/combobox"
-import {
-  Menu,
-  MenuButton,
-  MenuContent,
-  MenuGroup,
-  MenuItem,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/menu"
-import { Separator } from "@/tiptap-editor/components/tiptap-ui-primitive/separator"
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+import { Menu, MenuButton, MenuContent, MenuGroup, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 
 // --- Tiptap UI ---
-import { useTableDuplicateRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button"
-import { useTableMoveRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-move-row-column-button"
-import { useTableClearRowColumnContent } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button"
-import { useTableHeaderRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-header-row-column-button"
-import { useTableAddRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button"
-import { useTableDeleteRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button"
-import { useTableSortRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button"
-import { ColorMenu } from "@/tiptap-editor/components/tiptap-ui/color-menu"
-import { TableAlignMenu } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu"
+import { useTableDuplicateRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
+import { useTableMoveRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-move-row-column-button'
+import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
+import { useTableHeaderRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-header-row-column-button'
+import { useTableAddRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button'
+import { useTableDeleteRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button'
+import { useTableSortRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button'
+import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
+import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
 
-import { dragEnd } from "@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle"
+import { dragEnd } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
 
-import "./table-handle-menu.scss"
+import './table-handle-menu.scss'
 
 /* -------------------------------------------------------------------------------------------------
  * Types & Interfaces
@@ -76,17 +64,14 @@ interface TableActionItemProps {
   shortcutBadge?: React.ReactNode
 }
 
-const MENU_PLACEMENT_MAP: Record<
-  Orientation,
-  React.ComponentProps<typeof Menu>["placement"]
-> = {
-  row: "top-start",
-  column: "bottom-start",
+const MENU_PLACEMENT_MAP: Record<Orientation, React.ComponentProps<typeof Menu>['placement']> = {
+  row: 'top-start',
+  column: 'bottom-start',
 }
 
 const ARIA_LABELS: Record<Orientation, string> = {
-  row: "Row actions",
-  column: "Column actions",
+  row: 'Row actions',
+  column: 'Column actions',
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -98,9 +83,7 @@ const TableHandleContext = createContext<TableHandleContextValue | null>(null)
 function useTableHandleContext() {
   const context = useContext(TableHandleContext)
   if (!context) {
-    throw new Error(
-      "useTableHandleContext must be used within TableHandleProvider"
-    )
+    throw new Error('useTableHandleContext must be used within TableHandleProvider')
   }
   return context
 }
@@ -112,44 +95,27 @@ function useTableHandleContext() {
 /**
  * Hook to manage table handle menu state and interactions
  */
-function useTableHandleMenu(
-  onToggleOtherHandle?: (visible: boolean) => void,
-  onOpenChange?: (open: boolean) => void
-) {
-  const { editor, orientation, index, tableNode, tablePos } =
-    useTableHandleContext()
+function useTableHandleMenu(onToggleOtherHandle?: (visible: boolean) => void, onOpenChange?: (open: boolean) => void) {
+  const { editor, orientation, index, tableNode, tablePos } = useTableHandleContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
 
-  const menuPlacement = useMemo(
-    () => MENU_PLACEMENT_MAP[orientation],
-    [orientation]
-  )
+  const menuPlacement = useMemo(() => MENU_PLACEMENT_MAP[orientation], [orientation])
 
   const selectRowOrColumn = useCallback(() => {
-    if (
-      !editor ||
-      !tableNode ||
-      !isValidPosition(tablePos) ||
-      !isValidPosition(index)
-    )
-      return
+    if (!editor || !tableNode || !isValidPosition(tablePos) || !isValidPosition(index)) return
 
     try {
       const { width, height } = TableMap.get(tableNode)
-      const start =
-        orientation === "row" ? { row: index, col: 0 } : { row: 0, col: index }
-      const end =
-        orientation === "row"
-          ? { row: index, col: width - 1 }
-          : { row: height - 1, col: index }
+      const start = orientation === 'row' ? { row: index, col: 0 } : { row: 0, col: index }
+      const end = orientation === 'row' ? { row: index, col: width - 1 } : { row: height - 1, col: index }
 
       selectCellsByCoords(editor, tablePos, [start, end], {
-        mode: "dispatch",
+        mode: 'dispatch',
         dispatch: editor.view.dispatch.bind(editor.view),
       })
     } catch (error) {
-      console.warn("Failed to select row/column:", error)
+      console.warn('Failed to select row/column:', error)
     }
   }, [editor, tableNode, tablePos, orientation, index])
 
@@ -216,7 +182,7 @@ function useTableActionItems() {
     tablePos,
     index,
     orientation,
-    direction: "asc",
+    direction: 'asc',
     hideWhenUnavailable: true,
   })
 
@@ -225,7 +191,7 @@ function useTableActionItems() {
     tablePos,
     index,
     orientation,
-    direction: "desc",
+    direction: 'desc',
     hideWhenUnavailable: true,
   })
 
@@ -250,8 +216,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "row",
-    direction: "up",
+    orientation: 'row',
+    direction: 'up',
     hideWhenUnavailable: true,
   })
 
@@ -259,8 +225,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "row",
-    direction: "down",
+    orientation: 'row',
+    direction: 'down',
     hideWhenUnavailable: true,
   })
 
@@ -268,8 +234,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "column",
-    direction: "left",
+    orientation: 'column',
+    direction: 'left',
     hideWhenUnavailable: true,
   })
 
@@ -277,8 +243,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "column",
-    direction: "right",
+    orientation: 'column',
+    direction: 'right',
     hideWhenUnavailable: true,
   })
 
@@ -286,8 +252,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "row",
-    side: "above",
+    orientation: 'row',
+    side: 'above',
     hideWhenUnavailable: true,
   })
 
@@ -295,8 +261,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "row",
-    side: "below",
+    orientation: 'row',
+    side: 'below',
     hideWhenUnavailable: true,
   })
 
@@ -304,8 +270,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "column",
-    side: "left",
+    orientation: 'column',
+    side: 'left',
     hideWhenUnavailable: true,
   })
 
@@ -313,8 +279,8 @@ function useTableActionItems() {
     editor,
     index,
     tablePos,
-    orientation: "column",
-    side: "right",
+    orientation: 'column',
+    side: 'right',
     hideWhenUnavailable: true,
   })
 
@@ -373,7 +339,7 @@ function useTableActionItems() {
   const getActionItems = useCallback(() => {
     const items: TableActionItemProps[] = []
 
-    if (orientation === "row") {
+    if (orientation === 'row') {
       if (addActions.addAbove.isVisible) {
         items.push({
           icon: addActions.addAbove.Icon,
@@ -415,7 +381,7 @@ function useTableActionItems() {
   const getMoveItems = useCallback(() => {
     const items: TableActionItemProps[] = []
 
-    if (orientation === "row") {
+    if (orientation === 'row') {
       if (moveActions.moveUp.isVisible) {
         items.push({
           icon: moveActions.moveUp.Icon,
@@ -472,21 +438,8 @@ function useTableActionItems() {
 /**
  * Individual action item component
  */
-const TableActionItem = ({
-  icon: Icon,
-  label,
-  onClick,
-  disabled = false,
-  isActive = false,
-  shortcutBadge,
-}: TableActionItemProps) => (
-  <MenuItem
-    render={
-      <Button variant="ghost" data-active-state={isActive ? "on" : "off"} />
-    }
-    onClick={onClick}
-    disabled={disabled}
-  >
+const TableActionItem = ({ icon: Icon, label, onClick, disabled = false, isActive = false, shortcutBadge }: TableActionItemProps) => (
+  <MenuItem render={<Button variant="ghost" data-active-state={isActive ? 'on' : 'off'} />} onClick={onClick} disabled={disabled}>
     <Icon className="tiptap-button-icon" />
     <span className="tiptap-button-text">{label}</span>
     {shortcutBadge}
@@ -498,32 +451,15 @@ const TableActionItem = ({
  */
 const TableActionGroup = () => {
   const { index, orientation } = useTableHandleContext()
-  const {
-    deleteAction,
-    duplicateAction,
-    clearContentAction,
-    headerAction,
-    addItems,
-    moveItems,
-    sortItems,
-  } = useTableActionItems()
+  const { deleteAction, duplicateAction, clearContentAction, headerAction, addItems, moveItems, sortItems } = useTableActionItems()
 
-  const hasActions =
-    deleteAction.isVisible ||
-    duplicateAction.isVisible ||
-    clearContentAction.isVisible
+  const hasActions = deleteAction.isVisible || duplicateAction.isVisible || clearContentAction.isVisible
   const hasAddItems = addItems.length > 0
   const hasMoveItems = moveItems.length > 0
   const hasSortItems = sortItems.length > 0
   const hasHeaderAction = headerAction.isVisible && index === 0
 
-  if (
-    !hasActions &&
-    !hasAddItems &&
-    !hasMoveItems &&
-    !hasSortItems &&
-    !hasHeaderAction
-  ) {
+  if (!hasActions && !hasAddItems && !hasMoveItems && !hasSortItems && !hasHeaderAction) {
     return null
   }
 
@@ -630,14 +566,9 @@ const TableActionMenu = () => {
   const { resetMenu } = useTableHandleMenu()
 
   return (
-    <MenuContent
-      autoFocusOnShow
-      autoFocusOnHide={false}
-      modal
-      onClose={resetMenu}
-    >
+    <MenuContent autoFocusOnShow autoFocusOnHide={false} modal onClose={resetMenu}>
       <Combobox style={SR_ONLY} />
-      <ComboboxList style={{ minWidth: "15rem" }}>
+      <ComboboxList style={{ minWidth: '15rem' }}>
         <TableActionGroup />
       </ComboboxList>
     </MenuContent>
@@ -672,11 +603,7 @@ export const TableHandleMenu = ({
 
   return (
     <TableHandleContext.Provider value={contextValue}>
-      <TableHandleMenuContent
-        onToggleOtherHandle={onToggleOtherHandle}
-        onOpenChange={onOpenChange}
-        dragStart={dragStart}
-      />
+      <TableHandleMenuContent onToggleOtherHandle={onToggleOtherHandle} onOpenChange={onOpenChange} dragStart={dragStart} />
     </TableHandleContext.Provider>
   )
 }
@@ -688,18 +615,9 @@ const TableHandleMenuContent = ({
   onToggleOtherHandle,
   onOpenChange,
   dragStart,
-}: Pick<
-  TableHandleMenuProps,
-  "onToggleOtherHandle" | "onOpenChange" | "dragStart"
->) => {
+}: Pick<TableHandleMenuProps, 'onToggleOtherHandle' | 'onOpenChange' | 'dragStart'>) => {
   const { orientation } = useTableHandleContext()
-  const {
-    isMenuOpen,
-    isDragging,
-    setIsDragging,
-    menuPlacement,
-    handleMenuToggle,
-  } = useTableHandleMenu(onToggleOtherHandle, onOpenChange)
+  const { isMenuOpen, isDragging, setIsDragging, menuPlacement, handleMenuToggle } = useTableHandleMenu(onToggleOtherHandle, onOpenChange)
 
   const ariaLabel = ARIA_LABELS[orientation]
 
@@ -723,12 +641,7 @@ const TableHandleMenuContent = ({
       placement={menuPlacement}
       trigger={
         <MenuButton
-          className={cn(
-            "tiptap-table-handle-menu",
-            isMenuOpen && "menu-opened",
-            isDragging && "is-dragging",
-            orientation
-          )}
+          className={cn('tiptap-table-handle-menu', isMenuOpen && 'menu-opened', isDragging && 'is-dragging', orientation)}
           draggable={true}
           aria-label={ariaLabel}
           aria-haspopup="menu"

@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { useEffect, useState, useCallback, useRef } from "react"
-import type { Editor } from "@tiptap/react"
-import type { TableHandlesState } from "@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useEffect, useState, useCallback, useRef } from 'react'
+import type { Editor } from '@tiptap/react'
+import type { TableHandlesState } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface UseTableHandleStateConfig {
   /**
@@ -26,12 +26,7 @@ export interface UseTableHandleStateConfig {
 }
 
 export function useTableHandleState(config: UseTableHandleStateConfig = {}) {
-  const {
-    editor: providedEditor,
-    initialState = null,
-    watchFields,
-    onStateChange,
-  } = config
+  const { editor: providedEditor, initialState = null, watchFields, onStateChange } = config
 
   const { editor } = useTiptapEditor(providedEditor)
   const [state, setState] = useState<TableHandlesState | null>(initialState)
@@ -40,9 +35,7 @@ export function useTableHandleState(config: UseTableHandleStateConfig = {}) {
   const updateState = useCallback(
     (newState: TableHandlesState) => {
       if (watchFields && prevStateRef.current) {
-        const shouldUpdate = watchFields.some(
-          (field) => prevStateRef.current![field] !== newState[field]
-        )
+        const shouldUpdate = watchFields.some(field => prevStateRef.current![field] !== newState[field])
         if (!shouldUpdate) return
       }
 
@@ -61,10 +54,10 @@ export function useTableHandleState(config: UseTableHandleStateConfig = {}) {
       return
     }
 
-    editor.on("tableHandleState", updateState)
+    editor.on('tableHandleState', updateState)
 
     return () => {
-      editor.off("tableHandleState", updateState)
+      editor.off('tableHandleState', updateState)
     }
   }, [editor, onStateChange, updateState])
 

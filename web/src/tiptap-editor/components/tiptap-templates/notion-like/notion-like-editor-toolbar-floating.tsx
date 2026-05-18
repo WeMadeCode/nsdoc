@@ -1,57 +1,44 @@
-import { useEffect, useState } from "react"
-import { type Editor } from "@tiptap/react"
+import { useEffect, useState } from 'react'
+import { type Editor } from '@tiptap/react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useUiEditorState } from "@/tiptap-editor/hooks/use-ui-editor-state"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
-import { useFloatingToolbarVisibility } from "@/tiptap-editor/hooks/use-floating-toolbar-visibility"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { useFloatingToolbarVisibility } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 
 // --- Node ---
-import { ImageNodeFloating } from "@/tiptap-editor/components/tiptap-node/image-node/image-node-floating"
+import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
 
 // --- Icons ---
-import { MoreVerticalIcon } from "@/tiptap-editor/components/tiptap-icons/more-vertical-icon"
+import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
 
 // --- UI ---
-import { ColorTextPopover } from "@/tiptap-editor/components/tiptap-ui/color-text-popover"
-import { ImproveDropdown } from "@/tiptap-editor/components/tiptap-ui/improve-dropdown"
-import { LinkPopover } from "@/tiptap-editor/components/tiptap-ui/link-popover"
-import type { Mark } from "@/tiptap-editor/components/tiptap-ui/mark-button"
-import { canToggleMark, MarkButton } from "@/tiptap-editor/components/tiptap-ui/mark-button"
-import type { TextAlign } from "@/tiptap-editor/components/tiptap-ui/text-align-button"
-import {
-  canSetTextAlign,
-  TextAlignButton,
-} from "@/tiptap-editor/components/tiptap-ui/text-align-button"
-import { TurnIntoDropdown } from "@/tiptap-editor/components/tiptap-ui/turn-into-dropdown"
-import { IndentButton } from "@/tiptap-editor/components/tiptap-ui/indent-button"
+import { ColorTextPopover } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { LinkPopover } from '@/tiptap-editor/components/tiptap-ui/link-popover'
+import type { Mark } from '@/tiptap-editor/components/tiptap-ui/mark-button'
+import { canToggleMark, MarkButton } from '@/tiptap-editor/components/tiptap-ui/mark-button'
+import type { TextAlign } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
+import { canSetTextAlign, TextAlignButton } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
+import { TurnIntoDropdown } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
+import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
 
 // --- Utils ---
-import { isSelectionValid } from "@/tiptap-editor/lib/tiptap-collab-utils"
+import { isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 // --- Primitive UI Components ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/popover"
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/toolbar"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/tiptap-editor/components/tiptap-ui-primitive/toolbar'
 
 // --- UI Utils ---
-import { FloatingElement } from "@/tiptap-editor/components/tiptap-ui-utils/floating-element"
+import { FloatingElement } from '@/tiptap-editor/components/tiptap-ui-utils/floating-element'
 
 export function NotionToolbarFloating() {
   const { editor } = useTiptapEditor()
-  const isMobile = useIsBreakpoint("max", 480)
-  const { lockDragHandle, aiGenerationActive, commentInputVisible } =
-    useUiEditorState(editor)
+  const isMobile = useIsBreakpoint('max', 480)
+  const { lockDragHandle, aiGenerationActive, commentInputVisible } = useUiEditorState(editor)
 
   const { shouldShow } = useFloatingToolbarVisibility({
     editor,
@@ -64,12 +51,6 @@ export function NotionToolbarFloating() {
   return (
     <FloatingElement shouldShow={shouldShow}>
       <Toolbar variant="floating">
-        <ToolbarGroup>
-          <ImproveDropdown hideWhenUnavailable={true} />
-        </ToolbarGroup>
-
-        <ToolbarSeparator />
-
         <ToolbarGroup>
           <TurnIntoDropdown hideWhenUnavailable={true} />
         </ToolbarGroup>
@@ -91,10 +72,7 @@ export function NotionToolbarFloating() {
         </ToolbarGroup>
 
         <ToolbarGroup>
-          <LinkPopover
-            autoOpenOnLinkActive={false}
-            hideWhenUnavailable={true}
-          />
+          <LinkPopover autoOpenOnLinkActive={false} hideWhenUnavailable={true} />
           <ColorTextPopover hideWhenUnavailable={true} />
         </ToolbarGroup>
 
@@ -109,35 +87,28 @@ function canMoreOptions(editor: Editor | null): boolean {
     return false
   }
 
-  const canTextAlignAny = ["left", "center", "right", "justify"].some((align) =>
-    canSetTextAlign(editor, align as TextAlign)
-  )
+  const canTextAlignAny = ['left', 'center', 'right', 'justify'].some(align => canSetTextAlign(editor, align as TextAlign))
 
-  const canMarkAny = ["superscript", "subscript"].some((type) =>
-    canToggleMark(editor, type as Mark)
-  )
+  const canMarkAny = ['superscript', 'subscript'].some(type => canToggleMark(editor, type as Mark))
 
   return canMarkAny || canTextAlignAny
 }
 
-function shouldShowMoreOptions(params: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+function shouldShowMoreOptions(params: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = params
 
   if (!editor) {
     return false
   }
 
-  if (hideWhenUnavailable && !editor.isActive("code")) {
+  if (hideWhenUnavailable && !editor.isActive('code')) {
     return canMoreOptions(editor)
   }
 
   return Boolean(editor?.isEditable)
 }
 
-export interface MoreOptionsProps extends Omit<ButtonProps, "type"> {
+export interface MoreOptionsProps extends Omit<ButtonProps, 'type'> {
   /**
    * The Tiptap editor instance.
    */
@@ -149,11 +120,7 @@ export interface MoreOptionsProps extends Omit<ButtonProps, "type"> {
   hideWhenUnavailable?: boolean
 }
 
-export function MoreOptions({
-  editor: providedEditor,
-  hideWhenUnavailable = false,
-  ...props
-}: MoreOptionsProps) {
+export function MoreOptions({ editor: providedEditor, hideWhenUnavailable = false, ...props }: MoreOptionsProps) {
   const { editor } = useTiptapEditor(providedEditor)
   const [show, setShow] = useState(false)
 
@@ -171,10 +138,10 @@ export function MoreOptions({
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -188,25 +155,12 @@ export function MoreOptions({
       <ToolbarGroup>
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              role="button"
-              tabIndex={-1}
-              tooltip="More options"
-              {...props}
-            >
+            <Button type="button" variant="ghost" role="button" tabIndex={-1} tooltip="More options" {...props}>
               <MoreVerticalIcon className="tiptap-button-icon" />
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent
-            side="top"
-            align="end"
-            alignOffset={4}
-            sideOffset={4}
-            asChild
-          >
+          <PopoverContent side="top" align="end" alignOffset={4} sideOffset={4} asChild>
             <Toolbar variant="floating" tabIndex={0}>
               <ToolbarGroup>
                 <MarkButton type="superscript" />

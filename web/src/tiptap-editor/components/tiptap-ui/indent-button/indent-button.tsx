@@ -1,33 +1,26 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type {
-  IndentAction,
-  UseIndentConfig,
-} from "@/tiptap-editor/components/tiptap-ui/indent-button"
-import {
-  INDENT_SHORTCUT_KEYS,
-  useIndent,
-} from "@/tiptap-editor/components/tiptap-ui/indent-button"
+import type { IndentAction, UseIndentConfig } from '@/tiptap-editor/components/tiptap-ui/indent-button'
+import { INDENT_SHORTCUT_KEYS, useIndent } from '@/tiptap-editor/components/tiptap-ui/indent-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
 type IconProps = React.SVGProps<SVGSVGElement>
 type IconComponent = ({ className, ...props }: IconProps) => React.ReactElement
 
-export interface IndentButtonProps
-  extends Omit<ButtonProps, "type">, UseIndentConfig {
+export interface IndentButtonProps extends Omit<ButtonProps, 'type'>, UseIndentConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -75,13 +68,12 @@ export const IndentButton = forwardRef<HTMLButtonElement, IndentButtonProps>(
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleIndent, label, canIndent, Icon, shortcutKeys } =
-      useIndent({
-        editor,
-        action,
-        hideWhenUnavailable,
-        onIndented,
-      })
+    const { isVisible, handleIndent, label, canIndent, Icon, shortcutKeys } = useIndent({
+      editor,
+      action,
+      hideWhenUnavailable,
+      onIndented,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -116,12 +108,7 @@ export const IndentButton = forwardRef<HTMLButtonElement, IndentButtonProps>(
           <>
             <RenderIcon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <IndentShortcutBadge
-                action={action}
-                shortcutKeys={shortcutKeys}
-              />
-            )}
+            {showShortcut && <IndentShortcutBadge action={action} shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -129,4 +116,4 @@ export const IndentButton = forwardRef<HTMLButtonElement, IndentButtonProps>(
   }
 )
 
-IndentButton.displayName = "IndentButton"
+IndentButton.displayName = 'IndentButton'

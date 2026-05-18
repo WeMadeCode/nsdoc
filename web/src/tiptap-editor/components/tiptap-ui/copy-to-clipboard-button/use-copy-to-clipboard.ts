@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import type { Editor } from "@tiptap/react"
-import { useHotkeys } from "react-hotkeys-hook"
-import type { Transaction } from "@tiptap/pm/state"
-import { TextSelection } from "@tiptap/pm/state"
-import { Fragment, Slice } from "@tiptap/pm/model"
+import { useCallback, useEffect, useState } from 'react'
+import type { Editor } from '@tiptap/react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import type { Transaction } from '@tiptap/pm/state'
+import { TextSelection } from '@tiptap/pm/state'
+import { Fragment, Slice } from '@tiptap/pm/model'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { ClipboardIcon } from "@/tiptap-editor/components/tiptap-icons/clipboard-icon"
+import { ClipboardIcon } from '@/tiptap-editor/components/tiptap-icons/clipboard-icon'
 
-export const COPY_TO_CLIPBOARD_SHORTCUT_KEY = "mod+c"
+export const COPY_TO_CLIPBOARD_SHORTCUT_KEY = 'mod+c'
 
 /**
  * Configuration for the copy to clipboard functionality
@@ -46,14 +46,11 @@ export interface UseCopyToClipboardConfig {
  * @param htmlContent Optional HTML content to write
  * @returns Promise that resolves when the content is successfully written
  */
-export async function writeToClipboard(
-  textContent: string,
-  htmlContent?: string
-): Promise<void> {
+export async function writeToClipboard(textContent: string, htmlContent?: string): Promise<void> {
   try {
-    if (htmlContent && navigator.clipboard && "write" in navigator.clipboard) {
-      const blob = new Blob([htmlContent], { type: "text/html" })
-      const clipboardItem = new ClipboardItem({ "text/html": blob })
+    if (htmlContent && navigator.clipboard && 'write' in navigator.clipboard) {
+      const blob = new Blob([htmlContent], { type: 'text/html' })
+      const clipboardItem = new ClipboardItem({ 'text/html': blob })
       await navigator.clipboard.write([clipboardItem])
     }
   } catch {
@@ -86,10 +83,7 @@ export function canCopyToClipboard(editor: Editor | null): boolean {
 /**
  * Helper function to extract content from selection or document
  */
-export function extractContent(
-  editor: Editor,
-  copyWithFormatting: boolean = true
-): { textContent: string; htmlContent?: string } {
+export function extractContent(editor: Editor, copyWithFormatting: boolean = true): { textContent: string; htmlContent?: string } {
   const { selection } = editor.state
   const { $anchor } = selection
 
@@ -103,10 +97,8 @@ export function extractContent(
     content = new Slice(Fragment.from(node), 0, 0)
   }
 
-  const textContent = content.content.textBetween(0, content.content.size, "\n")
-  const htmlContent = copyWithFormatting
-    ? editor.view.serializeForClipboard(content).dom.innerHTML
-    : undefined
+  const textContent = content.content.textBetween(0, content.content.size, '\n')
+  const htmlContent = copyWithFormatting ? editor.view.serializeForClipboard(content).dom.innerHTML : undefined
 
   return { textContent, htmlContent }
 }
@@ -114,17 +106,11 @@ export function extractContent(
 /**
  * Copies content to clipboard
  */
-export async function copyToClipboard(
-  editor: Editor | null,
-  copyWithFormatting: boolean = true
-): Promise<boolean> {
+export async function copyToClipboard(editor: Editor | null, copyWithFormatting: boolean = true): Promise<boolean> {
   if (!editor || !editor.isEditable) return false
 
   try {
-    const { textContent, htmlContent } = extractContent(
-      editor,
-      copyWithFormatting
-    )
+    const { textContent, htmlContent } = extractContent(editor, copyWithFormatting)
 
     await writeToClipboard(textContent, htmlContent)
     return true
@@ -136,10 +122,7 @@ export async function copyToClipboard(
 /**
  * Determines if the copy to clipboard button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -150,7 +133,7 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canCopyToClipboard(editor)
   }
 
@@ -194,12 +177,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
-  const {
-    editor: providedEditor,
-    copyWithFormatting = true,
-    hideWhenUnavailable = false,
-    onCopied,
-  } = config || {}
+  const { editor: providedEditor, copyWithFormatting = true, hideWhenUnavailable = false, onCopied } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -215,10 +193,10 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -236,7 +214,7 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
 
   useHotkeys(
     COPY_TO_CLIPBOARD_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault() // prevent native copy behavior
       handleCopyToClipboard()
     },
@@ -251,7 +229,7 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
     isVisible,
     handleCopyToClipboard,
     canCopyToClipboard: canCopyToClipboardState,
-    label: "Copy to clipboard",
+    label: 'Copy to clipboard',
     shortcutKeys: COPY_TO_CLIPBOARD_SHORTCUT_KEY,
     Icon: ClipboardIcon,
   }

@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Tiptap UI ---
-import type { UseCodeBlockConfig } from "@/tiptap-editor/components/tiptap-ui/code-block-button"
-import {
-  CODE_BLOCK_SHORTCUT_KEY,
-  useCodeBlock,
-} from "@/tiptap-editor/components/tiptap-ui/code-block-button"
+import type { UseCodeBlockConfig } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
+import { CODE_BLOCK_SHORTCUT_KEY, useCodeBlock } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface CodeBlockButtonProps
-  extends Omit<ButtonProps, "type">, UseCodeBlockConfig {
+export interface CodeBlockButtonProps extends Omit<ButtonProps, 'type'>, UseCodeBlockConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface CodeBlockButtonProps
   showShortcut?: boolean
 }
 
-export function CodeBlockShortcutBadge({
-  shortcutKeys = CODE_BLOCK_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function CodeBlockShortcutBadge({ shortcutKeys = CODE_BLOCK_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,33 +38,13 @@ export function CodeBlockShortcutBadge({
  *
  * For custom button implementations, use the `useCodeBlock` hook instead.
  */
-export const CodeBlockButton = forwardRef<
-  HTMLButtonElement,
-  CodeBlockButtonProps
->(
+export const CodeBlockButton = forwardRef<HTMLButtonElement, CodeBlockButtonProps>(
   (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
-    },
+    { editor: providedEditor, text, hideWhenUnavailable = false, onToggled, showShortcut = false, onClick, children, ...buttonProps },
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useCodeBlock({
+    const { isVisible, canToggle, isActive, handleToggle, label, shortcutKeys, Icon } = useCodeBlock({
       editor,
       hideWhenUnavailable,
       onToggled,
@@ -95,7 +67,7 @@ export const CodeBlockButton = forwardRef<
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         disabled={!canToggle}
         data-disabled={!canToggle}
@@ -111,9 +83,7 @@ export const CodeBlockButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <CodeBlockShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <CodeBlockShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -121,4 +91,4 @@ export const CodeBlockButton = forwardRef<
   }
 )
 
-CodeBlockButton.displayName = "CodeBlockButton"
+CodeBlockButton.displayName = 'CodeBlockButton'

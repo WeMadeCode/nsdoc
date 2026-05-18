@@ -1,26 +1,15 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import { type Editor } from "@tiptap/react"
-import type { Transaction } from "@tiptap/pm/state"
-import { getSelectedDOMElement } from "@/tiptap-editor/lib/tiptap-advanced-utils"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import type { Transaction } from '@tiptap/pm/state'
+import { getSelectedDOMElement } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 import {
   findPrioritizedAIElement,
   cleanupFallbackAnchors,
   getSelectionRangeRect,
   createVirtualAnchor,
   createEditorWidthAnchorRect,
-} from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils"
-import type {
-  AiMenuState,
-  AiMenuStateContextValue,
-} from "@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-types"
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
+import type { AiMenuState, AiMenuStateContextValue } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-types'
 
 /** Safely remove an element ref and nullify it. */
 function cleanupRef(ref: React.MutableRefObject<HTMLElement | null>) {
@@ -30,14 +19,12 @@ function cleanupRef(ref: React.MutableRefObject<HTMLElement | null>) {
   }
 }
 
-export const AiMenuStateContext = createContext<AiMenuStateContextValue | null>(
-  null
-)
+export const AiMenuStateContext = createContext<AiMenuStateContextValue | null>(null)
 
 export const initialState: AiMenuState = {
   isOpen: false,
   tone: undefined,
-  language: "en",
+  language: 'en',
   shouldShowInput: true,
   inputIsFocused: false,
   fallbackAnchor: { element: null, rect: null },
@@ -47,7 +34,7 @@ export function useAiMenuState() {
   const context = useContext(AiMenuStateContext)
 
   if (!context) {
-    throw new Error("useAiMenuState must be used within an AiMenuStateProvider")
+    throw new Error('useAiMenuState must be used within an AiMenuStateProvider')
   }
 
   return context
@@ -57,7 +44,7 @@ export function useAiMenuStateProvider() {
   const [state, setState] = useState<AiMenuState>(initialState)
 
   const updateState = useCallback((updates: Partial<AiMenuState>) => {
-    setState((prev) => ({ ...prev, ...updates }))
+    setState(prev => ({ ...prev, ...updates }))
   }, [])
 
   const setFallbackAnchor = useCallback(
@@ -77,10 +64,7 @@ export function useAiMenuStateProvider() {
     cleanupFallbackAnchors()
   }, [])
 
-  const value = useMemo(
-    () => ({ state, updateState, setFallbackAnchor, reset }),
-    [state, updateState, setFallbackAnchor, reset]
-  )
+  const value = useMemo(() => ({ state, updateState, setFallbackAnchor, reset }), [state, updateState, setFallbackAnchor, reset])
 
   return { value, AiMenuStateContext }
 }
@@ -88,15 +72,13 @@ export function useAiMenuStateProvider() {
 // ─── Content Tracker ─────────────────────────────────────────────────
 
 function getLastAiElement(editorDom: HTMLElement): HTMLElement | null {
-  const elements = editorDom.querySelectorAll(
-    ".tiptap-ai-insertion"
-  ) as NodeListOf<HTMLElement>
+  const elements = editorDom.querySelectorAll('.tiptap-ai-insertion') as NodeListOf<HTMLElement>
   return elements[elements.length - 1] ?? null
 }
 
 function isAiLoading(editor: Editor): boolean {
   const aiStorage = editor.storage.ai || editor.storage.aiAdvanced
-  return aiStorage?.state === "loading"
+  return aiStorage?.state === 'loading'
 }
 
 export function useAiContentTracker({
@@ -131,27 +113,19 @@ export function useAiContentTracker({
     }
 
     const updateStreamingAnchor = (aiElement: HTMLElement) => {
-      const anchorRect = createEditorWidthAnchorRect(
-        editor.view.dom,
-        aiElement.getBoundingClientRect()
-      )
+      const anchorRect = createEditorWidthAnchorRect(editor.view.dom, aiElement.getBoundingClientRect())
 
       if (streamingAnchorRef.current) {
         streamingAnchorRef.current.remove()
       }
 
-      streamingAnchorRef.current = createVirtualAnchor(
-        anchorRect,
-        editor.view.dom
-      )
+      streamingAnchorRef.current = createVirtualAnchor(anchorRect, editor.view.dom)
       setAnchorElement(streamingAnchorRef.current)
     }
 
     const scheduleStreamingUpdate = (aiElement: HTMLElement) => {
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
-      rafIdRef.current = requestAnimationFrame(() =>
-        updateStreamingAnchor(aiElement)
-      )
+      rafIdRef.current = requestAnimationFrame(() => updateStreamingAnchor(aiElement))
     }
 
     const handleStreamingMode = () => {
@@ -161,9 +135,7 @@ export function useAiContentTracker({
       scheduleStreamingUpdate(lastAiElement)
 
       if (!resizeObserverRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() =>
-          scheduleStreamingUpdate(lastAiElement)
-        )
+        resizeObserverRef.current = new ResizeObserver(() => scheduleStreamingUpdate(lastAiElement))
         resizeObserverRef.current.observe(lastAiElement)
       }
     }
@@ -186,10 +158,7 @@ export function useAiContentTracker({
 
       cleanupRef(fallbackAnchorRef)
 
-      const anchorRect = createEditorWidthAnchorRect(
-        editor.view.dom,
-        targetElement.getBoundingClientRect()
-      )
+      const anchorRect = createEditorWidthAnchorRect(editor.view.dom, targetElement.getBoundingClientRect())
       const anchor = createVirtualAnchor(anchorRect, editor.view.dom)
       fallbackAnchorRef.current = anchor
 
@@ -205,10 +174,10 @@ export function useAiContentTracker({
       }
     }
 
-    editor.on("transaction", handleTransaction)
+    editor.on('transaction', handleTransaction)
 
     return () => {
-      editor.off("transaction", handleTransaction)
+      editor.off('transaction', handleTransaction)
       cleanupStreamingAnchor()
       cleanupRef(fallbackAnchorRef)
     }
@@ -230,10 +199,7 @@ export function useTextSelectionTracker({
   aiGenerationActive: boolean
   showMenuAtElement: (element: HTMLElement) => void
   setMenuVisible: (visible: boolean) => void
-  onSelectionChange?: (
-    element: HTMLElement | null,
-    rect: DOMRect | null
-  ) => void
+  onSelectionChange?: (element: HTMLElement | null, rect: DOMRect | null) => void
   prevent?: boolean
   anchorToSelection?: boolean
 }) {
@@ -252,10 +218,7 @@ export function useTextSelectionTracker({
       const selectionRect = getSelectionRangeRect(editor)
       if (!selectionRect) return false
 
-      const anchorRect = createEditorWidthAnchorRect(
-        editor.view.dom,
-        selectionRect
-      )
+      const anchorRect = createEditorWidthAnchorRect(editor.view.dom, selectionRect)
 
       cleanupRef(selectionAnchorRef)
 
@@ -277,13 +240,7 @@ export function useTextSelectionTracker({
       }
     }
 
-    const handleTransaction = ({
-      editor,
-      transaction,
-    }: {
-      editor: Editor
-      transaction: Transaction
-    }) => {
+    const handleTransaction = ({ editor, transaction }: { editor: Editor; transaction: Transaction }) => {
       if (transaction.selection?.empty) return
 
       if (anchorToSelection && handleSelectionAnchored(editor)) return
@@ -291,19 +248,11 @@ export function useTextSelectionTracker({
       handleSelectionDefault(editor)
     }
 
-    editor.on("transaction", handleTransaction)
+    editor.on('transaction', handleTransaction)
 
     return () => {
-      editor.off("transaction", handleTransaction)
+      editor.off('transaction', handleTransaction)
       cleanupRef(selectionAnchorRef)
     }
-  }, [
-    editor,
-    aiGenerationActive,
-    showMenuAtElement,
-    setMenuVisible,
-    onSelectionChange,
-    prevent,
-    anchorToSelection,
-  ])
+  }, [editor, aiGenerationActive, showMenuAtElement, setMenuVisible, onSelectionChange, prevent, anchorToSelection])
 }

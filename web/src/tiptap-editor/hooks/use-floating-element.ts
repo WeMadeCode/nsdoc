@@ -1,18 +1,8 @@
-"use client"
+'use client'
 
-import type {
-  AutoUpdateOptions,
-  UseDismissProps,
-  UseFloatingOptions,
-} from "@floating-ui/react"
-import {
-  autoUpdate,
-  useDismiss,
-  useFloating,
-  useInteractions,
-  useTransitionStyles,
-} from "@floating-ui/react"
-import { useEffect, useMemo } from "react"
+import type { AutoUpdateOptions, UseDismissProps, UseFloatingOptions } from '@floating-ui/react'
+import { autoUpdate, useDismiss, useFloating, useInteractions, useTransitionStyles } from '@floating-ui/react'
+import { useEffect, useMemo } from 'react'
 
 interface FloatingElementReturn {
   /**
@@ -30,15 +20,11 @@ interface FloatingElementReturn {
   /**
    * Returns props that should be spread onto the floating element.
    */
-  getFloatingProps: (
-    userProps?: React.HTMLProps<HTMLElement>
-  ) => Record<string, unknown>
+  getFloatingProps: (userProps?: React.HTMLProps<HTMLElement>) => Record<string, unknown>
   /**
    * Returns props that should be spread onto the reference element.
    */
-  getReferenceProps: (
-    userProps?: React.HTMLProps<Element>
-  ) => Record<string, unknown>
+  getReferenceProps: (userProps?: React.HTMLProps<Element>) => Record<string, unknown>
 }
 
 /**
@@ -62,12 +48,7 @@ export function useFloatingElement(
   const { refs, context, floatingStyles } = useFloating({
     open: show,
     whileElementsMounted(referenceEl, floatingEl, update) {
-      const cleanup = autoUpdate(
-        referenceEl,
-        floatingEl,
-        update,
-        autoUpdateOptions
-      )
+      const cleanup = autoUpdate(referenceEl, floatingEl, update, autoUpdateOptions)
       return cleanup
     },
     ...floatingOptions,
@@ -94,7 +75,7 @@ export function useFloatingElement(
     }
 
     const getBoundingClientRect = () => {
-      const rect = typeof reference === "function" ? reference() : reference
+      const rect = typeof reference === 'function' ? reference() : reference
       return rect || new DOMRect()
     }
 
@@ -115,14 +96,6 @@ export function useFloatingElement(
       getFloatingProps,
       getReferenceProps,
     }),
-    [
-      floatingStyles,
-      isMounted,
-      refs.setFloating,
-      styles,
-      zIndex,
-      getFloatingProps,
-      getReferenceProps,
-    ]
+    [floatingStyles, isMounted, refs.setFloating, styles, zIndex, getFloatingProps, getReferenceProps]
   )
 }

@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const TextReduceIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M3 5C2.44772 5 2 5.44772 2 6C2 6.55228 2.44772 7 3 7H21C21.5523 7 22 6.55228 22 6C22 5.44772 21.5523 5 21 5H3Z"
         fill="currentColor"
@@ -29,4 +21,4 @@ export const TextReduceIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-TextReduceIcon.displayName = "TextReduceIcon"
+TextReduceIcon.displayName = 'TextReduceIcon'

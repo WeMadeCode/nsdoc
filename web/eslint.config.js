@@ -21,6 +21,7 @@ export default tseslint.config([
     rules: {
       'prettier/prettier': 'error',
       'react-hooks/exhaustive-deps': 'error',
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

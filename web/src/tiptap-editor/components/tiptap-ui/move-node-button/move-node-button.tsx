@@ -1,24 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseMoveNodeConfig } from "@/tiptap-editor/components/tiptap-ui/move-node-button"
-import { useMoveNode } from "@/tiptap-editor/components/tiptap-ui/move-node-button"
+import type { UseMoveNodeConfig } from '@/tiptap-editor/components/tiptap-ui/move-node-button'
+import { useMoveNode } from '@/tiptap-editor/components/tiptap-ui/move-node-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface MoveNodeButtonProps
-  extends Omit<ButtonProps, "type">, UseMoveNodeConfig {
+export interface MoveNodeButtonProps extends Omit<ButtonProps, 'type'>, UseMoveNodeConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -30,21 +29,14 @@ export interface MoveNodeButtonProps
   showShortcut?: boolean
 }
 
-export function MoveNodeShortcutBadge({
-  shortcutKeys,
-}: {
-  shortcutKeys: string
-}) {
+export function MoveNodeShortcutBadge({ shortcutKeys }: { shortcutKeys: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
 /**
  * Button component for moving a node up or down in a Tiptap editor.
  */
-export const MoveNodeButton = forwardRef<
-  HTMLButtonElement,
-  MoveNodeButtonProps
->(
+export const MoveNodeButton = forwardRef<HTMLButtonElement, MoveNodeButtonProps>(
   (
     {
       editor: providedEditor,
@@ -60,14 +52,7 @@ export const MoveNodeButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      handleMoveNode,
-      canMoveNode,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useMoveNode({
+    const { isVisible, handleMoveNode, canMoveNode, label, shortcutKeys, Icon } = useMoveNode({
       editor,
       direction,
       hideWhenUnavailable,
@@ -87,7 +72,7 @@ export const MoveNodeButton = forwardRef<
       return null
     }
 
-    const tooltip = direction === "up" ? "Move Up" : "Move Down"
+    const tooltip = direction === 'up' ? 'Move Up' : 'Move Down'
 
     return (
       <Button
@@ -106,9 +91,7 @@ export const MoveNodeButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <MoveNodeShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <MoveNodeShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -116,4 +99,4 @@ export const MoveNodeButton = forwardRef<
   }
 )
 
-MoveNodeButton.displayName = "MoveNodeButton"
+MoveNodeButton.displayName = 'MoveNodeButton'

@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { type Editor } from "@tiptap/react"
-import type { Transaction } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { type Editor } from '@tiptap/react'
+import type { Transaction } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { RotateCcwIcon } from "@/tiptap-editor/components/tiptap-icons/rotate-ccw-icon"
+import { RotateCcwIcon } from '@/tiptap-editor/components/tiptap-icons/rotate-ccw-icon'
 
-export const RESET_ALL_FORMATTING_SHORTCUT_KEY = "mod+r"
+export const RESET_ALL_FORMATTING_SHORTCUT_KEY = 'mod+r'
 
 /**
  * Configuration for the reset formatting functionality
@@ -49,14 +49,14 @@ export function removeAllMarksExcept(tr: Transaction, skip: string[] = []) {
 
   if (empty) return tr
 
-  ranges.forEach((range) => {
+  ranges.forEach(range => {
     const from = range.$from.pos
     const to = range.$to.pos
 
     tr.doc.nodesBetween(from, to, (node, pos) => {
       if (!node.isInline) return true
 
-      node.marks.forEach((mark) => {
+      node.marks.forEach(mark => {
         if (!skip.includes(mark.type.name)) {
           tr.removeMark(pos, pos + node.nodeSize, mark.type)
         }
@@ -87,7 +87,7 @@ export function canResetMarks(tr: Transaction, skip: string[] = []): boolean {
 
     let hasRemovableMarks = false
 
-    tr.doc.nodesBetween(from, to, (node) => {
+    tr.doc.nodesBetween(from, to, node => {
       if (!node.isInline) return true
 
       for (const mark of node.marks) {
@@ -111,10 +111,7 @@ export function canResetMarks(tr: Transaction, skip: string[] = []): boolean {
 /**
  * Checks if formatting can be reset for a node
  */
-export function canResetFormatting(
-  editor: Editor | null,
-  preserveMarks?: string[]
-): boolean {
+export function canResetFormatting(editor: Editor | null, preserveMarks?: string[]): boolean {
   if (!editor || !editor.isEditable) return false
 
   const tr = editor.state.tr
@@ -124,10 +121,7 @@ export function canResetFormatting(
 /**
  * Resets formatting for a node or selection
  */
-export function resetFormatting(
-  editor: Editor | null,
-  preserveMarks?: string[]
-): boolean {
+export function resetFormatting(editor: Editor | null, preserveMarks?: string[]): boolean {
   if (!editor || !editor.isEditable) return false
 
   try {
@@ -146,16 +140,12 @@ export function resetFormatting(
 /**
  * Determines if the reset formatting button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-  preserveMarks?: string[]
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; preserveMarks?: string[] }): boolean {
   const { editor, hideWhenUnavailable, preserveMarks } = props
 
   if (!editor || !editor.isEditable) return false
 
-  if (hideWhenUnavailable && !editor.isActive("code")) {
+  if (hideWhenUnavailable && !editor.isActive('code')) {
     return canResetFormatting(editor, preserveMarks)
   }
 
@@ -198,12 +188,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
-  const {
-    editor: providedEditor,
-    preserveMarks,
-    hideWhenUnavailable = false,
-    onResetAllFormatting,
-  } = config || {}
+  const { editor: providedEditor, preserveMarks, hideWhenUnavailable = false, onResetAllFormatting } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -214,17 +199,15 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
     if (!editor) return
 
     const handleSelectionUpdate = () => {
-      setIsVisible(
-        shouldShowButton({ editor, hideWhenUnavailable, preserveMarks })
-      )
+      setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, preserveMarks }))
     }
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable, preserveMarks])
 
@@ -240,7 +223,7 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
 
   useHotkeys(
     RESET_ALL_FORMATTING_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault() // prevent browser default refresh
       handleResetFormatting()
     },
@@ -255,7 +238,7 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
     isVisible,
     handleResetFormatting,
     canReset,
-    label: "Reset formatting",
+    label: 'Reset formatting',
     shortcutKeys: RESET_ALL_FORMATTING_SHORTCUT_KEY,
     Icon: RotateCcwIcon,
   }

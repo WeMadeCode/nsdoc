@@ -1,32 +1,25 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useRef, useState } from "react"
-import { flip, offset, shift, size } from "@floating-ui/react"
-import { PluginKey } from "@tiptap/pm/state"
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { flip, offset, shift, size } from '@floating-ui/react'
+import { PluginKey } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useFloatingElement } from "@/tiptap-editor/hooks/use-floating-element"
-import { useMenuNavigation } from "@/tiptap-editor/hooks/use-menu-navigation"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useFloatingElement } from '@/tiptap-editor/hooks/use-floating-element'
+import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap Editor ---
-import type { Range } from "@tiptap/react"
+import type { Range } from '@tiptap/react'
 
 // --- Tiptap UI ---
-import { Suggestion } from "@tiptap/suggestion"
+import { Suggestion } from '@tiptap/suggestion'
 
 // --- UI Primitives ---
-import {
-  SuggestionPluginKey,
-  type SuggestionKeyDownProps,
-  type SuggestionProps,
-} from "@tiptap/suggestion"
+import { SuggestionPluginKey, type SuggestionKeyDownProps, type SuggestionProps } from '@tiptap/suggestion'
 
-import { calculateStartPosition } from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-utils"
-import type {
-  SuggestionItem,
-  SuggestionMenuProps,
-} from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types"
+import { calculateStartPosition } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-utils'
+import type { SuggestionItem, SuggestionMenuProps } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types'
 
 /**
  * A component that renders a suggestion menu for Tiptap editors.
@@ -35,7 +28,7 @@ import type {
 export const SuggestionMenu = ({
   editor: providedEditor,
   floatingOptions,
-  selector = "tiptap-suggestion-menu",
+  selector = 'tiptap-suggestion-menu',
   children,
   maxHeight = 384,
   pluginKey = SuggestionPluginKey,
@@ -50,51 +43,38 @@ export const SuggestionMenu = ({
   // const [internalClientRect, setInternalClientRect] = useState<DOMRect | null>(
   //   null
   // )
-  const [internalDecorationNode, setInternalDecorationNode] =
-    useState<HTMLElement | null>(null)
-  const [internalCommand, setInternalCommand] = useState<
-    ((item: SuggestionItem) => void) | null
-  >(null)
+  const [internalDecorationNode, setInternalDecorationNode] = useState<HTMLElement | null>(null)
+  const [internalCommand, setInternalCommand] = useState<((item: SuggestionItem) => void) | null>(null)
   const [internalItems, setInternalItems] = useState<SuggestionItem[]>([])
-  const [internalQuery, setInternalQuery] = useState<string>("")
+  const [internalQuery, setInternalQuery] = useState<string>('')
   const [, setInternalRange] = useState<Range | null>(null)
 
-  const { ref, style, getFloatingProps, isMounted } = useFloatingElement(
-    show,
-    internalDecorationNode,
-    1000,
-    {
-      placement: "bottom-start",
-      middleware: [
-        offset(10),
-        flip({
-          mainAxis: true,
-          crossAxis: false,
-        }),
-        shift(),
-        size({
-          apply({ availableHeight, elements }) {
-            if (elements.floating) {
-              const maxHeightValue = maxHeight
-                ? Math.min(maxHeight, availableHeight)
-                : availableHeight
+  const { ref, style, getFloatingProps, isMounted } = useFloatingElement(show, internalDecorationNode, 1000, {
+    placement: 'bottom-start',
+    middleware: [
+      offset(10),
+      flip({
+        mainAxis: true,
+        crossAxis: false,
+      }),
+      shift(),
+      size({
+        apply({ availableHeight, elements }) {
+          if (elements.floating) {
+            const maxHeightValue = maxHeight ? Math.min(maxHeight, availableHeight) : availableHeight
 
-              elements.floating.style.setProperty(
-                "--suggestion-menu-max-height",
-                `${maxHeightValue}px`
-              )
-            }
-          },
-        }),
-      ],
-      onOpenChange(open) {
-        if (!open) {
-          setShow(false)
-        }
-      },
-      ...floatingOptions,
-    }
-  )
+            elements.floating.style.setProperty('--suggestion-menu-max-height', `${maxHeightValue}px`)
+          }
+        },
+      }),
+    ],
+    onOpenChange(open) {
+      if (!open) {
+        setShow(false)
+      }
+    },
+    ...floatingOptions,
+  })
 
   const internalSuggestionPropsRef = useRef(internalSuggestionProps)
 
@@ -111,28 +91,24 @@ export const SuggestionMenu = ({
       return
     }
 
-    const existingPlugin = editor.state.plugins.find(
-      (plugin) => plugin.spec.key === pluginKey
-    )
+    const existingPlugin = editor.state.plugins.find(plugin => plugin.spec.key === pluginKey)
     if (existingPlugin) {
       editor.unregisterPlugin(pluginKey)
     }
 
     // Find the Mention extension that matches our trigger character (e.g. "@") so we can
     // pull suggestion configuration from it (e.g. allowSpaces, allowedPrefixes, startOfLine).
-    const ourChar = internalSuggestionPropsRef.current.char ?? "@"
+    const ourChar = internalSuggestionPropsRef.current.char ?? '@'
 
-    const mentionExtension = editor.extensionManager.extensions.find((ext) => {
-      if (ext.name !== "mention") return false
+    const mentionExtension = editor.extensionManager.extensions.find(ext => {
+      if (ext.name !== 'mention') return false
 
       const suggestions = ext.options?.suggestions
       if (suggestions?.length) {
-        return suggestions.some(
-          (s: Record<string, unknown>) => (s.char ?? "@") === ourChar
-        )
+        return suggestions.some((s: Record<string, unknown>) => (s.char ?? '@') === ourChar)
       }
 
-      return (ext.options?.suggestion?.char ?? "@") === ourChar
+      return (ext.options?.suggestion?.char ?? '@') === ourChar
     })
 
     // We want to allow passing mention suggestion configuration either
@@ -146,23 +122,13 @@ export const SuggestionMenu = ({
 
       const suggestions = mentionExtension.options?.suggestions
       if (suggestions?.length) {
-        matchingConfig = suggestions.find(
-          (s: Record<string, unknown>) => (s.char ?? "@") === ourChar
-        )
+        matchingConfig = suggestions.find((s: Record<string, unknown>) => (s.char ?? '@') === ourChar)
       } else if (mentionExtension.options?.suggestion) {
         matchingConfig = mentionExtension.options.suggestion
       }
 
       if (matchingConfig) {
-        const managedKeys = new Set([
-          "pluginKey",
-          "editor",
-          "render",
-          "command",
-          "items",
-          "allow",
-          "char",
-        ])
+        const managedKeys = new Set(['pluginKey', 'editor', 'render', 'command', 'items', 'allow', 'char'])
 
         for (const key of Object.keys(matchingConfig)) {
           if (!managedKeys.has(key)) {
@@ -174,8 +140,7 @@ export const SuggestionMenu = ({
 
     const suggestion = Suggestion({
       ...mentionSuggestionDefaults,
-      pluginKey:
-        pluginKey instanceof PluginKey ? pluginKey : new PluginKey(pluginKey),
+      pluginKey: pluginKey instanceof PluginKey ? pluginKey : new PluginKey(pluginKey),
       editor,
 
       allow(props) {
@@ -183,7 +148,7 @@ export const SuggestionMenu = ({
 
         // Check if we're inside an image node
         for (let depth = $from.depth; depth > 0; depth--) {
-          if ($from.node(depth).type.name === "image") {
+          if ($from.node(depth).type.name === 'image') {
             return false // Don't allow slash command inside image (since we support captions)
           }
         }
@@ -199,48 +164,33 @@ export const SuggestionMenu = ({
         const { view, state } = editor
         const { selection } = state
 
-        const isMention = editor.extensionManager.extensions.some(
-          (extension) => {
-            if (extension.name !== "mention") return false
+        const isMention = editor.extensionManager.extensions.some(extension => {
+          if (extension.name !== 'mention') return false
 
-            const mentionSuggestions = extension.options?.suggestions
-            if (mentionSuggestions?.length) {
-              return mentionSuggestions.some(
-                (s: Record<string, unknown>) =>
-                  (s.char ?? "@") === internalSuggestionPropsRef.current.char
-              )
-            }
-
-            return (
-              (extension.options?.suggestion?.char ?? "@") ===
-              internalSuggestionPropsRef.current.char
-            )
+          const mentionSuggestions = extension.options?.suggestions
+          if (mentionSuggestions?.length) {
+            return mentionSuggestions.some((s: Record<string, unknown>) => (s.char ?? '@') === internalSuggestionPropsRef.current.char)
           }
-        )
+
+          return (extension.options?.suggestion?.char ?? '@') === internalSuggestionPropsRef.current.char
+        })
 
         if (!isMention) {
           const cursorPosition = selection.$from.pos
           const previousNode = selection.$head?.nodeBefore
 
           const startPosition = previousNode
-            ? calculateStartPosition(
-                cursorPosition,
-                previousNode,
-                internalSuggestionPropsRef.current.char
-              )
+            ? calculateStartPosition(cursorPosition, previousNode, internalSuggestionPropsRef.current.char)
             : selection.$from.start()
 
-          const transaction = state.tr.deleteRange(
-            startPosition,
-            cursorPosition
-          )
+          const transaction = state.tr.deleteRange(startPosition, cursorPosition)
           view.dispatch(transaction)
         }
 
         const rangeToUse = { ...range }
 
         const nodeAfter = view.state.selection.$to.nodeAfter
-        const overrideSpace = nodeAfter?.text?.startsWith(" ")
+        const overrideSpace = nodeAfter?.text?.startsWith(' ')
 
         if (overrideSpace) {
           rangeToUse.to += 1
@@ -252,9 +202,7 @@ export const SuggestionMenu = ({
       render: () => {
         return {
           onStart: (props: SuggestionProps<SuggestionItem>) => {
-            setInternalDecorationNode(
-              (props.decorationNode as HTMLElement) ?? null
-            )
+            setInternalDecorationNode((props.decorationNode as HTMLElement) ?? null)
             setInternalCommand(() => props.command)
             setInternalItems(props.items)
             setInternalQuery(props.query)
@@ -264,9 +212,7 @@ export const SuggestionMenu = ({
           },
 
           onUpdate: (props: SuggestionProps<SuggestionItem>) => {
-            setInternalDecorationNode(
-              (props.decorationNode as HTMLElement) ?? null
-            )
+            setInternalDecorationNode((props.decorationNode as HTMLElement) ?? null)
             setInternalCommand(() => props.command)
             setInternalItems(props.items)
             setInternalQuery(props.query)
@@ -275,7 +221,7 @@ export const SuggestionMenu = ({
           },
 
           onKeyDown: (props: SuggestionKeyDownProps) => {
-            if (props.event.key === "Escape") {
+            if (props.event.key === 'Escape') {
               closePopup()
               return true
             }
@@ -286,7 +232,7 @@ export const SuggestionMenu = ({
             setInternalDecorationNode(null)
             setInternalCommand(null)
             setInternalItems([])
-            setInternalQuery("")
+            setInternalQuery('')
             setInternalRange(null)
             // setInternalClientRect(null)
             setShow(false)
@@ -336,7 +282,7 @@ export const SuggestionMenu = ({
       className="tiptap-suggestion-menu"
       role="listbox"
       aria-label="Suggestions"
-      onPointerDown={(e) => e.preventDefault()}
+      onPointerDown={e => e.preventDefault()}
     >
       {children({
         items: internalItems,

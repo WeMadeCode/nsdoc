@@ -1,33 +1,26 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type {
-  TextAlign,
-  UseTextAlignConfig,
-} from "@/tiptap-editor/components/tiptap-ui/text-align-button"
-import {
-  TEXT_ALIGN_SHORTCUT_KEYS,
-  useTextAlign,
-} from "@/tiptap-editor/components/tiptap-ui/text-align-button"
+import type { TextAlign, UseTextAlignConfig } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
+import { TEXT_ALIGN_SHORTCUT_KEYS, useTextAlign } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
 type IconProps = React.SVGProps<SVGSVGElement>
 type IconComponent = ({ className, ...props }: IconProps) => React.ReactElement
 
-export interface TextAlignButtonProps
-  extends Omit<ButtonProps, "type">, UseTextAlignConfig {
+export interface TextAlignButtonProps extends Omit<ButtonProps, 'type'>, UseTextAlignConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -58,10 +51,7 @@ export function TextAlignShortcutBadge({
  *
  * For custom button implementations, use the `useTextAlign` hook instead.
  */
-export const TextAlignButton = forwardRef<
-  HTMLButtonElement,
-  TextAlignButtonProps
->(
+export const TextAlignButton = forwardRef<HTMLButtonElement, TextAlignButtonProps>(
   (
     {
       editor: providedEditor,
@@ -78,15 +68,7 @@ export const TextAlignButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      handleTextAlign,
-      label,
-      canAlign,
-      isActive,
-      Icon,
-      shortcutKeys,
-    } = useTextAlign({
+    const { isVisible, handleTextAlign, label, canAlign, isActive, Icon, shortcutKeys } = useTextAlign({
       editor,
       align,
       hideWhenUnavailable,
@@ -113,7 +95,7 @@ export const TextAlignButton = forwardRef<
         type="button"
         disabled={!canAlign}
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         data-disabled={!canAlign}
         role="button"
         tabIndex={-1}
@@ -128,12 +110,7 @@ export const TextAlignButton = forwardRef<
           <>
             <RenderIcon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <TextAlignShortcutBadge
-                align={align}
-                shortcutKeys={shortcutKeys}
-              />
-            )}
+            {showShortcut && <TextAlignShortcutBadge align={align} shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -141,4 +118,4 @@ export const TextAlignButton = forwardRef<
   }
 )
 
-TextAlignButton.displayName = "TextAlignButton"
+TextAlignButton.displayName = 'TextAlignButton'

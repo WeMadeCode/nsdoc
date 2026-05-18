@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const MicAiIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M10.5 1C9.43913 1 8.42172 1.42143 7.67157 2.17157C6.92143 2.92172 6.5 3.93913 6.5 5V12C6.5 13.0609 6.92143 14.0783 7.67157 14.8284C8.42172 15.5786 9.43913 16 10.5 16C11.5609 16 12.5783 15.5786 13.3284 14.8284C14.0786 14.0783 14.5 13.0609 14.5 12C14.5 11.4477 14.0523 11 13.5 11C12.9477 11 12.5 11.4477 12.5 12C12.5 12.5304 12.2893 13.0391 11.9142 13.4142C11.5391 13.7893 11.0304 14 10.5 14C9.96957 14 9.46086 13.7893 9.08579 13.4142C8.71071 13.0391 8.5 12.5304 8.5 12V5C8.5 4.46957 8.71071 3.96086 9.08579 3.58579C9.46086 3.21071 9.96957 3 10.5 3C11.0523 3 11.5 2.55228 11.5 2C11.5 1.44772 11.0523 1 10.5 1Z"
         fill="currentColor"
@@ -31,4 +23,4 @@ export const MicAiIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-MicAiIcon.displayName = "MicAiIcon"
+MicAiIcon.displayName = 'MicAiIcon'

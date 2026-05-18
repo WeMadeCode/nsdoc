@@ -1,20 +1,19 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTableMergeSplitCellConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button"
-import { useTableMergeSplitCell } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button"
+import type { UseTableMergeSplitCellConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button'
+import { useTableMergeSplitCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableMergeSplitCellButtonProps
-  extends Omit<ButtonProps, "type">, UseTableMergeSplitCellConfig {
+export interface TableMergeSplitCellButtonProps extends Omit<ButtonProps, 'type'>, UseTableMergeSplitCellConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -55,31 +54,15 @@ export interface TableMergeSplitCellButtonProps
  * />
  * ```
  */
-export const TableMergeSplitCellButton = forwardRef<
-  HTMLButtonElement,
-  TableMergeSplitCellButtonProps
->(
-  (
-    {
-      editor: providedEditor,
-      action,
-      hideWhenUnavailable = false,
-      onExecuted,
-      text,
-      onClick,
-      children,
-      ...buttonProps
-    },
-    ref
-  ) => {
+export const TableMergeSplitCellButton = forwardRef<HTMLButtonElement, TableMergeSplitCellButtonProps>(
+  ({ editor: providedEditor, action, hideWhenUnavailable = false, onExecuted, text, onClick, children, ...buttonProps }, ref) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleExecute, label, canExecute, Icon } =
-      useTableMergeSplitCell({
-        editor,
-        action,
-        hideWhenUnavailable,
-        onExecuted,
-      })
+    const { isVisible, handleExecute, label, canExecute, Icon } = useTableMergeSplitCell({
+      editor,
+      action,
+      hideWhenUnavailable,
+      onExecuted,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -121,4 +104,4 @@ export const TableMergeSplitCellButton = forwardRef<
   }
 )
 
-TableMergeSplitCellButton.displayName = "TableMergeSplitCellButton"
+TableMergeSplitCellButton.displayName = 'TableMergeSplitCellButton'

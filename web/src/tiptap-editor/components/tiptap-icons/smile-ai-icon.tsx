@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const SmileAiIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M7.67909 4.05505C9.27254 3.18292 11.0926 2.81337 12.9 2.995C13.4495 3.05022 13.9398 2.64952 13.995 2.1C14.0502 1.55048 13.6495 1.06024 13.1 1.00502C10.8909 0.783033 8.66641 1.2347 6.71886 2.30064C4.7713 3.36659 3.19189 4.99691 2.18824 6.97729C1.1846 8.95767 0.803706 11.1954 1.09564 13.3963C1.38758 15.5972 2.33867 17.6583 3.8239 19.3085C5.30912 20.9588 7.25894 22.121 9.41704 22.6423C11.5751 23.1637 13.8405 23.0198 15.9153 22.2296C17.9901 21.4394 19.7772 20.0398 21.0417 18.2149C22.3062 16.39 22.9889 14.2252 23 12.005L23 12V11C23 10.4477 22.5523 10 22 10C21.4477 10 21 10.4477 21 11V11.9976C20.9904 13.8132 20.4319 15.5834 19.3978 17.0758C18.3632 18.5689 16.901 19.714 15.2034 20.3605C13.5059 21.0071 11.6524 21.1248 9.8867 20.6982C8.12098 20.2717 6.52567 19.3208 5.31048 17.9706C4.0953 16.6204 3.31713 14.9341 3.07828 13.1333C2.83942 11.3326 3.15106 9.50171 3.97222 7.8814C4.79339 6.26109 6.08564 4.92719 7.67909 4.05505Z"
         fill="currentColor"
@@ -35,4 +27,4 @@ export const SmileAiIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-SmileAiIcon.displayName = "SmileAiIcon"
+SmileAiIcon.displayName = 'SmileAiIcon'

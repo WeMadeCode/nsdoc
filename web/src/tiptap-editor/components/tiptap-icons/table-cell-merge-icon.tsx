@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const TableCellMergeIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M10 16C10.5177 16 10.9438 16.3933 10.9951 16.8975L11 17V19C11 20.6569 9.65685 22 8 22H4C2.34315 22 1 20.6569 1 19V17C1 16.4477 1.44772 16 2 16C2.55228 16 3 16.4477 3 17V19C3 19.5523 3.44772 20 4 20H8C8.55228 20 9 19.5523 9 19V17L9.00488 16.8975C9.05621 16.3933 9.48232 16 10 16Z"
         fill="currentColor"
@@ -41,4 +33,4 @@ export const TableCellMergeIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-TableCellMergeIcon.displayName = "TableCellMergeIcon"
+TableCellMergeIcon.displayName = 'TableCellMergeIcon'

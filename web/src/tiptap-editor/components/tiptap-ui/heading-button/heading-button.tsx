@@ -1,28 +1,21 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Tiptap UI ---
-import type {
-  Level,
-  UseHeadingConfig,
-} from "@/tiptap-editor/components/tiptap-ui/heading-button"
-import {
-  HEADING_SHORTCUT_KEYS,
-  useHeading,
-} from "@/tiptap-editor/components/tiptap-ui/heading-button"
+import type { Level, UseHeadingConfig } from '@/tiptap-editor/components/tiptap-ui/heading-button'
+import { HEADING_SHORTCUT_KEYS, useHeading } from '@/tiptap-editor/components/tiptap-ui/heading-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
-export interface HeadingButtonProps
-  extends Omit<ButtonProps, "type">, UseHeadingConfig {
+export interface HeadingButtonProps extends Omit<ButtonProps, 'type'>, UseHeadingConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -34,13 +27,7 @@ export interface HeadingButtonProps
   showShortcut?: boolean
 }
 
-export function HeadingShortcutBadge({
-  level,
-  shortcutKeys = HEADING_SHORTCUT_KEYS[level],
-}: {
-  level: Level
-  shortcutKeys?: string
-}) {
+export function HeadingShortcutBadge({ level, shortcutKeys = HEADING_SHORTCUT_KEYS[level] }: { level: Level; shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -65,15 +52,7 @@ export const HeadingButton = forwardRef<HTMLButtonElement, HeadingButtonProps>(
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      Icon,
-      shortcutKeys,
-    } = useHeading({
+    const { isVisible, canToggle, isActive, handleToggle, label, Icon, shortcutKeys } = useHeading({
       editor,
       level,
       hideWhenUnavailable,
@@ -97,7 +76,7 @@ export const HeadingButton = forwardRef<HTMLButtonElement, HeadingButtonProps>(
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canToggle}
@@ -113,9 +92,7 @@ export const HeadingButton = forwardRef<HTMLButtonElement, HeadingButtonProps>(
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <HeadingShortcutBadge level={level} shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <HeadingShortcutBadge level={level} shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -123,4 +100,4 @@ export const HeadingButton = forwardRef<HTMLButtonElement, HeadingButtonProps>(
   }
 )
 
-HeadingButton.displayName = "HeadingButton"
+HeadingButton.displayName = 'HeadingButton'

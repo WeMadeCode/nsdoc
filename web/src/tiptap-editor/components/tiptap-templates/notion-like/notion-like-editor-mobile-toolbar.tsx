@@ -1,59 +1,45 @@
-"use client"
+'use client'
 
-import { cloneElement, useEffect, useMemo, useRef, useState } from "react"
-import { type Editor } from "@tiptap/react"
+import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
+import { type Editor } from '@tiptap/react'
 
 // --- Hooks ---
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
-import { useWindowSize } from "@/tiptap-editor/hooks/use-window-size"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { useWindowSize } from '@/tiptap-editor/hooks/use-window-size'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
 import {
   ColorHighlightPopover,
   ColorHighlightPopoverButton,
   ColorHighlightPopoverContent,
-} from "@/tiptap-editor/components/tiptap-ui/color-highlight-popover"
-import { ImageUploadButton } from "@/tiptap-editor/components/tiptap-ui/image-upload-button"
-import {
-  canSetLink,
-  LinkButton,
-  LinkContent,
-  LinkPopover,
-} from "@/tiptap-editor/components/tiptap-ui/link-popover"
-import { MarkButton } from "@/tiptap-editor/components/tiptap-ui/mark-button"
-import { TextAlignButton } from "@/tiptap-editor/components/tiptap-ui/text-align-button"
-import { SlashCommandTriggerButton } from "@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button"
-import { ResetAllFormattingButton } from "@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button"
-import { DeleteNodeButton } from "@/tiptap-editor/components/tiptap-ui/delete-node-button"
-import { ImproveDropdown } from "@/tiptap-editor/components/tiptap-ui/improve-dropdown"
-import { CopyAnchorLinkButton } from "@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button"
-import { TurnIntoDropdownContent } from "@/tiptap-editor/components/tiptap-ui/turn-into-dropdown"
-import { useRecentColors } from "@/tiptap-editor/components/tiptap-ui/color-text-popover"
-import {
-  ColorTextButton,
-  TEXT_COLORS,
-} from "@/tiptap-editor/components/tiptap-ui/color-text-button"
-import {
-  canColorHighlight,
-  ColorHighlightButton,
-  HIGHLIGHT_COLORS,
-} from "@/tiptap-editor/components/tiptap-ui/color-highlight-button"
-import { AiAskButton } from "@/tiptap-editor/components/tiptap-ui/ai-ask-button"
-import { DuplicateButton } from "@/tiptap-editor/components/tiptap-ui/duplicate-button"
-import { CopyToClipboardButton } from "@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button"
-import { IndentButton } from "@/tiptap-editor/components/tiptap-ui/indent-button"
+} from '@/tiptap-editor/components/tiptap-ui/color-highlight-popover'
+import { ImageUploadButton } from '@/tiptap-editor/components/tiptap-ui/image-upload-button'
+import { canSetLink, LinkButton, LinkContent, LinkPopover } from '@/tiptap-editor/components/tiptap-ui/link-popover'
+import { MarkButton } from '@/tiptap-editor/components/tiptap-ui/mark-button'
+import { TextAlignButton } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
+import { SlashCommandTriggerButton } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
+import { ResetAllFormattingButton } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
+import { DeleteNodeButton } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
+import { CopyAnchorLinkButton } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
+import { TurnIntoDropdownContent } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
+import { useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { ColorTextButton, TEXT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
+import { canColorHighlight, ColorHighlightButton, HIGHLIGHT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
+import { DuplicateButton } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
+import { CopyToClipboardButton } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
+import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
 
 // --- Utils ---
-import { getNodeDisplayName } from "@/tiptap-editor/lib/tiptap-collab-utils"
+import { getNodeDisplayName } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 // --- Icons ---
-import { PaintBucketIcon } from "@/tiptap-editor/components/tiptap-icons/paint-bucket-icon"
-import { Repeat2Icon } from "@/tiptap-editor/components/tiptap-icons/repeat-2-icon"
+import { PaintBucketIcon } from '@/tiptap-editor/components/tiptap-icons/paint-bucket-icon'
+import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
 
 // --- UI Primitives ---
-import { Spacer } from "@/tiptap-editor/components/tiptap-ui-primitive/spacer"
-import { Separator } from "@/tiptap-editor/components/tiptap-ui-primitive/separator"
+import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,30 +51,26 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu"
-import { ArrowLeftIcon } from "@/tiptap-editor/components/tiptap-icons/arrow-left-icon"
-import { ChevronRightIcon } from "@/tiptap-editor/components/tiptap-icons/chevron-right-icon"
-import { HighlighterIcon } from "@/tiptap-editor/components/tiptap-icons/highlighter-icon"
-import { LinkIcon } from "@/tiptap-editor/components/tiptap-icons/link-icon"
-import { MoreVerticalIcon } from "@/tiptap-editor/components/tiptap-icons/more-vertical-icon"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/toolbar"
-import { MoveNodeButton } from "@/tiptap-editor/components/tiptap-ui/move-node-button"
-import { useCursorVisibility } from "@/tiptap-editor/hooks/use-cursor-visibility"
-import { ImageNodeFloating } from "@/tiptap-editor/components/tiptap-node/image-node/image-node-floating"
+} from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
+import { ArrowLeftIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-left-icon'
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+import { HighlighterIcon } from '@/tiptap-editor/components/tiptap-icons/highlighter-icon'
+import { LinkIcon } from '@/tiptap-editor/components/tiptap-icons/link-icon'
+import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/tiptap-editor/components/tiptap-ui-primitive/toolbar'
+import { MoveNodeButton } from '@/tiptap-editor/components/tiptap-ui/move-node-button'
+import { useCursorVisibility } from '@/tiptap-editor/hooks/use-cursor-visibility'
+import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
 
 // =============================================================================
 // Types & Constants
 // =============================================================================
 
 const TOOLBAR_VIEWS = {
-  MAIN: "main",
-  HIGHLIGHTER: "highlighter",
-  LINK: "link",
+  MAIN: 'main',
+  HIGHLIGHTER: 'highlighter',
+  LINK: 'link',
 } as const
 
 type ToolbarViewId = (typeof TOOLBAR_VIEWS)[keyof typeof TOOLBAR_VIEWS]
@@ -103,10 +85,7 @@ export type ToolbarViewType = {
   shouldShow?: (editor: Editor | null) => boolean
 }
 
-type ToolbarViewRegistry = Record<
-  Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>,
-  ToolbarViewType
->
+type ToolbarViewRegistry = Record<Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>, ToolbarViewType>
 
 interface ToolbarState {
   viewId: ToolbarViewId
@@ -153,12 +132,10 @@ function createToolbarViewRegistry(): ToolbarViewRegistry {
   return {
     [TOOLBAR_VIEWS.HIGHLIGHTER]: {
       id: TOOLBAR_VIEWS.HIGHLIGHTER,
-      title: "Text Highlighter",
+      title: 'Text Highlighter',
       icon: <HighlighterIcon className="tiptap-button-icon" />,
       content: <ColorHighlightPopoverContent />,
-      mobileButton: (onClick: () => void) => (
-        <ColorHighlightPopoverButton onClick={onClick} />
-      ),
+      mobileButton: (onClick: () => void) => <ColorHighlightPopoverButton onClick={onClick} />,
       desktopComponent: <ColorHighlightPopover />,
       shouldShow(editor) {
         return canColorHighlight(editor)
@@ -166,7 +143,7 @@ function createToolbarViewRegistry(): ToolbarViewRegistry {
     },
     [TOOLBAR_VIEWS.LINK]: {
       id: TOOLBAR_VIEWS.LINK,
-      title: "Link Editor",
+      title: 'Link Editor',
       icon: <LinkIcon className="tiptap-button-icon" />,
       content: <LinkContent />,
       mobileButton: (onClick: () => void) => <LinkButton onClick={onClick} />,
@@ -248,12 +225,9 @@ function ColorActionGroup() {
       <>
         <DropdownMenuGroup>
           <DropdownMenuLabel>Recent colors</DropdownMenuLabel>
-          {recentColors.map((colorObj) => (
-            <DropdownMenuItem
-              key={`${colorObj.type}-${colorObj.value}`}
-              asChild
-            >
-              {colorObj.type === "text" ? (
+          {recentColors.map(colorObj => (
+            <DropdownMenuItem key={`${colorObj.type}-${colorObj.value}`} asChild>
+              {colorObj.type === 'text' ? (
                 <ColorTextButton
                   textColor={colorObj.value}
                   label={colorObj.label}
@@ -261,7 +235,7 @@ function ColorActionGroup() {
                   tooltip={colorObj.label}
                   onApplied={({ color, label }) =>
                     addRecentColor({
-                      type: "text",
+                      type: 'text',
                       label,
                       value: color,
                     })
@@ -274,7 +248,7 @@ function ColorActionGroup() {
                   tooltip={colorObj.label}
                   onApplied={({ color, label }) =>
                     addRecentColor({
-                      type: "highlight",
+                      type: 'highlight',
                       label,
                       value: color,
                     })
@@ -308,16 +282,14 @@ function ColorActionGroup() {
           <DropdownMenuGroup>
             <DropdownMenuLabel>Text color</DropdownMenuLabel>
 
-            {TEXT_COLORS.map((textColor) => (
+            {TEXT_COLORS.map(textColor => (
               <DropdownMenuItem key={textColor.value} asChild>
                 <ColorTextButton
                   textColor={textColor.value}
                   label={textColor.label}
                   text={textColor.label}
                   tooltip={textColor.label}
-                  onApplied={({ color, label }) =>
-                    addRecentColor({ type: "text", label, value: color })
-                  }
+                  onApplied={({ color, label }) => addRecentColor({ type: 'text', label, value: color })}
                 />
               </DropdownMenuItem>
             ))}
@@ -328,7 +300,7 @@ function ColorActionGroup() {
           <DropdownMenuGroup>
             <DropdownMenuLabel>Highlight color</DropdownMenuLabel>
 
-            {HIGHLIGHT_COLORS.map((highlightColor) => (
+            {HIGHLIGHT_COLORS.map(highlightColor => (
               <DropdownMenuItem key={highlightColor.value} asChild>
                 <ColorHighlightButton
                   highlightColor={highlightColor.value}
@@ -336,7 +308,7 @@ function ColorActionGroup() {
                   tooltip={highlightColor.label}
                   onApplied={({ color, label }) =>
                     addRecentColor({
-                      type: "highlight",
+                      type: 'highlight',
                       label,
                       value: color,
                     })
@@ -402,24 +374,10 @@ function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
           <DuplicateButton text="Duplicate node" showShortcut={!isMobile} />
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <CopyToClipboardButton
-            text="Copy to clipboard"
-            showShortcut={!isMobile}
-          />
+          <CopyToClipboardButton text="Copy to clipboard" showShortcut={!isMobile} />
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <CopyAnchorLinkButton
-            text="Copy anchor link"
-            showShortcut={!isMobile}
-          />
-        </DropdownMenuItem>
-      </DropdownMenuGroup>
-
-      <Separator orientation="horizontal" />
-
-      <DropdownMenuGroup>
-        <DropdownMenuItem asChild>
-          <AiAskButton text="Ask AI" showShortcut={!isMobile} />
+          <CopyAnchorLinkButton text="Copy anchor link" showShortcut={!isMobile} />
         </DropdownMenuItem>
       </DropdownMenuGroup>
 
@@ -459,19 +417,12 @@ interface ToolbarViewButtonProps {
   onViewChange: (viewId: ToolbarViewId) => void
 }
 
-function ToolbarViewButton({
-  view,
-  isMobile,
-  onViewChange,
-}: ToolbarViewButtonProps) {
+function ToolbarViewButton({ view, isMobile, onViewChange }: ToolbarViewButtonProps) {
   const viewId = view.id as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>
 
   if (isMobile) {
     return view.mobileButton ? (
-      cloneElement(
-        view.mobileButton(() => onViewChange(viewId)) as React.ReactElement,
-        { key: view.id }
-      )
+      cloneElement(view.mobileButton(() => onViewChange(viewId)) as React.ReactElement, { key: view.id })
     ) : (
       <Button key={view.id} onClick={() => onViewChange(viewId)}>
         {view.icon}
@@ -493,13 +444,8 @@ interface ToolbarViewsGroupProps {
   editor: Editor | null
 }
 
-function ToolbarViewsGroup({
-  toolbarViews,
-  isMobile,
-  onViewChange,
-  editor,
-}: ToolbarViewsGroupProps) {
-  const visibleViews = Object.values(toolbarViews).filter((view) => {
+function ToolbarViewsGroup({ toolbarViews, isMobile, onViewChange, editor }: ToolbarViewsGroupProps) {
+  const visibleViews = Object.values(toolbarViews).filter(view => {
     if (!view.shouldShow) return true
     return view.shouldShow(editor)
   })
@@ -508,13 +454,8 @@ function ToolbarViewsGroup({
 
   return (
     <>
-      {visibleViews.map((view) => (
-        <ToolbarViewButton
-          key={view.id}
-          view={view}
-          isMobile={isMobile}
-          onViewChange={onViewChange}
-        />
+      {visibleViews.map(view => (
+        <ToolbarViewButton key={view.id} view={view} isMobile={isMobile} onViewChange={onViewChange} />
       ))}
 
       <ToolbarSeparator />
@@ -533,12 +474,7 @@ interface MainToolbarContentProps {
   onViewChange: (viewId: ToolbarViewId) => void
 }
 
-function MainToolbarContent({
-  editor,
-  isMobile,
-  toolbarViews,
-  onViewChange,
-}: MainToolbarContentProps) {
+function MainToolbarContent({ editor, isMobile, toolbarViews, onViewChange }: MainToolbarContentProps) {
   const hasSelection = hasTextSelection(editor)
   const hasContent = (editor?.getText().length ?? 0) > 0
 
@@ -553,20 +489,9 @@ function MainToolbarContent({
 
       {(hasSelection || hasContent) && (
         <>
-          <ToolbarGroup>
-            <ImproveDropdown hideWhenUnavailable />
-          </ToolbarGroup>
-
-          <ToolbarSeparator />
-
           <FormattingGroup />
 
-          <ToolbarViewsGroup
-            toolbarViews={toolbarViews}
-            isMobile={isMobile}
-            onViewChange={onViewChange}
-            editor={editor}
-          />
+          <ToolbarViewsGroup toolbarViews={toolbarViews} isMobile={isMobile} onViewChange={onViewChange} editor={editor} />
 
           <ImageNodeFloating />
 
@@ -600,10 +525,7 @@ interface SpecializedToolbarContentProps {
   onBack: () => void
 }
 
-function SpecializedToolbarContent({
-  view,
-  onBack,
-}: SpecializedToolbarContentProps) {
+function SpecializedToolbarContent({ view, onBack }: SpecializedToolbarContentProps) {
   return (
     <>
       <ToolbarGroup>
@@ -630,16 +552,14 @@ export interface MobileToolbarProps {
 
 export function MobileToolbar({ editor: providedEditor }: MobileToolbarProps) {
   const { editor } = useTiptapEditor(providedEditor)
-  const isMobile = useIsBreakpoint("max", 480)
+  const isMobile = useIsBreakpoint('max', 480)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const toolbarState = useToolbarState(isMobile)
   const toolbarViews = useMemo(() => createToolbarViewRegistry(), [])
 
   const currentView = toolbarState.isMainView
     ? null
-    : toolbarViews[
-        toolbarState.viewId as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>
-      ]
+    : toolbarViews[toolbarState.viewId as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>]
 
   const { height } = useWindowSize()
   const rect = useCursorVisibility({
@@ -663,19 +583,9 @@ export function MobileToolbar({ editor: providedEditor }: MobileToolbarProps) {
       }}
     >
       {toolbarState.isMainView ? (
-        <MainToolbarContent
-          editor={editor}
-          isMobile={isMobile}
-          toolbarViews={toolbarViews}
-          onViewChange={toolbarState.showView}
-        />
+        <MainToolbarContent editor={editor} isMobile={isMobile} toolbarViews={toolbarViews} onViewChange={toolbarState.showView} />
       ) : (
-        currentView && (
-          <SpecializedToolbarContent
-            view={currentView}
-            onBack={toolbarState.showMainView}
-          />
-        )
+        currentView && <SpecializedToolbarContent view={currentView} onBack={toolbarState.showMainView} />
       )}
     </Toolbar>
   )

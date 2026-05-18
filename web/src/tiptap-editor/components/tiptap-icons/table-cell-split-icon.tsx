@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const TableCellSplitIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M4 2C2.34315 2 1 3.34315 1 5V7C1 7.55228 1.44772 8 2 8C2.55228 8 3 7.55228 3 7V5C3 4.44772 3.44772 4 4 4H8C8.55228 4 9 4.44772 9 5V7C9 7.55228 9.44772 8 10 8C10.5523 8 11 7.55228 11 7V5C11 3.34315 9.65685 2 8 2H4Z"
         fill="currentColor"
@@ -41,4 +33,4 @@ export const TableCellSplitIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-TableCellSplitIcon.displayName = "TableCellSplitIcon"
+TableCellSplitIcon.displayName = 'TableCellSplitIcon'

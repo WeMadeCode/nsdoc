@@ -1,6 +1,6 @@
-import { Node, mergeAttributes } from "@tiptap/core"
-import { ReactNodeViewRenderer } from "@tiptap/react"
-import { TocNodeComponent } from "@/tiptap-editor/components/tiptap-node/toc-node/toc-node"
+import { Node, mergeAttributes } from '@tiptap/core'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import { TocNodeComponent } from '@/tiptap-editor/components/tiptap-node/toc-node/toc-node'
 
 export interface TocNodeAttrs {
   /**
@@ -30,7 +30,7 @@ export interface TocNodeOptions extends TocNodeAttrs {
   HTMLAttributes: Record<string, any>
 }
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     tocNode: {
       /**
@@ -49,9 +49,9 @@ declare module "@tiptap/core" {
  * @see registry/tiptap-node/toc-node/toc-node-component
  */
 export const TocNode = Node.create<TocNodeOptions>({
-  name: "tocNode",
+  name: 'tocNode',
 
-  group: "block customNode",
+  group: 'block customNode',
 
   draggable: true,
 
@@ -73,40 +73,40 @@ export const TocNode = Node.create<TocNodeOptions>({
       topOffset: {
         default: null as number | null,
         parseHTML: (element: HTMLElement) => {
-          const val = element.getAttribute("data-top-offset")
+          const val = element.getAttribute('data-top-offset')
           const num = val != null ? Number(val) : null
           return Number.isFinite(num) ? num : null
         },
         renderHTML: (attrs: TocNodeAttrs) => {
           if (attrs.topOffset == null) return {}
-          return { "data-top-offset": attrs.topOffset }
+          return { 'data-top-offset': attrs.topOffset }
         },
       },
       maxShowCount: {
         default: null as number | null,
         parseHTML: (element: HTMLElement) => {
-          const val = element.getAttribute("data-max-show-count")
+          const val = element.getAttribute('data-max-show-count')
           const num = val != null ? Number(val) : null
           return Number.isFinite(num) ? num : null
         },
         renderHTML: (attrs: TocNodeAttrs) => {
           if (attrs.maxShowCount == null) return {}
-          return { "data-max-show-count": attrs.maxShowCount }
+          return { 'data-max-show-count': attrs.maxShowCount }
         },
       },
       showTitle: {
         default: true,
 
         parseHTML: (element: HTMLElement) => {
-          const val = element.getAttribute("data-show-title")
-          if (val === "false") return false
-          if (val === "true") return true
+          const val = element.getAttribute('data-show-title')
+          if (val === 'false') return false
+          if (val === 'true') return true
           return null
         },
 
         renderHTML: (attrs: TocNodeAttrs) => {
           if (attrs.showTitle == null) return {}
-          return { "data-show-title": String(attrs.showTitle) }
+          return { 'data-show-title': String(attrs.showTitle) }
         },
       },
     }
@@ -118,9 +118,9 @@ export const TocNode = Node.create<TocNodeOptions>({
 
   renderHTML({ HTMLAttributes }) {
     return [
-      "div",
+      'div',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        "data-type": "toc-node",
+        'data-type': 'toc-node',
       }),
     ]
   },
@@ -133,7 +133,7 @@ export const TocNode = Node.create<TocNodeOptions>({
         const el = event.target as HTMLElement | null
         if (!el) return false
 
-        return Boolean(el.closest(".tiptap-table-of-contents-item"))
+        return Boolean(el.closest('.tiptap-table-of-contents-item'))
       },
     })
   },
@@ -141,7 +141,7 @@ export const TocNode = Node.create<TocNodeOptions>({
   addCommands() {
     return {
       insertTocNode:
-        (attrs) =>
+        attrs =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,

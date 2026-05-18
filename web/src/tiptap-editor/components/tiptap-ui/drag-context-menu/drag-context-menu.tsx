@@ -1,111 +1,80 @@
-"use client"
+'use client'
 
 // ─── React & External Libraries ──────────────────────────────────────────────
-import { useCallback, useEffect, useMemo, useState } from "react"
-import type { Node as TiptapNode } from "@tiptap/pm/model"
-import { offset } from "@floating-ui/react"
-import { DragHandle } from "@tiptap/extension-drag-handle-react"
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Node as TiptapNode } from '@tiptap/pm/model'
+import { offset } from '@floating-ui/react'
+import { DragHandle } from '@tiptap/extension-drag-handle-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 import type {
   DragContextMenuProps,
   MenuItemProps,
   NodeChangeData,
-} from "@/tiptap-editor/components/tiptap-ui/drag-context-menu/drag-context-menu-types"
+} from '@/tiptap-editor/components/tiptap-ui/drag-context-menu/drag-context-menu-types'
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
-import { useUiEditorState } from "@/tiptap-editor/hooks/use-ui-editor-state"
-import { selectNodeAndHideFloating } from "@/tiptap-editor/hooks/use-floating-toolbar-visibility"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
+import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 
 // ─── Primitive UI Components ──────────────────────────────────────────────────
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Spacer } from "@/tiptap-editor/components/tiptap-ui-primitive/spacer"
-import { Separator } from "@/tiptap-editor/components/tiptap-ui-primitive/separator"
-import {
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuButton,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/menu"
-import { Combobox, ComboboxList } from "@/tiptap-editor/components/tiptap-ui-primitive/combobox"
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { Menu, MenuContent, MenuItem, MenuGroup, MenuGroupLabel, MenuButton } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
 
 // ─── Tiptap UI — Hooks ────────────────────────────────────────────────────────
-import { useImageDownload } from "@/tiptap-editor/components/tiptap-ui/image-download-button"
-import {
-  useDuplicate,
-  DuplicateShortcutBadge,
-} from "@/tiptap-editor/components/tiptap-ui/duplicate-button"
-import {
-  useCopyToClipboard,
-  CopyToClipboardShortcutBadge,
-} from "@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button"
-import {
-  useDeleteNode,
-  DeleteNodeShortcutBadge,
-} from "@/tiptap-editor/components/tiptap-ui/delete-node-button"
-import {
-  useCopyAnchorLink,
-  CopyAnchorLinkShortcutBadge,
-} from "@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button"
-import { useResetAllFormatting } from "@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button"
-import {
-  useAiAsk,
-  AskAiShortcutBadge,
-} from "@/tiptap-editor/components/tiptap-ui/ai-ask-button"
-import { useText } from "@/tiptap-editor/components/tiptap-ui/text-button"
-import { useHeading } from "@/tiptap-editor/components/tiptap-ui/heading-button"
-import { useList } from "@/tiptap-editor/components/tiptap-ui/list-button"
-import { useBlockquote } from "@/tiptap-editor/components/tiptap-ui/blockquote-button"
-import { useCodeBlock } from "@/tiptap-editor/components/tiptap-ui/code-block-button"
+import { useImageDownload } from '@/tiptap-editor/components/tiptap-ui/image-download-button'
+import { useDuplicate, DuplicateShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
+import { useCopyToClipboard, CopyToClipboardShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
+import { useDeleteNode, DeleteNodeShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
+import { useCopyAnchorLink, CopyAnchorLinkShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
+import { useResetAllFormatting } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
+import { useAiAsk, AskAiShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
+import { useText } from '@/tiptap-editor/components/tiptap-ui/text-button'
+import { useHeading } from '@/tiptap-editor/components/tiptap-ui/heading-button'
+import { useList } from '@/tiptap-editor/components/tiptap-ui/list-button'
+import { useBlockquote } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
+import { useCodeBlock } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
 
 // ─── Tiptap UI — Components ───────────────────────────────────────────────────
-import { SlashCommandTriggerButton } from "@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button"
-import { ColorMenu } from "@/tiptap-editor/components/tiptap-ui/color-menu"
+import { SlashCommandTriggerButton } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
+import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
 
 // ─── Tiptap Node Extensions ───────────────────────────────────────────────────
-import { TableAlignMenu } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu"
-import { useTableFitToWidth } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button"
-import { useTableClearRowColumnContent } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button"
-import { useTocShowTitle } from "@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button"
+import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
+import { useTableFitToWidth } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button'
+import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
+import { useTocShowTitle } from '@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button'
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
-import {
-  getNodeDisplayName,
-  isTextSelectionValid,
-} from "@/tiptap-editor/lib/tiptap-collab-utils"
-import { SR_ONLY } from "@/tiptap-editor/lib/tiptap-utils"
+import { getNodeDisplayName, isTextSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
+import { SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-import { GripVerticalIcon } from "@/tiptap-editor/components/tiptap-icons/grip-vertical-icon"
-import { ChevronRightIcon } from "@/tiptap-editor/components/tiptap-icons/chevron-right-icon"
-import { Repeat2Icon } from "@/tiptap-editor/components/tiptap-icons/repeat-2-icon"
+import { GripVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/grip-vertical-icon'
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
-import "./drag-context-menu.scss"
+import './drag-context-menu.scss'
 
 const useNodeTransformActions = () => {
   const text = useText()
   const heading1 = useHeading({ level: 1 })
   const heading2 = useHeading({ level: 2 })
   const heading3 = useHeading({ level: 3 })
-  const bulletList = useList({ type: "bulletList" })
-  const orderedList = useList({ type: "orderedList" })
-  const taskList = useList({ type: "taskList" })
+  const bulletList = useList({ type: 'bulletList' })
+  const orderedList = useList({ type: 'orderedList' })
+  const taskList = useList({ type: 'taskList' })
   const blockquote = useBlockquote()
   const codeBlock = useCodeBlock()
 
   const mapper = (
-    action: ReturnType<
-      | typeof useText
-      | typeof useHeading
-      | typeof useList
-      | typeof useBlockquote
-      | typeof useCodeBlock
-    >
+    action: ReturnType<typeof useText | typeof useHeading | typeof useList | typeof useBlockquote | typeof useCodeBlock>
   ) => ({
     icon: action.Icon,
     label: action.label,
@@ -124,26 +93,13 @@ const useNodeTransformActions = () => {
     mapper(codeBlock),
   ]
 
-  const allDisabled = actions.every((a) => a.disabled)
+  const allDisabled = actions.every(a => a.disabled)
 
   return allDisabled ? null : actions
 }
 
-const BaseMenuItem: React.FC<MenuItemProps> = ({
-  icon: Icon,
-  label,
-  onClick,
-  disabled = false,
-  isActive = false,
-  shortcutBadge,
-}) => (
-  <MenuItem
-    render={
-      <Button variant="ghost" data-active-state={isActive ? "on" : "off"} />
-    }
-    onClick={onClick}
-    disabled={disabled}
-  >
+const BaseMenuItem: React.FC<MenuItemProps> = ({ icon: Icon, label, onClick, disabled = false, isActive = false, shortcutBadge }) => (
+  <MenuItem render={<Button variant="ghost" data-active-state={isActive ? 'on' : 'off'} />} onClick={onClick} disabled={disabled}>
     <Icon className="tiptap-button-icon" />
     <span className="tiptap-button-text">{label}</span>
     {shortcutBadge}
@@ -182,11 +138,10 @@ const SubMenuTrigger: React.FC<{
 
 const TransformActionGroup: React.FC = () => {
   const actions = useNodeTransformActions()
-  const { canReset, handleResetFormatting, label, Icon } =
-    useResetAllFormatting({
-      hideWhenUnavailable: true,
-      preserveMarks: ["inlineThread"],
-    })
+  const { canReset, handleResetFormatting, label, Icon } = useResetAllFormatting({
+    hideWhenUnavailable: true,
+    preserveMarks: ['inlineThread'],
+  })
 
   if (!actions && !canReset) return null
 
@@ -196,21 +151,14 @@ const TransformActionGroup: React.FC = () => {
         <SubMenuTrigger icon={Repeat2Icon} label="Turn Into">
           <MenuGroup>
             <MenuGroupLabel>Turn into</MenuGroupLabel>
-            {actions.map((action) => (
+            {actions.map(action => (
               <BaseMenuItem key={action.label} {...action} />
             ))}
           </MenuGroup>
         </SubMenuTrigger>
       )}
 
-      {canReset && (
-        <BaseMenuItem
-          icon={Icon}
-          label={label}
-          disabled={!canReset}
-          onClick={handleResetFormatting}
-        />
-      )}
+      {canReset && <BaseMenuItem icon={Icon} label={label} disabled={!canReset} onClick={handleResetFormatting} />}
     </>
   )
 }
@@ -223,19 +171,12 @@ const TableFitToWidth: React.FC = () => {
 
   return (
     <>
-      {canFitToWidth && (
-        <BaseMenuItem
-          icon={Icon}
-          label={label}
-          disabled={!canFitToWidth}
-          onClick={handleFitToWidth}
-        />
-      )}
+      {canFitToWidth && <BaseMenuItem icon={Icon} label={label} disabled={!canFitToWidth} onClick={handleFitToWidth} />}
 
       {clearAllContents.canClearRowColumnContent && (
         <BaseMenuItem
           icon={clearAllContents.Icon}
-          label={"Clear all contents"}
+          label={'Clear all contents'}
           disabled={!clearAllContents.canClearRowColumnContent}
           onClick={clearAllContents.handleClear}
         />
@@ -251,14 +192,7 @@ const TocShowTitle: React.FC = () => {
 
   if (!canToggle) return null
 
-  return (
-    <BaseMenuItem
-      icon={Icon}
-      label={label}
-      disabled={!canToggle}
-      onClick={handleToggle}
-    />
-  )
+  return <BaseMenuItem icon={Icon} label={label} disabled={!canToggle} onClick={handleToggle} />
 }
 
 const ImageActionGroup: React.FC = () => {
@@ -268,35 +202,13 @@ const ImageActionGroup: React.FC = () => {
 
   if (!canDownload) return null
 
-  return (
-    <BaseMenuItem
-      icon={Icon}
-      label={label}
-      disabled={!canDownload}
-      onClick={handleDownload}
-    />
-  )
+  return <BaseMenuItem icon={Icon} label={label} disabled={!canDownload} onClick={handleDownload} />
 }
 
 const CoreActionGroup: React.FC = () => {
-  const {
-    handleDuplicate,
-    canDuplicate,
-    label,
-    Icon: DuplicateIcon,
-  } = useDuplicate()
-  const {
-    handleCopyToClipboard,
-    canCopyToClipboard,
-    label: copyLabel,
-    Icon: CopyIcon,
-  } = useCopyToClipboard()
-  const {
-    handleCopyAnchorLink,
-    canCopyAnchorLink,
-    label: copyAnchorLinkLabel,
-    Icon: CopyAnchorLinkIcon,
-  } = useCopyAnchorLink()
+  const { handleDuplicate, canDuplicate, label, Icon: DuplicateIcon } = useDuplicate()
+  const { handleCopyToClipboard, canCopyToClipboard, label: copyLabel, Icon: CopyIcon } = useCopyToClipboard()
+  const { handleCopyAnchorLink, canCopyAnchorLink, label: copyAnchorLinkLabel, Icon: CopyAnchorLinkIcon } = useCopyAnchorLink()
 
   return (
     <>
@@ -339,14 +251,7 @@ const AIActionGroup: React.FC = () => {
   return (
     <>
       <MenuGroup>
-        {canAiAsk && (
-          <BaseMenuItem
-            icon={AiAskIcon}
-            label="Ask AI"
-            onClick={handleAiAsk}
-            shortcutBadge={<AskAiShortcutBadge />}
-          />
-        )}
+        {canAiAsk && <BaseMenuItem icon={AiAskIcon} label="Ask AI" onClick={handleAiAsk} shortcutBadge={<AskAiShortcutBadge />} />}
       </MenuGroup>
 
       <Separator orientation="horizontal" />
@@ -378,7 +283,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
 }) => {
   const { editor } = useTiptapEditor(providedEditor)
   const { aiGenerationActive, isDragging } = useUiEditorState(editor)
-  const isMobile = useIsBreakpoint("max", mobileBreakpoint)
+  const isMobile = useIsBreakpoint('max', mobileBreakpoint)
   const [open, setOpen] = useState(false)
   const [node, setNode] = useState<TiptapNode | null>(null)
   const [nodePos, setNodePos] = useState<number>(-1)
@@ -391,7 +296,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
   useEffect(() => {
     if (!editor) return
     editor.commands.setLockDragHandle(open)
-    editor.commands.setMeta("lockDragHandle", open)
+    editor.commands.setMeta('lockDragHandle', open)
   }, [editor, open])
 
   const mainAxisOffset = 16
@@ -399,7 +304,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
   const dynamicPositions = useMemo(() => {
     return {
       middleware: [
-        offset((props) => {
+        offset(props => {
           const { rects } = props
           const nodeHeight = rects.reference.height
           const dragHandleHeight = rects.floating.height
@@ -418,7 +323,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
 
   const handleOnMenuClose = useCallback(() => {
     if (editor) {
-      editor.commands.setMeta("hideDragHandle", true)
+      editor.commands.setMeta('hideDragHandle', true)
     }
   }, [editor])
 
@@ -445,7 +350,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
     <div
       style={
         {
-          "--drag-handle-main-axis-offset": `${mainAxisOffset}px`,
+          '--drag-handle-main-axis-offset': `${mainAxisOffset}px`,
         } as React.CSSProperties
       }
     >
@@ -459,21 +364,13 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
       >
         <div
           style={{
-            display: "flex",
-            flexDirection: "row",
-            ...(aiGenerationActive || isMobile || isTextSelectionValid(editor)
-              ? { opacity: 0, pointerEvents: "none" }
-              : {}),
+            display: 'flex',
+            flexDirection: 'row',
+            ...(aiGenerationActive || isMobile || isTextSelectionValid(editor) ? { opacity: 0, pointerEvents: 'none' } : {}),
             ...(isDragging ? { opacity: 0 } : {}),
           }}
         >
-          {withSlashCommandTrigger && (
-            <SlashCommandTriggerButton
-              node={node}
-              nodePos={nodePos}
-              data-weight="small"
-            />
-          )}
+          {withSlashCommandTrigger && <SlashCommandTriggerButton node={node} nodePos={nodePos} data-weight="small" />}
 
           <Menu
             open={open}
@@ -493,12 +390,10 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
                     }
                     data-weight="small"
                     style={{
-                      cursor: "grab",
-                      ...(open ? { pointerEvents: "none" } : {}),
+                      cursor: 'grab',
+                      ...(open ? { pointerEvents: 'none' } : {}),
                     }}
-                    onMouseDown={() =>
-                      selectNodeAndHideFloating(editor, nodePos)
-                    }
+                    onMouseDown={() => selectNodeAndHideFloating(editor, nodePos)}
                   >
                     <GripVerticalIcon className="tiptap-button-icon" />
                   </Button>
@@ -506,14 +401,9 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
               />
             }
           >
-            <MenuContent
-              onClose={handleOnMenuClose}
-              autoFocusOnHide={false}
-              preventBodyScroll={true}
-              portal
-            >
+            <MenuContent onClose={handleOnMenuClose} autoFocusOnHide={false} preventBodyScroll={true} portal>
               <Combobox style={SR_ONLY} />
-              <ComboboxList style={{ minWidth: "15rem" }}>
+              <ComboboxList style={{ minWidth: '15rem' }}>
                 <MenuGroupLabel>{nodeName}</MenuGroupLabel>
 
                 <MenuGroup>

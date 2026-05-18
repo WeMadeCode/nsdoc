@@ -1,31 +1,23 @@
-"use client"
+'use client'
 
-import { useEffect, useMemo, useRef } from "react"
-import type { Editor, Range } from "@tiptap/react"
+import { useEffect, useMemo, useRef } from 'react'
+import type { Editor, Range } from '@tiptap/react'
 
 // --- Lib ---
-import { getElementOverflowPosition } from "@/tiptap-editor/lib/tiptap-collab-utils"
+import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 // --- Tiptap UI ---
 import type {
   SuggestionItem,
   SuggestionMenuProps,
   SuggestionMenuRenderProps,
-} from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu"
-import { SuggestionMenu } from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu"
+} from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { SuggestionMenu } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
 
 // --- UI Primitives ---
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/avatar"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import {
-  Card,
-  CardBody,
-  CardItemGroup,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/card"
+import { Avatar, AvatarImage, AvatarFallback } from '@/tiptap-editor/components/tiptap-ui-primitive/avatar'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
 
 interface User {
   id: number
@@ -34,7 +26,7 @@ interface User {
   avatarUrl: string
 }
 
-type MentionDropdownMenuProps = Omit<SuggestionMenuProps, "items" | "children">
+type MentionDropdownMenuProps = Omit<SuggestionMenuProps, 'items' | 'children'>
 
 interface MentionItemProps {
   item: SuggestionItem<User>
@@ -44,26 +36,26 @@ interface MentionItemProps {
 
 const fetchUsers = async (query: string): Promise<User[]> => {
   const employeeData = [
-    ["Emily Johnson", "Marketing Manager"],
-    ["Michael Thompson", "Sales Manager"],
-    ["Sophia Lee", "Product Designer"],
-    ["William Davis", "IT Project Manager"],
-    ["Olivia Wilson", "HR Specialist"],
-    ["Daniel Taylor", "Financial Controller"],
-    ["Isabella Anderson", "Graphic Designer"],
-    ["Jacob Martinez", "Sales Representative"],
-    ["Ava Hernandez", "Marketing Assistant"],
-    ["Alexander Diaz", "IT Support"],
-    ["Emma Ramirez", "HR Specialist"],
-    ["Ethan Flores", "Product Manager"],
-    ["Mia Morales", "Graphic Designer"],
-    ["Noah Reyes", "Sales Manager"],
-    ["Isabella Castillo", "Marketing Manager"],
-    ["Liam Gutierrez", "IT Project Manager"],
-    ["Avery Jimenez", "HR Specialist"],
-    ["Lucas Vargas", "Product Designer"],
-    ["Chloe Rojas", "Graphic Designer"],
-    ["Kai Zhang", "Sales Representative"],
+    ['Emily Johnson', 'Marketing Manager'],
+    ['Michael Thompson', 'Sales Manager'],
+    ['Sophia Lee', 'Product Designer'],
+    ['William Davis', 'IT Project Manager'],
+    ['Olivia Wilson', 'HR Specialist'],
+    ['Daniel Taylor', 'Financial Controller'],
+    ['Isabella Anderson', 'Graphic Designer'],
+    ['Jacob Martinez', 'Sales Representative'],
+    ['Ava Hernandez', 'Marketing Assistant'],
+    ['Alexander Diaz', 'IT Support'],
+    ['Emma Ramirez', 'HR Specialist'],
+    ['Ethan Flores', 'Product Manager'],
+    ['Mia Morales', 'Graphic Designer'],
+    ['Noah Reyes', 'Sales Manager'],
+    ['Isabella Castillo', 'Marketing Manager'],
+    ['Liam Gutierrez', 'IT Project Manager'],
+    ['Avery Jimenez', 'HR Specialist'],
+    ['Lucas Vargas', 'Product Designer'],
+    ['Chloe Rojas', 'Graphic Designer'],
+    ['Kai Zhang', 'Sales Representative'],
   ] as const
 
   const userData = {
@@ -83,18 +75,12 @@ const fetchUsers = async (query: string): Promise<User[]> => {
   if (!query) return userData.users
 
   return userData.users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(query.toLowerCase()) ||
-      user.position.toLowerCase().includes(query.toLowerCase())
+    user => user.name.toLowerCase().includes(query.toLowerCase()) || user.position.toLowerCase().includes(query.toLowerCase())
   )
 }
 
 export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
-  const handleItemSelect = (props: {
-    editor: Editor
-    range: Range
-    context?: User
-  }) => {
+  const handleItemSelect = (props: { editor: Editor; range: Range; context?: User }) => {
     if (!props.editor || !props.range || !props.context) return
 
     props.editor
@@ -102,15 +88,15 @@ export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
       .focus()
       .insertContentAt(props.range, [
         {
-          type: "mention",
+          type: 'mention',
           attrs: {
             id: props.context.id.toString(),
             label: props.context.name,
           },
         },
         {
-          type: "text",
-          text: " ",
+          type: 'text',
+          text: ' ',
         },
       ])
       .run()
@@ -119,7 +105,7 @@ export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
   const getSuggestionItems = async (props: { query: string }) => {
     const users = await fetchUsers(props.query)
 
-    return users.map((user) => ({
+    return users.map(user => ({
       title: user.name,
       subtext: user.name,
       context: user,
@@ -136,7 +122,7 @@ export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
       items={getSuggestionItems}
       {...props}
     >
-      {(props) => <MentionList {...props} />}
+      {props => <MentionList {...props} />}
     </SuggestionMenu>
   )
 }
@@ -145,27 +131,19 @@ const MentionItem = ({ item, isSelected, onSelect }: MentionItemProps) => {
   const itemRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    const menuElement = document.querySelector(
-      '[data-selector="tiptap-mention-dropdown-menu"]'
-    ) as HTMLElement
+    const menuElement = document.querySelector('[data-selector="tiptap-mention-dropdown-menu"]') as HTMLElement
     if (!itemRef.current || !isSelected || !menuElement) return
 
     const overflow = getElementOverflowPosition(itemRef.current, menuElement)
-    if (overflow === "top") {
+    if (overflow === 'top') {
       itemRef.current.scrollIntoView(true)
-    } else if (overflow === "bottom") {
+    } else if (overflow === 'bottom') {
       itemRef.current.scrollIntoView(false)
     }
   }, [isSelected])
 
   return (
-    <Button
-      ref={itemRef}
-      variant="ghost"
-      data-active-state={isSelected ? "on" : "off"}
-      onClick={onSelect}
-      data-user-id={item.context?.id}
-    >
+    <Button ref={itemRef} variant="ghost" data-active-state={isSelected ? 'on' : 'off'} onClick={onSelect} data-user-id={item.context?.id}>
       <Avatar>
         <AvatarImage src={item.context?.avatarUrl} alt={item.title} />
         <AvatarFallback>{item.title[0]?.toUpperCase()}</AvatarFallback>
@@ -176,11 +154,7 @@ const MentionItem = ({ item, isSelected, onSelect }: MentionItemProps) => {
   )
 }
 
-const MentionList = ({
-  items,
-  selectedIndex,
-  onSelect,
-}: SuggestionMenuRenderProps<User>) => {
+const MentionList = ({ items, selectedIndex, onSelect }: SuggestionMenuRenderProps<User>) => {
   const renderedItems = useMemo(() => {
     const rendered: React.ReactElement[] = []
 
@@ -205,7 +179,7 @@ const MentionList = ({
   return (
     <Card
       style={{
-        maxHeight: "var(--suggestion-menu-max-height)",
+        maxHeight: 'var(--suggestion-menu-max-height)',
       }}
     >
       <CardBody>

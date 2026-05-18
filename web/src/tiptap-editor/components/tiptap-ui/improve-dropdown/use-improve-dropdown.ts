@@ -1,30 +1,23 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import type { Editor } from "@tiptap/react"
-import type { Language, TextOptions, Tone } from "@tiptap-pro/extension-ai"
-import { NodeSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Editor } from '@tiptap/react'
+import type { Language, TextOptions, Tone } from '@tiptap-pro/extension-ai'
+import { NodeSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Icons ---
-import { AiSparklesIcon } from "@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon"
+import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
 
 // --- Lib ---
-import { isNodeTypeSelected } from "@/tiptap-editor/lib/tiptap-utils"
+import { isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 /**
  * AI commands that can be executed on selected text
  */
-export type AICommand =
-  | "fixSpellingAndGrammar"
-  | "extend"
-  | "shorten"
-  | "simplify"
-  | "emojify"
-  | "complete"
-  | "summarize"
+export type AICommand = 'fixSpellingAndGrammar' | 'extend' | 'shorten' | 'simplify' | 'emojify' | 'complete' | 'summarize'
 
 /**
  * Configuration for the improve dropdown functionality
@@ -46,16 +39,7 @@ export interface UseImproveDropdownConfig {
   hideWhenUnavailable?: boolean
 }
 
-const AI_EXCLUDED_BLOCKS = [
-  "image",
-  "imageUpload",
-  "video",
-  "audio",
-  "table",
-  "codeBlock",
-  "horizontalRule",
-  "hardBreak",
-]
+const AI_EXCLUDED_BLOCKS = ['image', 'imageUpload', 'video', 'audio', 'table', 'codeBlock', 'horizontalRule', 'hardBreak']
 
 /**
  * Checks if AI commands can be used with the current selection
@@ -86,10 +70,7 @@ export function canUseAi(editor: Editor | null): boolean {
 /**
  * Determines if the improve dropdown should be visible
  */
-export function shouldShowImproveDropdown(params: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowImproveDropdown(params: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = params
 
   if (!editor) return false
@@ -102,9 +83,9 @@ export function shouldShowImproveDropdown(params: {
 
   // The third argument 'true' checks whether the current selection is inside an image caption, and prevents showing AI features (improve dropdown) there
   // If the selection is inside an image caption, we can't show the improve dropdown (AI features)
-  if (isNodeTypeSelected(editor, ["image"], true)) return false
+  if (isNodeTypeSelected(editor, ['image'], true)) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canUseAi(editor)
   }
 
@@ -154,11 +135,7 @@ export function shouldShowImproveDropdown(params: {
  * ```
  */
 export function useImproveDropdown(config?: UseImproveDropdownConfig) {
-  const {
-    editor: providedEditor,
-    textOptions,
-    hideWhenUnavailable = false,
-  } = config || {}
+  const { editor: providedEditor, textOptions, hideWhenUnavailable = false } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isOpen, setIsOpen] = useState(false)
@@ -168,7 +145,7 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
   const defaultOptions = useMemo(
     () => ({
       stream: true,
-      format: "rich-text" as const,
+      format: 'rich-text' as const,
       ...textOptions,
     }),
     [textOptions]
@@ -191,25 +168,25 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
 
       setTimeout(() => {
         switch (command) {
-          case "fixSpellingAndGrammar":
+          case 'fixSpellingAndGrammar':
             editor.commands.aiFixSpellingAndGrammar(defaultOptions)
             break
-          case "extend":
+          case 'extend':
             editor.commands.aiExtend(defaultOptions)
             break
-          case "shorten":
+          case 'shorten':
             editor.commands.aiShorten(defaultOptions)
             break
-          case "simplify":
+          case 'simplify':
             editor.commands.aiSimplify(defaultOptions)
             break
-          case "emojify":
+          case 'emojify':
             editor.commands.aiEmojify(defaultOptions)
             break
-          case "complete":
+          case 'complete':
             editor.commands.aiComplete(defaultOptions)
             break
-          case "summarize":
+          case 'summarize':
             editor.commands.aiSummarize(defaultOptions)
             break
         }
@@ -255,10 +232,10 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
     }
 
     handleSelectionUpdate()
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -271,7 +248,7 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
     executeAICommand,
     adjustTone,
     translate,
-    label: "Improve",
+    label: 'Improve',
     Icon: AiSparklesIcon,
   }
 }

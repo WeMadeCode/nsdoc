@@ -1,47 +1,34 @@
-"use client"
+'use client'
 
-import React, {
-  createContext,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react"
-import { useMergeRefs } from "@floating-ui/react"
-import "./sidebar.scss"
-import { Button } from "../button"
-import { cn, clamp } from "@/tiptap-editor/lib/tiptap-utils"
+import React, { createContext, forwardRef, useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
+import { useMergeRefs } from '@floating-ui/react'
+import './sidebar.scss'
+import { Button } from '../button'
+import { cn, clamp } from '@/tiptap-editor/lib/tiptap-utils'
 
-const SIDEBAR_COOKIE_NAME = "sidebar:state"
-const SIDEBAR_WIDTH_COOKIE_NAME = "sidebar:width"
+const SIDEBAR_COOKIE_NAME = 'sidebar:state'
+const SIDEBAR_WIDTH_COOKIE_NAME = 'sidebar:width'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
-const SIDEBAR_KEYBOARD_SHORTCUT = "b"
+const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
 function getCookie(name: string): string | undefined {
-  if (typeof document === "undefined") return undefined
+  if (typeof document === 'undefined') return undefined
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop()?.split(";").shift()
+  if (parts.length === 2) return parts.pop()?.split(';').shift()
   return undefined
 }
 
-function setCookie(
-  name: string,
-  value: string,
-  maxAge = SIDEBAR_COOKIE_MAX_AGE
-) {
-  if (typeof document === "undefined") return
+function setCookie(name: string, value: string, maxAge = SIDEBAR_COOKIE_MAX_AGE) {
+  if (typeof document === 'undefined') return
   document.cookie = `${name}=${value}; max-age=${maxAge}; path=/; SameSite=Lax`
 }
 
-export type SidebarMode = "push" | "overlay"
-export type SidebarSide = "left" | "right"
-export type SidebarStyle = "plain" | "elevated"
-export type SidebarAppearance = "default" | "subdued" | "emphasized"
-export type SidebarBreakpoint = "sm" | "md" | "lg" | "xl" | "2xl"
+export type SidebarMode = 'push' | 'overlay'
+export type SidebarSide = 'left' | 'right'
+export type SidebarStyle = 'plain' | 'elevated'
+export type SidebarAppearance = 'default' | 'subdued' | 'emphasized'
+export type SidebarBreakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 
 interface SidebarContextValue {
   id: string
@@ -72,7 +59,7 @@ const SidebarContext = createContext<SidebarContextValue | undefined>(undefined)
 export function useSidebar(): SidebarContextValue {
   const context = useContext(SidebarContext)
   if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider")
+    throw new Error('useSidebar must be used within a SidebarProvider')
   }
   return context
 }
@@ -95,15 +82,7 @@ interface UseResizableOptions {
   onResizeEnd?: (width: number) => void
 }
 
-function useResizable({
-  side,
-  minWidth,
-  maxWidth,
-  initialWidth,
-  enabled,
-  onResize,
-  onResizeEnd,
-}: UseResizableOptions) {
+function useResizable({ side, minWidth, maxWidth, initialWidth, enabled, onResize, onResizeEnd }: UseResizableOptions) {
   const elementRef = useRef<HTMLDivElement>(null)
   const [isResizing, setIsResizing] = useState(false)
   const [width, setWidth] = useState(initialWidth)
@@ -136,8 +115,8 @@ function useResizable({
         elementRef.current.style.width = `${state.currentWidth}px`
       }
 
-      document.body.style.cursor = "ew-resize"
-      document.body.style.userSelect = "none"
+      document.body.style.cursor = 'ew-resize'
+      document.body.style.userSelect = 'none'
 
       setIsResizing(true)
     },
@@ -157,8 +136,7 @@ function useResizable({
       }
 
       state.rafId = requestAnimationFrame(() => {
-        const deltaX =
-          side === "left" ? e.clientX - state.startX : state.startX - e.clientX
+        const deltaX = side === 'left' ? e.clientX - state.startX : state.startX - e.clientX
 
         const newWidth = clamp(state.startWidth + deltaX, minWidth, maxWidth)
         state.currentWidth = newWidth
@@ -175,8 +153,8 @@ function useResizable({
       const finalWidth = state.currentWidth
 
       // Cleanup
-      document.body.style.cursor = ""
-      document.body.style.userSelect = ""
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
 
       if (state.rafId !== null) {
         cancelAnimationFrame(state.rafId)
@@ -188,14 +166,14 @@ function useResizable({
       onResizeEnd?.(finalWidth)
     }
 
-    document.addEventListener("mousemove", handleMouseMove)
-    document.addEventListener("mouseup", handleMouseUp)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove)
-      document.removeEventListener("mouseup", handleMouseUp)
-      document.body.style.cursor = ""
-      document.body.style.userSelect = ""
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
 
       if (state.rafId !== null) {
         cancelAnimationFrame(state.rafId)
@@ -212,7 +190,7 @@ function useResizable({
   }
 }
 
-export interface SidebarProviderProps extends React.ComponentProps<"div"> {
+export interface SidebarProviderProps extends React.ComponentProps<'div'> {
   /** Sidebar mode: "push" moves content, "overlay" floats above. @default "push" */
   mode?: SidebarMode
   /** Which side the sidebar appears on. @default "left" */
@@ -246,10 +224,10 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
   (
     {
       id: idProp,
-      mode = "push",
-      side = "left",
-      variant = "plain",
-      appearance = "default",
+      mode = 'push',
+      side = 'left',
+      variant = 'plain',
+      appearance = 'default',
       resizable = false,
       defaultOpen = true,
       open: controlledOpen,
@@ -270,7 +248,7 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
     const [open, setOpenState] = useState(() => {
       if (controlledOpen !== undefined) return controlledOpen
       const cookieValue = getCookie(SIDEBAR_COOKIE_NAME)
-      return cookieValue ? cookieValue === "true" : defaultOpen
+      return cookieValue ? cookieValue === 'true' : defaultOpen
     })
 
     const [fullsize, setFullsize] = useState(defaultFullsize)
@@ -324,8 +302,8 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
         }
       }
 
-      document.addEventListener("keydown", handleKeyDown)
-      return () => document.removeEventListener("keydown", handleKeyDown)
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
     }, [toggleSidebar])
 
     const contextValue: SidebarContextValue = {
@@ -358,9 +336,9 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
   }
 )
 
-SidebarProvider.displayName = "SidebarProvider"
+SidebarProvider.displayName = 'SidebarProvider'
 
-export interface SidebarProps extends React.ComponentProps<"div"> {
+export interface SidebarProps extends React.ComponentProps<'div'> {
   /** Unique identifier. Auto-generated if not provided. */
   id?: string
   /** Sidebar mode. @default "push" */
@@ -401,7 +379,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
       variant: variantProp,
       appearance: appearanceProp,
       resizable: resizableProp,
-      breakpoint = "md",
+      breakpoint = 'md',
       open: openProp,
       fullsize: fullsizeProp,
       onSidebarResize,
@@ -419,10 +397,10 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
     const generatedId = useId()
 
     const id = context?.id ?? idProp ?? `sidebar-${generatedId}`
-    const mode = context?.mode ?? modeProp ?? "push"
-    const side = context?.side ?? sideProp ?? "left"
-    const variant = context?.variant ?? variantProp ?? "plain"
-    const appearance = context?.appearance ?? appearanceProp ?? "default"
+    const mode = context?.mode ?? modeProp ?? 'push'
+    const side = context?.side ?? sideProp ?? 'left'
+    const variant = context?.variant ?? variantProp ?? 'plain'
+    const appearance = context?.appearance ?? appearanceProp ?? 'default'
     const resizable = context?.resizable ?? resizableProp ?? false
     const minWidth = context?.minWidth ?? minWidthProp
     const maxWidth = context?.maxWidth ?? maxWidthProp
@@ -477,7 +455,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
       <div
         ref={mergedRef}
         id={id}
-        className={cn("tiptap-sidebar", className)}
+        className={cn('tiptap-sidebar', className)}
         data-mode={mode}
         data-side={side}
         data-style={variant}
@@ -507,87 +485,53 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
   }
 )
 
-Sidebar.displayName = "Sidebar"
+Sidebar.displayName = 'Sidebar'
 
-export const SidebarHeader = forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("tiptap-sidebar-header", className)}
-    {...props}
-  />
+export const SidebarHeader = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('tiptap-sidebar-header', className)} {...props} />
 ))
-SidebarHeader.displayName = "SidebarHeader"
+SidebarHeader.displayName = 'SidebarHeader'
 
-export const SidebarContent = forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("tiptap-sidebar-content", className)}
-    {...props}
-  />
+export const SidebarContent = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('tiptap-sidebar-content', className)} {...props} />
 ))
-SidebarContent.displayName = "SidebarContent"
+SidebarContent.displayName = 'SidebarContent'
 
-export const SidebarFooter = forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("tiptap-sidebar-footer", className)}
-    {...props}
-  />
+export const SidebarFooter = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn('tiptap-sidebar-footer', className)} {...props} />
 ))
-SidebarFooter.displayName = "SidebarFooter"
-export interface SidebarTriggerProps extends React.ComponentProps<
-  typeof Button
-> {
+SidebarFooter.displayName = 'SidebarFooter'
+export interface SidebarTriggerProps extends React.ComponentProps<typeof Button> {
   onToggle?: () => void
 }
 
-export const SidebarTrigger = forwardRef<
-  HTMLButtonElement,
-  SidebarTriggerProps
->(({ className, children, onClick, onToggle, ...props }, ref) => {
-  const context = useSidebar()
+export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>(
+  ({ className, children, onClick, onToggle, ...props }, ref) => {
+    const context = useSidebar()
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    onClick?.(e)
-    onToggle?.()
-    context.toggleSidebar()
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      onClick?.(e)
+      onToggle?.()
+      context.toggleSidebar()
+    }
+
+    return (
+      <Button ref={ref} className={className} onClick={handleClick} aria-expanded={context.open} aria-controls={context.id} {...props}>
+        {children}
+      </Button>
+    )
   }
+)
 
-  return (
-    <Button
-      ref={ref}
-      className={className}
-      onClick={handleClick}
-      aria-expanded={context.open}
-      aria-controls={context.id}
-      {...props}
-    >
-      {children}
-    </Button>
-  )
-})
+SidebarTrigger.displayName = 'SidebarTrigger'
 
-SidebarTrigger.displayName = "SidebarTrigger"
-
-export const SidebarInset = forwardRef<
-  HTMLElement,
-  React.ComponentProps<"main">
->(({ className, ...props }, ref) => (
-  <main ref={ref} className={cn("tiptap-main-content", className)} {...props} />
+export const SidebarInset = forwardRef<HTMLElement, React.ComponentProps<'main'>>(({ className, ...props }, ref) => (
+  <main ref={ref} className={cn('tiptap-main-content', className)} {...props} />
 ))
 
-SidebarInset.displayName = "SidebarInset"
+SidebarInset.displayName = 'SidebarInset'
 
-export interface SidebarBackdropProps extends React.ComponentProps<"div"> {
+export interface SidebarBackdropProps extends React.ComponentProps<'div'> {
   /** Whether the backdrop is visible. */
   visible?: boolean
   /** Called when backdrop is clicked. */
@@ -604,7 +548,7 @@ export const SidebarBackdrop = forwardRef<HTMLDivElement, SidebarBackdropProps>(
     return (
       <div
         ref={ref}
-        className={cn("tiptap-sidebar-backdrop", className)}
+        className={cn('tiptap-sidebar-backdrop', className)}
         data-visible={visible}
         onClick={handleClick}
         aria-hidden="true"
@@ -614,4 +558,4 @@ export const SidebarBackdrop = forwardRef<HTMLDivElement, SidebarBackdropProps>(
   }
 )
 
-SidebarBackdrop.displayName = "SidebarBackdrop"
+SidebarBackdrop.displayName = 'SidebarBackdrop'

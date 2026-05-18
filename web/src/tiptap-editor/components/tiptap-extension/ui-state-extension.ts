@@ -1,4 +1,4 @@
-import { Extension } from "@tiptap/core"
+import { Extension } from '@tiptap/core'
 
 export interface UiState {
   aiGenerationIsSelection: boolean
@@ -10,7 +10,7 @@ export interface UiState {
   isDragging: boolean
 }
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     uiState: {
       aiGenerationSetIsSelection: (value: boolean) => ReturnType
@@ -45,7 +45,7 @@ export const defaultUiState: UiState = {
 } as const
 
 export const UiState = Extension.create<UiState>({
-  name: "uiState",
+  name: 'uiState',
 
   addStorage() {
     return {
@@ -54,11 +54,10 @@ export const UiState = Extension.create<UiState>({
   },
 
   addCommands() {
-    const createBooleanSetter =
-      (key: keyof UiState) => (value: boolean) => () => {
-        this.storage[key] = value
-        return true
-      }
+    const createBooleanSetter = (key: keyof UiState) => (value: boolean) => () => {
+      this.storage[key] = value
+      return true
+    }
 
     const createToggle = (key: keyof UiState, value: boolean) => () => () => {
       this.storage[key] = value
@@ -67,21 +66,19 @@ export const UiState = Extension.create<UiState>({
 
     return {
       // AI Generation commands
-      aiGenerationSetIsSelection: createBooleanSetter(
-        "aiGenerationIsSelection"
-      ),
-      aiGenerationSetIsLoading: createBooleanSetter("aiGenerationIsLoading"),
-      aiGenerationHasMessage: createBooleanSetter("aiGenerationHasMessage"),
-      aiGenerationShow: createToggle("aiGenerationActive", true),
-      aiGenerationHide: createToggle("aiGenerationActive", false),
+      aiGenerationSetIsSelection: createBooleanSetter('aiGenerationIsSelection'),
+      aiGenerationSetIsLoading: createBooleanSetter('aiGenerationIsLoading'),
+      aiGenerationHasMessage: createBooleanSetter('aiGenerationHasMessage'),
+      aiGenerationShow: createToggle('aiGenerationActive', true),
+      aiGenerationHide: createToggle('aiGenerationActive', false),
 
       // Comment input commands
-      commentInputShow: createToggle("commentInputVisible", true),
-      commentInputHide: createToggle("commentInputVisible", false),
+      commentInputShow: createToggle('commentInputVisible', true),
+      commentInputHide: createToggle('commentInputVisible', false),
 
       // Drag handle commands
-      setLockDragHandle: createBooleanSetter("lockDragHandle"),
-      setIsDragging: createBooleanSetter("isDragging"),
+      setLockDragHandle: createBooleanSetter('lockDragHandle'),
+      setIsDragging: createBooleanSetter('isDragging'),
 
       // Reset command
       resetUiState: () => () => {

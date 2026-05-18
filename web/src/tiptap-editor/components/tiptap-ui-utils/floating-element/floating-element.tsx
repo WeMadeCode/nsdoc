@@ -1,39 +1,20 @@
-"use client"
+'use client'
 
-import type { HTMLAttributes } from "react"
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import { type Editor } from "@tiptap/react"
-import {
-  flip,
-  offset,
-  shift,
-  useMergeRefs,
-  type UseFloatingOptions,
-} from "@floating-ui/react"
-import { Selection } from "@tiptap/pm/state"
+import type { HTMLAttributes } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import { flip, offset, shift, useMergeRefs, type UseFloatingOptions } from '@floating-ui/react'
+import { Selection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useFloatingElement } from "@/tiptap-editor/hooks/use-floating-element"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useFloatingElement } from '@/tiptap-editor/hooks/use-floating-element'
 
 // --- Lib ---
-import {
-  getSelectionBoundingRect,
-  isSelectionValid,
-} from "@/tiptap-editor/lib/tiptap-collab-utils"
+import { getSelectionBoundingRect, isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
-import {
-  isElementWithinEditor,
-  isElementWithinExternalPortal,
-} from "@/tiptap-editor/components/tiptap-ui-utils/floating-element"
-import { isValidPosition } from "@/tiptap-editor/lib/tiptap-utils"
+import { isElementWithinEditor, isElementWithinExternalPortal } from '@/tiptap-editor/components/tiptap-ui-utils/floating-element'
+import { isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface FloatingElementProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -103,9 +84,7 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     },
     forwardedRef
   ) => {
-    const [open, setOpen] = useState<boolean>(
-      shouldShow !== undefined ? shouldShow : false
-    )
+    const [open, setOpen] = useState<boolean>(shouldShow !== undefined ? shouldShow : false)
 
     const floatingElementRef = useRef<HTMLDivElement | null>(null)
     const preventHideRef = useRef(false)
@@ -134,9 +113,7 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         // When the floating element closes, reset the selection.
         // This lets the user place the cursor again and ensures the drag handle reappears,
         // as it's intentionally hidden during valid text selections.
-        const tr = editor.state.tr.setSelection(
-          Selection.near(editor.state.doc.resolve(0))
-        )
+        const tr = editor.state.tr.setSelection(Selection.near(editor.state.doc.resolve(0)))
         editor.view.dispatch(tr)
       }
 
@@ -155,30 +132,25 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
       }
     }, [referenceElement])
 
-    const { isMounted, ref, style, getFloatingProps } = useFloatingElement(
-      open,
-      reference,
-      zIndex,
-      {
-        placement: "top",
-        middleware: [shift(), flip(), offset(4)],
-        onOpenChange: handleFloatingOpenChange,
-        dismissOptions: {
-          enabled: true,
-          escapeKey: true,
-          outsidePress(event) {
-            const relatedTarget = event.target as Node
-            if (!relatedTarget) return false
+    const { isMounted, ref, style, getFloatingProps } = useFloatingElement(open, reference, zIndex, {
+      placement: 'top',
+      middleware: [shift(), flip(), offset(4)],
+      onOpenChange: handleFloatingOpenChange,
+      dismissOptions: {
+        enabled: true,
+        escapeKey: true,
+        outsidePress(event) {
+          const relatedTarget = event.target as Node
+          if (!relatedTarget) return false
 
-            // Don't close if clicking inside a portaled UI
-            if (isElementWithinExternalPortal(relatedTarget)) return false
+          // Don't close if clicking inside a portaled UI
+          if (isElementWithinExternalPortal(relatedTarget)) return false
 
-            return !isElementWithinEditor(editor, relatedTarget)
-          },
+          return !isElementWithinEditor(editor, relatedTarget)
         },
-        ...floatingOptions,
-      }
-    )
+      },
+      ...floatingOptions,
+    })
 
     const updateSelectionState = useCallback(() => {
       if (!editor) return
@@ -192,16 +164,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
 
       const shouldShowResult = isSelectionValid(editor)
 
-      if (
-        newRect &&
-        !preventShowRef.current &&
-        (shouldShowResult || preventHideRef.current)
-      ) {
+      if (newRect && !preventShowRef.current && (shouldShowResult || preventHideRef.current)) {
         handleOpenChange(true)
-      } else if (
-        !preventHideRef.current &&
-        (!shouldShowResult || preventShowRef.current || !editor.isEditable)
-      ) {
+      } else if (!preventHideRef.current && (!shouldShowResult || preventShowRef.current || !editor.isEditable)) {
         handleOpenChange(false)
       }
     }, [editor, getBoundingClientRect, handleOpenChange, shouldShow])
@@ -210,16 +175,16 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
       if (!editor || !closeOnEscape) return
 
       const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Escape" && open) {
+        if (event.key === 'Escape' && open) {
           handleOpenChange(false)
           return true
         }
         return false
       }
 
-      editor.view.dom.addEventListener("keydown", handleKeyDown)
+      editor.view.dom.addEventListener('keydown', handleKeyDown)
       return () => {
-        editor.view.dom.removeEventListener("keydown", handleKeyDown)
+        editor.view.dom.removeEventListener('keydown', handleKeyDown)
       }
     }, [editor, open, closeOnEscape, handleOpenChange])
 
@@ -238,28 +203,19 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         const isWithinEditor = isElementWithinEditor(editor, relatedTarget)
 
         const floatingElement = floatingElementRef.current
-        const isWithinFloatingElement =
-          floatingElement &&
-          (floatingElement === relatedTarget ||
-            floatingElement.contains(relatedTarget))
+        const isWithinFloatingElement = floatingElement && (floatingElement === relatedTarget || floatingElement.contains(relatedTarget))
 
         // Don't close if focus moved to a portaled UI
-        const isWithinExternalPortal =
-          isElementWithinExternalPortal(relatedTarget)
+        const isWithinExternalPortal = isElementWithinExternalPortal(relatedTarget)
 
-        if (
-          !isWithinEditor &&
-          !isWithinFloatingElement &&
-          !isWithinExternalPortal &&
-          open
-        ) {
+        if (!isWithinEditor && !isWithinFloatingElement && !isWithinExternalPortal && open) {
           handleOpenChange(false)
         }
       }
 
-      editor.view.dom.addEventListener("blur", handleBlur)
+      editor.view.dom.addEventListener('blur', handleBlur)
       return () => {
-        editor.view.dom.removeEventListener("blur", handleBlur)
+        editor.view.dom.removeEventListener('blur', handleBlur)
       }
     }, [editor, handleOpenChange, open])
 
@@ -272,12 +228,12 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         }
       }
 
-      editor.view.dom.addEventListener("dragstart", handleDrag)
-      editor.view.dom.addEventListener("dragover", handleDrag)
+      editor.view.dom.addEventListener('dragstart', handleDrag)
+      editor.view.dom.addEventListener('dragover', handleDrag)
 
       return () => {
-        editor.view.dom.removeEventListener("dragstart", handleDrag)
-        editor.view.dom.removeEventListener("dragover", handleDrag)
+        editor.view.dom.removeEventListener('dragstart', handleDrag)
+        editor.view.dom.removeEventListener('dragover', handleDrag)
       }
     }, [editor, open, handleOpenChange])
 
@@ -302,9 +258,7 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
 
         if (!nodeBefore || nodeBefore.isBlock) return
 
-        const tr = state.tr.setSelection(
-          Selection.near(state.doc.resolve(posCoords.pos))
-        )
+        const tr = state.tr.setSelection(Selection.near(state.doc.resolve(posCoords.pos)))
         view.dispatch(tr)
       }
 
@@ -315,22 +269,22 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         }
       }
 
-      editor.view.dom.addEventListener("mousedown", handleMouseDown)
-      editor.view.root.addEventListener("mouseup", handleMouseUp)
+      editor.view.dom.addEventListener('mousedown', handleMouseDown)
+      editor.view.root.addEventListener('mouseup', handleMouseUp)
 
       return () => {
-        editor.view.dom.removeEventListener("mousedown", handleMouseDown)
-        editor.view.root.removeEventListener("mouseup", handleMouseUp)
+        editor.view.dom.removeEventListener('mousedown', handleMouseDown)
+        editor.view.root.removeEventListener('mouseup', handleMouseUp)
       }
     }, [editor, updateSelectionState])
 
     useEffect(() => {
       if (!editor) return
 
-      editor.on("selectionUpdate", updateSelectionState)
+      editor.on('selectionUpdate', updateSelectionState)
 
       return () => {
-        editor.off("selectionUpdate", updateSelectionState)
+        editor.off('selectionUpdate', updateSelectionState)
       }
     }, [editor, updateSelectionState])
 
@@ -339,26 +293,17 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
       updateSelectionState()
     }, [editor, updateSelectionState])
 
-    const finalStyle = useMemo(
-      () =>
-        propStyle && Object.keys(propStyle).length > 0 ? propStyle : style,
-      [propStyle, style]
-    )
+    const finalStyle = useMemo(() => (propStyle && Object.keys(propStyle).length > 0 ? propStyle : style), [propStyle, style])
     const mergedRef = useMergeRefs([ref, forwardedRef, floatingElementRef])
 
     if (!editor || !isMounted || !open) return null
 
     return (
-      <div
-        ref={mergedRef}
-        style={finalStyle}
-        {...props}
-        {...getFloatingProps()}
-      >
+      <div ref={mergedRef} style={finalStyle} {...props} {...getFloatingProps()}>
         {children}
       </div>
     )
   }
 )
 
-FloatingElement.displayName = "FloatingElement"
+FloatingElement.displayName = 'FloatingElement'

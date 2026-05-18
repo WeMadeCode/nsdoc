@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { type Editor } from "@tiptap/react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { NodeSelection, TextSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { NodeSelection, TextSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { TypeIcon } from "@/tiptap-editor/components/tiptap-icons/type-icon"
+import { TypeIcon } from '@/tiptap-editor/components/tiptap-icons/type-icon'
 
 // --- Lib ---
 import {
@@ -19,9 +19,9 @@ import {
   isNodeInSchema,
   isValidPosition,
   selectionWithinConvertibleTypes,
-} from "@/tiptap-editor/lib/tiptap-utils"
+} from '@/tiptap-editor/lib/tiptap-utils'
 
-export const TEXT_SHORTCUT_KEY = "mod+alt+0"
+export const TEXT_SHORTCUT_KEY = 'mod+alt+0'
 
 /**
  * Configuration for the text/paragraph functionality
@@ -47,34 +47,23 @@ export interface UseTextConfig {
  * - When `turnInto === false`, it just checks the direct ability to set paragraph on the selection.
  * - When `turnInto === true`, it additionally requires the selection to be within convertible types.
  */
-export function canToggleText(
-  editor: Editor | null,
-  turnInto: boolean = true
-): boolean {
+export function canToggleText(editor: Editor | null, turnInto: boolean = true): boolean {
   if (!editor) return false
   if (!editor.schema.nodes.paragraph) return false
 
   if (!turnInto) {
-    return editor.can().setNode("paragraph")
+    return editor.can().setNode('paragraph')
   }
 
   // Ensure selection is in nodes we're allowed to convert
   if (
-    !selectionWithinConvertibleTypes(editor, [
-      "paragraph",
-      "heading",
-      "bulletList",
-      "orderedList",
-      "taskList",
-      "blockquote",
-      "codeBlock",
-    ])
+    !selectionWithinConvertibleTypes(editor, ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock'])
   )
     return false
 
   // Either we can set paragraph directly on the selection,
   // or we can clear formatting/nodes to arrive at a paragraph.
-  return editor.can().setNode("paragraph") || editor.can().clearNodes()
+  return editor.can().setNode('paragraph') || editor.can().clearNodes()
 }
 
 /**
@@ -82,7 +71,7 @@ export function canToggleText(
  */
 export function isParagraphActive(editor: Editor | null): boolean {
   if (!editor) return false
-  return editor.isActive("paragraph")
+  return editor.isActive('paragraph')
 }
 
 /**
@@ -104,20 +93,17 @@ export function toggleParagraph(editor: Editor | null): boolean {
     // we also dont block the canToggle since it will fall back to the bottom logic
     const isPossibleToTurnInto =
       selectionWithinConvertibleTypes(editor, [
-        "paragraph",
-        "heading",
-        "bulletList",
-        "orderedList",
-        "taskList",
-        "blockquote",
-        "codeBlock",
+        'paragraph',
+        'heading',
+        'bulletList',
+        'orderedList',
+        'taskList',
+        'blockquote',
+        'codeBlock',
       ]) && blocks.length === 1
 
     // No selection, find the the cursor position
-    if (
-      (state.selection.empty || state.selection instanceof TextSelection) &&
-      isPossibleToTurnInto
-    ) {
+    if ((state.selection.empty || state.selection instanceof TextSelection) && isPossibleToTurnInto) {
       const pos = findNodePosition({
         editor,
         node: state.selection.$anchor.node(1),
@@ -137,24 +123,18 @@ export function toggleParagraph(editor: Editor | null): boolean {
       const firstChild = selection.node.firstChild?.firstChild
       const lastChild = selection.node.lastChild?.lastChild
 
-      const from = firstChild
-        ? selection.from + firstChild.nodeSize
-        : selection.from + 1
+      const from = firstChild ? selection.from + firstChild.nodeSize : selection.from + 1
 
-      const to = lastChild
-        ? selection.to - lastChild.nodeSize
-        : selection.to - 1
+      const to = lastChild ? selection.to - lastChild.nodeSize : selection.to - 1
 
       const resolvedFrom = state.doc.resolve(from)
       const resolvedTo = state.doc.resolve(to)
 
-      chain = chain
-        .setTextSelection(TextSelection.between(resolvedFrom, resolvedTo))
-        .clearNodes()
+      chain = chain.setTextSelection(TextSelection.between(resolvedFrom, resolvedTo)).clearNodes()
     }
 
-    if (!editor.isActive("paragraph")) {
-      chain.setNode("paragraph").run()
+    if (!editor.isActive('paragraph')) {
+      chain.setNode('paragraph').run()
     }
 
     editor.chain().focus().selectTextblockEnd().run()
@@ -168,10 +148,7 @@ export function toggleParagraph(editor: Editor | null): boolean {
 /**
  * Determines if the text button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -182,9 +159,9 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!isNodeInSchema("paragraph", editor)) return false
+  if (!isNodeInSchema('paragraph', editor)) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canToggleText(editor)
   }
 
@@ -228,11 +205,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useText(config?: UseTextConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onToggled,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onToggled } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -249,10 +222,10 @@ export function useText(config?: UseTextConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -268,7 +241,7 @@ export function useText(config?: UseTextConfig) {
 
   useHotkeys(
     TEXT_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault()
       handleToggle()
     },
@@ -284,7 +257,7 @@ export function useText(config?: UseTextConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: "Text",
+    label: 'Text',
     shortcutKeys: TEXT_SHORTCUT_KEY,
     Icon: TypeIcon,
   }

@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const IndentIncreaseIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M17.0002 18.5C17.5524 18.5 18.0002 18.9477 18.0002 19.5C18.0002 20.0523 17.5524 20.5 17.0002 20.5H11.0002C10.4479 20.5 10.0002 20.0523 10.0002 19.5C10.0002 18.9477 10.4479 18.5 11.0002 18.5H17.0002Z"
         fill="currentColor"
@@ -37,4 +29,4 @@ export const IndentIncreaseIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-IndentIncreaseIcon.displayName = "IndentIncreaseIcon"
+IndentIncreaseIcon.displayName = 'IndentIncreaseIcon'

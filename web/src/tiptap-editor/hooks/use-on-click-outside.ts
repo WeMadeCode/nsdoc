@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import type { RefObject } from "react"
-import { useEffect, useRef } from "react"
-import { useIsomorphicLayoutEffect } from "@/tiptap-editor/hooks/use-isomorphic-layout-effect"
+import type { RefObject } from 'react'
+import { useEffect, useRef } from 'react'
+import { useIsomorphicLayoutEffect } from '@/tiptap-editor/hooks/use-isomorphic-layout-effect'
 
 // MediaQueryList Event based useEventListener interface
 function useEventListener<K extends keyof MediaQueryListEventMap>(
@@ -23,14 +23,10 @@ function useEventListener<K extends keyof WindowEventMap>(
 // Element Event based useEventListener interface
 function useEventListener<
   K extends keyof HTMLElementEventMap & keyof SVGElementEventMap,
-  T extends Element = K extends keyof HTMLElementEventMap
-    ? HTMLDivElement
-    : SVGElement,
+  T extends Element = K extends keyof HTMLElementEventMap ? HTMLDivElement : SVGElement,
 >(
   eventName: K,
-  handler:
-    | ((event: HTMLElementEventMap[K]) => void)
-    | ((event: SVGElementEventMap[K]) => void),
+  handler: ((event: HTMLElementEventMap[K]) => void) | ((event: SVGElementEventMap[K]) => void),
   element: RefObject<T>,
   options?: boolean | AddEventListenerOptions
 ): void
@@ -61,14 +57,7 @@ function useEventListener<
   T extends HTMLElement | SVGAElement | MediaQueryList = HTMLElement,
 >(
   eventName: KW | KH | KM,
-  handler: (
-    event:
-      | WindowEventMap[KW]
-      | HTMLElementEventMap[KH]
-      | SVGElementEventMap[KH]
-      | MediaQueryListEventMap[KM]
-      | Event
-  ) => void,
+  handler: (event: WindowEventMap[KW] | HTMLElementEventMap[KH] | SVGElementEventMap[KH] | MediaQueryListEventMap[KM] | Event) => void,
   element?: RefObject<T>,
   options?: boolean | AddEventListenerOptions
 ) {
@@ -86,7 +75,7 @@ function useEventListener<
     if (!(targetElement && targetElement.addEventListener)) return
 
     // Create event listener that calls handler function stored in ref
-    const listener: typeof handler = (event) => {
+    const listener: typeof handler = event => {
       savedHandler.current(event)
     }
 
@@ -102,13 +91,7 @@ function useEventListener<
 export { useEventListener }
 
 /** Supported event types. */
-type EventType =
-  | "mousedown"
-  | "mouseup"
-  | "touchstart"
-  | "touchend"
-  | "focusin"
-  | "focusout"
+type EventType = 'mousedown' | 'mouseup' | 'touchstart' | 'touchend' | 'focusin' | 'focusout'
 
 /**
  * Custom hook that handles clicks outside a specified element.
@@ -122,12 +105,12 @@ type EventType =
 export function useOnClickOutside<T extends HTMLElement | null = HTMLElement>(
   ref: RefObject<T> | RefObject<T>[],
   handler: (event: MouseEvent | TouchEvent | FocusEvent) => void,
-  eventType: EventType = "mousedown",
+  eventType: EventType = 'mousedown',
   eventListenerOptions: AddEventListenerOptions = {}
 ): void {
   useEventListener(
     eventType,
-    (event) => {
+    event => {
       const target = event.target as Node
 
       // Do nothing if the target is not connected element with document
@@ -136,9 +119,7 @@ export function useOnClickOutside<T extends HTMLElement | null = HTMLElement>(
       }
 
       const isOutside = Array.isArray(ref)
-        ? ref
-            .filter((r) => Boolean(r.current))
-            .every((r) => r.current && !r.current.contains(target))
+        ? ref.filter(r => Boolean(r.current)).every(r => r.current && !r.current.contains(target))
         : ref.current && !ref.current.contains(target)
 
       if (isOutside) {

@@ -1,27 +1,26 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseSlashCommandTriggerConfig } from "@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button"
+import type { UseSlashCommandTriggerConfig } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
 import {
   SLASH_COMMAND_TRIGGER_SHORTCUT_KEY,
   useSlashCommandTrigger,
-} from "@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button"
+} from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface SlashCommandTriggerButtonProps
-  extends Omit<ButtonProps, "type">, UseSlashCommandTriggerConfig {
+export interface SlashCommandTriggerButtonProps extends Omit<ButtonProps, 'type'>, UseSlashCommandTriggerConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +32,7 @@ export interface SlashCommandTriggerButtonProps
   showShortcut?: boolean
 }
 
-export function SlashCommandShortcutBadge({
-  shortcutKeys = SLASH_COMMAND_TRIGGER_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function SlashCommandShortcutBadge({ shortcutKeys = SLASH_COMMAND_TRIGGER_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,17 +41,14 @@ export function SlashCommandShortcutBadge({
  *
  * For custom button implementations, use the `useSlashCommand` hook instead.
  */
-export const SlashCommandTriggerButton = forwardRef<
-  HTMLButtonElement,
-  SlashCommandTriggerButtonProps
->(
+export const SlashCommandTriggerButton = forwardRef<HTMLButtonElement, SlashCommandTriggerButtonProps>(
   (
     {
       editor: providedEditor,
       node,
       nodePos,
       text,
-      trigger = "/",
+      trigger = '/',
       hideWhenUnavailable = false,
       onTriggered,
       showShortcut = false,
@@ -67,14 +59,7 @@ export const SlashCommandTriggerButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canInsert,
-      handleSlashCommand,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useSlashCommandTrigger({
+    const { isVisible, canInsert, handleSlashCommand, label, shortcutKeys, Icon } = useSlashCommandTrigger({
       editor,
       node,
       nodePos,
@@ -114,9 +99,7 @@ export const SlashCommandTriggerButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <SlashCommandShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <SlashCommandShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -124,4 +107,4 @@ export const SlashCommandTriggerButton = forwardRef<
   }
 )
 
-SlashCommandTriggerButton.displayName = "SlashCommandTriggerButton"
+SlashCommandTriggerButton.displayName = 'SlashCommandTriggerButton'

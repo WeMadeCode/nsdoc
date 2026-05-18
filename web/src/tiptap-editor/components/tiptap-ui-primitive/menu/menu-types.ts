@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import type * as React from "react"
-import type * as Ariakit from "@ariakit/react"
+import type * as React from 'react'
+import type * as Ariakit from '@ariakit/react'
 
 export interface Action {
   filterItems?: boolean
@@ -13,8 +13,7 @@ export interface Action {
   value?: string
 }
 
-export interface MenuItemProps
-  extends Omit<Ariakit.ComboboxItemProps, "store"> {
+export interface MenuItemProps extends Omit<Ariakit.ComboboxItemProps, 'store'> {
   group?: string
   name?: string
   parentGroup?: string
@@ -29,13 +28,12 @@ export interface MenuContextValue {
 export interface MenuProps extends Ariakit.MenuProviderProps {
   trigger?: React.ReactNode
   value?: string
-  onOpenChange?: Ariakit.MenuProviderProps["setOpen"]
-  onValueChange?: Ariakit.ComboboxProviderProps["setValue"]
-  onValuesChange?: Ariakit.MenuProviderProps["setValues"]
+  onOpenChange?: Ariakit.MenuProviderProps['setOpen']
+  onValueChange?: Ariakit.ComboboxProviderProps['setValue']
+  onValuesChange?: Ariakit.MenuProviderProps['setValues']
 }
 
-export interface MenuContentProps
-  extends React.ComponentProps<typeof Ariakit.Menu> {
+export interface MenuContentProps extends React.ComponentProps<typeof Ariakit.Menu> {
   onClickOutside?: (event: MouseEvent | TouchEvent | FocusEvent) => void
 }
 

@@ -1,8 +1,8 @@
-import { isNodeSelection, type Editor } from "@tiptap/react"
-import { NodeSelection, type Transaction } from "@tiptap/pm/state"
-import { useEffect, useRef, useState } from "react"
+import { isNodeSelection, type Editor } from '@tiptap/react'
+import { NodeSelection, type Transaction } from '@tiptap/pm/state'
+import { useEffect, useRef, useState } from 'react'
 
-export const HIDE_FLOATING_META = "hideFloatingToolbar"
+export const HIDE_FLOATING_META = 'hideFloatingToolbar'
 
 /**
  * Centralizes all logic about when the floating toolbar should be hidden/shown.
@@ -15,10 +15,7 @@ export const HIDE_FLOATING_META = "hideFloatingToolbar"
  */
 export function useFloatingToolbarVisibility(params: {
   editor: Editor | null
-  isSelectionValid: (
-    editor: Editor,
-    selection: Editor["state"]["selection"]
-  ) => boolean
+  isSelectionValid: (editor: Editor, selection: Editor['state']['selection']) => boolean
   extraHideWhen?: boolean // e.g. aiGenerationActive || commentInputVisible
 }) {
   const { editor, isSelectionValid, extraHideWhen = false } = params
@@ -41,10 +38,10 @@ export function useFloatingToolbarVisibility(params: {
       }
     }
 
-    editor.on("transaction", onTx)
+    editor.on('transaction', onTx)
 
     return () => {
-      editor.off("transaction", onTx)
+      editor.off('transaction', onTx)
     }
   }, [editor])
 
@@ -66,9 +63,9 @@ export function useFloatingToolbarVisibility(params: {
       }
     }
 
-    dom.addEventListener("pointerdown", onPointerDown, { capture: true })
+    dom.addEventListener('pointerdown', onPointerDown, { capture: true })
     return () =>
-      dom.removeEventListener("pointerdown", onPointerDown, {
+      dom.removeEventListener('pointerdown', onPointerDown, {
         capture: true,
       })
   }, [editor, extraHideWhen, isSelectionValid])
@@ -89,9 +86,9 @@ export function useFloatingToolbarVisibility(params: {
     }
 
     handleSelectionUpdate()
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, extraHideWhen, isSelectionValid])
 
@@ -106,11 +103,7 @@ export function useFloatingToolbarVisibility(params: {
 export const selectNodeAndHideFloating = (editor: Editor, pos: number) => {
   if (!editor) return
   const { state, view } = editor
-  view.dispatch(
-    state.tr
-      .setSelection(NodeSelection.create(state.doc, pos))
-      .setMeta(HIDE_FLOATING_META, true)
-  )
+  view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, pos)).setMeta(HIDE_FLOATING_META, true))
 }
 
 /**

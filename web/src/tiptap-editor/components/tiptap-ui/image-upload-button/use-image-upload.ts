@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { type Editor } from "@tiptap/react"
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { type Editor } from '@tiptap/react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/tiptap-editor/lib/tiptap-utils"
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { ImagePlusIcon } from "@/tiptap-editor/components/tiptap-icons/image-plus-icon"
+import { ImagePlusIcon } from '@/tiptap-editor/components/tiptap-icons/image-plus-icon'
 
-export const IMAGE_UPLOAD_SHORTCUT_KEY = "mod+shift+i"
+export const IMAGE_UPLOAD_SHORTCUT_KEY = 'mod+shift+i'
 
 /**
  * Configuration for the image upload functionality
@@ -40,9 +40,9 @@ export interface UseImageUploadConfig {
  */
 export function canInsertImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, "imageUpload")) return false
+  if (!isExtensionAvailable(editor, 'imageUpload')) return false
 
-  return editor.can().insertContent({ type: "imageUpload" })
+  return editor.can().insertContent({ type: 'imageUpload' })
 }
 
 /**
@@ -50,7 +50,7 @@ export function canInsertImage(editor: Editor | null): boolean {
  */
 export function isImageActive(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  return editor.isActive("imageUpload")
+  return editor.isActive('imageUpload')
 }
 
 /**
@@ -65,7 +65,7 @@ export function insertImage(editor: Editor | null): boolean {
       .chain()
       .focus()
       .insertContent({
-        type: "imageUpload",
+        type: 'imageUpload',
       })
       .run()
   } catch {
@@ -76,10 +76,7 @@ export function insertImage(editor: Editor | null): boolean {
 /**
  * Determines if the image button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor || !editor.isEditable) return false
@@ -88,9 +85,9 @@ export function shouldShowButton(props: {
     return true
   }
 
-  if (!isExtensionAvailable(editor, "imageUpload")) return false
+  if (!isExtensionAvailable(editor, 'imageUpload')) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canInsertImage(editor)
   }
 
@@ -134,11 +131,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useImageUpload(config?: UseImageUploadConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onInserted,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onInserted } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -155,10 +148,10 @@ export function useImageUpload(config?: UseImageUploadConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -174,7 +167,7 @@ export function useImageUpload(config?: UseImageUploadConfig) {
 
   useHotkeys(
     IMAGE_UPLOAD_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault()
       handleImage()
     },
@@ -190,7 +183,7 @@ export function useImageUpload(config?: UseImageUploadConfig) {
     isActive,
     handleImage,
     canInsert,
-    label: "Add image",
+    label: 'Add image',
     shortcutKeys: IMAGE_UPLOAD_SHORTCUT_KEY,
     Icon: ImagePlusIcon,
   }

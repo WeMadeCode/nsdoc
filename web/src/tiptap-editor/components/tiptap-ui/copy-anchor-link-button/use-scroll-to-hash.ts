@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect } from "react"
-import { type Editor } from "@tiptap/react"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { getEditorExtension } from "@/tiptap-editor/lib/tiptap-advanced-utils"
-import { selectNodeAndHideFloating } from "@/tiptap-editor/hooks/use-floating-toolbar-visibility"
+import { useCallback, useEffect } from 'react'
+import { type Editor } from '@tiptap/react'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { getEditorExtension } from '@/tiptap-editor/lib/tiptap-advanced-utils'
+import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 
 export interface UseScrollToHashConfig {
   /**
@@ -31,11 +31,7 @@ export interface UseScrollToHashConfig {
  * @returns Function to scroll to a specific hash
  */
 export function useScrollToHash(config: UseScrollToHashConfig = {}) {
-  const {
-    editor: providedEditor,
-    onTargetFound = () => {},
-    onTargetNotFound = () => {},
-  } = config
+  const { editor: providedEditor, onTargetFound = () => {}, onTargetNotFound = () => {} } = config
 
   const { editor } = useTiptapEditor(providedEditor)
 
@@ -43,9 +39,7 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
     (id: string): boolean => {
       if (!editor) return false
 
-      const attributeName =
-        getEditorExtension(editor, "uniqueID")?.options?.attributeName ??
-        "data-id"
+      const attributeName = getEditorExtension(editor, 'uniqueID')?.options?.attributeName ?? 'data-id'
       let position: number | null = null
 
       editor.state.doc.descendants((node, pos) => {
@@ -64,7 +58,7 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
         const dom = editor.view.nodeDOM(position!) as HTMLElement | null
 
         if (dom) {
-          dom.scrollIntoView({ behavior: "smooth", block: "center" })
+          dom.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
       }, 0)
 
@@ -93,16 +87,14 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
     if (!editor) return
 
     // Handle collaboration sync or immediate scroll
-    const provider = editor.extensionManager.extensions.find(
-      (ext) => ext.name === "collaborationCaret"
-    )?.options?.provider
+    const provider = editor.extensionManager.extensions.find(ext => ext.name === 'collaborationCaret')?.options?.provider
 
     if (provider?.on) {
       const syncHandler = () => handleScroll(500)
-      provider.on("synced", syncHandler)
+      provider.on('synced', syncHandler)
 
       return () => {
-        provider.off?.("synced", syncHandler)
+        provider.off?.('synced', syncHandler)
       }
     } else {
       handleScroll(500)
@@ -113,14 +105,14 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
     const immediateScroll = () => handleScroll()
     const delayedScroll = () => handleScroll(500)
 
-    window.addEventListener("hashchange", immediateScroll)
-    window.addEventListener("pageshow", delayedScroll)
-    window.addEventListener("popstate", immediateScroll)
+    window.addEventListener('hashchange', immediateScroll)
+    window.addEventListener('pageshow', delayedScroll)
+    window.addEventListener('popstate', immediateScroll)
 
     return () => {
-      window.removeEventListener("hashchange", immediateScroll)
-      window.removeEventListener("pageshow", delayedScroll)
-      window.removeEventListener("popstate", immediateScroll)
+      window.removeEventListener('hashchange', immediateScroll)
+      window.removeEventListener('pageshow', delayedScroll)
+      window.removeEventListener('popstate', immediateScroll)
     }
   }, [handleScroll])
 

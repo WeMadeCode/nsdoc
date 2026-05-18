@@ -1,53 +1,53 @@
-import type { Editor } from "@tiptap/core"
+import type { Editor } from '@tiptap/core'
 
 const STYLE_PROPS: (keyof CSSStyleDeclaration | string)[] = [
   // Box & border
-  "boxSizing",
-  "backgroundColor",
-  "borderTopColor",
-  "borderRightColor",
-  "borderBottomColor",
-  "borderLeftColor",
-  "borderTopStyle",
-  "borderRightStyle",
-  "borderBottomStyle",
-  "borderLeftStyle",
-  "borderTopWidth",
-  "borderRightWidth",
-  "borderBottomWidth",
-  "borderLeftWidth",
-  "borderRadius",
+  'boxSizing',
+  'backgroundColor',
+  'borderTopColor',
+  'borderRightColor',
+  'borderBottomColor',
+  'borderLeftColor',
+  'borderTopStyle',
+  'borderRightStyle',
+  'borderBottomStyle',
+  'borderLeftStyle',
+  'borderTopWidth',
+  'borderRightWidth',
+  'borderBottomWidth',
+  'borderLeftWidth',
+  'borderRadius',
   // Spacing
-  "paddingTop",
-  "paddingRight",
-  "paddingBottom",
-  "paddingLeft",
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
   // Typography
-  "color",
-  "font",
-  "fontFamily",
-  "fontSize",
-  "fontWeight",
-  "fontStyle",
-  "lineHeight",
-  "letterSpacing",
-  "textTransform",
-  "textDecoration",
-  "textAlign",
-  "verticalAlign",
-  "whiteSpace",
+  'color',
+  'font',
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'fontStyle',
+  'lineHeight',
+  'letterSpacing',
+  'textTransform',
+  'textDecoration',
+  'textAlign',
+  'verticalAlign',
+  'whiteSpace',
   // Sizing
-  "width",
-  "minWidth",
-  "maxWidth",
-  "height",
-  "minHeight",
-  "maxHeight",
+  'width',
+  'minWidth',
+  'maxWidth',
+  'height',
+  'minHeight',
+  'maxHeight',
   // Table specifics
-  "backgroundClip",
+  'backgroundClip',
 ]
 
-const toDash = (p: string) => p.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase())
+const toDash = (p: string) => p.replace(/[A-Z]/g, m => '-' + m.toLowerCase())
 
 /**
  * Copy a curated list of computed styles from source -> target
@@ -64,11 +64,11 @@ function copyComputedStyles(source: HTMLElement, target: HTMLElement) {
   }
 
   // Ensure long content doesn't overflow the drag image
-  target.style.overflow = "hidden"
-  target.style.textOverflow = "ellipsis"
+  target.style.overflow = 'hidden'
+  target.style.textOverflow = 'ellipsis'
   // Respect existing wrapping if set on the source; otherwise prefer single line
-  if (cs.whiteSpace === "" || cs.whiteSpace === "normal") {
-    target.style.whiteSpace = "nowrap"
+  if (cs.whiteSpace === '' || cs.whiteSpace === 'normal') {
+    target.style.whiteSpace = 'nowrap'
   }
 }
 
@@ -106,17 +106,16 @@ function cloneWithStyles(root: HTMLElement): HTMLElement {
  */
 function styleDragWrapper(el: HTMLElement, maxWidth: number) {
   Object.assign(el.style, {
-    position: "fixed",
-    top: "-10000px",
-    left: "-10000px",
-    pointerEvents: "none",
-    zIndex: "2147483647",
+    position: 'fixed',
+    top: '-10000px',
+    left: '-10000px',
+    pointerEvents: 'none',
+    zIndex: '2147483647',
     maxWidth: `${maxWidth}px`,
-    borderRadius: "12px",
-    background: "transparent",
-    filter:
-      "drop-shadow(0 8px 24px rgba(0,0,0,0.18)) drop-shadow(0 2px 8px rgba(0,0,0,0.10))",
-    overflow: "hidden",
+    borderRadius: '12px',
+    background: 'transparent',
+    filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) drop-shadow(0 2px 8px rgba(0,0,0,0.10))',
+    overflow: 'hidden',
   } as CSSStyleDeclaration)
 }
 
@@ -130,7 +129,7 @@ function scaleToFit(el: HTMLElement, maxWidth: number): void {
   const rect = el.getBoundingClientRect()
   if (rect.width > maxWidth && rect.width > 0) {
     const scale = maxWidth / rect.width
-    el.style.transformOrigin = "top left"
+    el.style.transformOrigin = 'top left'
     el.style.transform = `scale(${scale})`
   }
 }
@@ -138,14 +137,11 @@ function scaleToFit(el: HTMLElement, maxWidth: number): void {
 /**
  * Copy table-level styles that affect layout.
  */
-function applyTableBoxStyles(
-  srcTable: HTMLTableElement,
-  dstTable: HTMLTableElement
-) {
+function applyTableBoxStyles(srcTable: HTMLTableElement, dstTable: HTMLTableElement) {
   const tcs = getComputedStyle(srcTable)
   dstTable.style.borderCollapse = tcs.borderCollapse
   dstTable.style.borderSpacing = tcs.borderSpacing
-  dstTable.style.tableLayout = "fixed" // consistent drag image
+  dstTable.style.tableLayout = 'fixed' // consistent drag image
   dstTable.className = srcTable.className
 }
 
@@ -163,18 +159,15 @@ function lockCellWidth(fromCell: HTMLElement, toCell: HTMLElement) {
 /**
  * Build a 1-row preview table.
  */
-function buildRowPreview(
-  tableEl: HTMLTableElement,
-  rowIndex: number
-): HTMLTableElement | null {
-  const body = tableEl.tBodies?.[0] ?? tableEl.querySelector("tbody")
+function buildRowPreview(tableEl: HTMLTableElement, rowIndex: number): HTMLTableElement | null {
+  const body = tableEl.tBodies?.[0] ?? tableEl.querySelector('tbody')
   if (!body) return null
 
   const row = body.rows?.[rowIndex] as HTMLTableRowElement | undefined
   if (!row) return null
 
-  const tableClone = document.createElement("table")
-  const tbodyClone = document.createElement("tbody")
+  const tableClone = document.createElement('table')
+  const tbodyClone = document.createElement('tbody')
   const rowClone = cloneWithStyles(row) as HTMLTableRowElement
 
   applyTableBoxStyles(tableEl, tableClone)
@@ -194,15 +187,12 @@ function buildRowPreview(
 /**
  * Build a 1-column preview table (one cell per row).
  */
-function buildColumnPreview(
-  tableEl: HTMLTableElement,
-  colIndex: number
-): HTMLTableElement | null {
-  const body = tableEl.tBodies?.[0] ?? tableEl.querySelector("tbody")
+function buildColumnPreview(tableEl: HTMLTableElement, colIndex: number): HTMLTableElement | null {
+  const body = tableEl.tBodies?.[0] ?? tableEl.querySelector('tbody')
   if (!body) return null
 
-  const tableClone = document.createElement("table")
-  const tbodyClone = document.createElement("tbody")
+  const tableClone = document.createElement('table')
+  const tbodyClone = document.createElement('tbody')
   applyTableBoxStyles(tableEl, tableClone)
 
   let firstCellWidth = 0
@@ -213,7 +203,7 @@ function buildColumnPreview(
     const srcCell = srcRow.cells?.[colIndex] as HTMLElement | undefined
     if (!srcCell) continue
 
-    const tr = document.createElement("tr")
+    const tr = document.createElement('tr')
     const cellClone = cloneWithStyles(srcCell)
 
     const rect = srcCell.getBoundingClientRect()
@@ -240,16 +230,11 @@ function buildColumnPreview(
  * - Scales down if it exceeds editor width
  * - Preserves computed styles to look 1:1 with the table
  */
-export function createTableDragImage(
-  editor: Editor,
-  orientation: "row" | "col",
-  index: number,
-  tablePos: number
-): HTMLElement {
+export function createTableDragImage(editor: Editor, orientation: 'row' | 'col', index: number, tablePos: number): HTMLElement {
   const editorRect = editor.view.dom.getBoundingClientRect()
   const maxWidth = Math.max(0, editorRect.width)
 
-  const wrapper = document.createElement("div")
+  const wrapper = document.createElement('div')
   styleDragWrapper(wrapper, maxWidth)
 
   const tableEl = editor.view.nodeDOM(tablePos) as HTMLTableElement | null
@@ -262,16 +247,13 @@ export function createTableDragImage(
   const dragWidth = Math.min(tableRect.width, editorRect.width)
   wrapper.style.width = `${dragWidth}px`
 
-  const preview =
-    orientation === "row"
-      ? buildRowPreview(tableEl, index)
-      : buildColumnPreview(tableEl, index)
+  const preview = orientation === 'row' ? buildRowPreview(tableEl, index) : buildColumnPreview(tableEl, index)
 
   if (preview) {
-    const card = document.createElement("div")
+    const card = document.createElement('div')
     Object.assign(card.style, {
-      background: "var(--drag-image-bg, transparent)",
-      overflow: "hidden",
+      background: 'var(--drag-image-bg, transparent)',
+      overflow: 'hidden',
     } as CSSStyleDeclaration)
 
     card.appendChild(preview)

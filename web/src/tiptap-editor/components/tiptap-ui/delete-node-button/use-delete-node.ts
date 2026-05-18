@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { type Editor } from "@tiptap/react"
-import { NodeSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { type Editor } from '@tiptap/react'
+import { NodeSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { TrashIcon } from "@/tiptap-editor/components/tiptap-icons/trash-icon"
+import { TrashIcon } from '@/tiptap-editor/components/tiptap-icons/trash-icon'
 
-export const DELETE_NODE_SHORTCUT_KEY = "backspace"
+export const DELETE_NODE_SHORTCUT_KEY = 'backspace'
 
 /**
  * Configuration for the delete node functionality
@@ -65,11 +65,7 @@ export function canDeleteNode(editor: Editor | null): boolean {
 /**
  * Helper function to delete a node with fallback strategy
  */
-export function deleteNodeAtPosition(
-  editor: Editor,
-  pos: number,
-  nodeSize: number
-): boolean {
+export function deleteNodeAtPosition(editor: Editor, pos: number, nodeSize: number): boolean {
   const chain = editor.chain().focus()
   const success = chain.deleteRange({ from: pos, to: pos + nodeSize }).run()
 
@@ -104,13 +100,7 @@ export function deleteNode(editor: Editor | null): boolean {
       const node = selection.$from.node(depth)
       const pos = selection.$from.before(depth)
 
-      if (
-        node &&
-        node.isBlock &&
-        node.type.name !== "tableRow" &&
-        node.type.name !== "tableHeader" &&
-        node.type.name !== "tableCell"
-      ) {
+      if (node && node.isBlock && node.type.name !== 'tableRow' && node.type.name !== 'tableHeader' && node.type.name !== 'tableCell') {
         return deleteNodeAtPosition(editor, pos, node.nodeSize)
       }
     }
@@ -124,10 +114,7 @@ export function deleteNode(editor: Editor | null): boolean {
 /**
  * Determines if the delete node button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -138,7 +125,7 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canDeleteNode(editor)
   }
 
@@ -181,11 +168,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useDeleteNode(config?: UseDeleteNodeConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onDeleted,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onDeleted } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -201,10 +184,10 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -220,7 +203,7 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
 
   useHotkeys(
     DELETE_NODE_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault()
       handleDeleteNode()
     },
@@ -235,7 +218,7 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
     isVisible,
     handleDeleteNode,
     canDeleteNode: canDeleteNodeState,
-    label: "Delete",
+    label: 'Delete',
     shortcutKeys: DELETE_NODE_SHORTCUT_KEY,
     Icon: TrashIcon,
   }

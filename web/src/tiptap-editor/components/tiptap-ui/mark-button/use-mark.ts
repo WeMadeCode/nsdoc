@@ -1,31 +1,24 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import type { Editor } from "@tiptap/react"
+import { useCallback, useEffect, useState } from 'react'
+import type { Editor } from '@tiptap/react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { isMarkInSchema, isNodeTypeSelected } from "@/tiptap-editor/lib/tiptap-utils"
+import { isMarkInSchema, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { BoldIcon } from "@/tiptap-editor/components/tiptap-icons/bold-icon"
-import { Code2Icon } from "@/tiptap-editor/components/tiptap-icons/code2-icon"
-import { ItalicIcon } from "@/tiptap-editor/components/tiptap-icons/italic-icon"
-import { StrikeIcon } from "@/tiptap-editor/components/tiptap-icons/strike-icon"
-import { SubscriptIcon } from "@/tiptap-editor/components/tiptap-icons/subscript-icon"
-import { SuperscriptIcon } from "@/tiptap-editor/components/tiptap-icons/superscript-icon"
-import { UnderlineIcon } from "@/tiptap-editor/components/tiptap-icons/underline-icon"
+import { BoldIcon } from '@/tiptap-editor/components/tiptap-icons/bold-icon'
+import { Code2Icon } from '@/tiptap-editor/components/tiptap-icons/code2-icon'
+import { ItalicIcon } from '@/tiptap-editor/components/tiptap-icons/italic-icon'
+import { StrikeIcon } from '@/tiptap-editor/components/tiptap-icons/strike-icon'
+import { SubscriptIcon } from '@/tiptap-editor/components/tiptap-icons/subscript-icon'
+import { SuperscriptIcon } from '@/tiptap-editor/components/tiptap-icons/superscript-icon'
+import { UnderlineIcon } from '@/tiptap-editor/components/tiptap-icons/underline-icon'
 
-export type Mark =
-  | "bold"
-  | "italic"
-  | "strike"
-  | "code"
-  | "underline"
-  | "superscript"
-  | "subscript"
+export type Mark = 'bold' | 'italic' | 'strike' | 'code' | 'underline' | 'superscript' | 'subscript'
 
 /**
  * Configuration for the mark functionality
@@ -61,13 +54,13 @@ export const markIcons = {
 }
 
 export const MARK_SHORTCUT_KEYS: Record<Mark, string> = {
-  bold: "mod+b",
-  italic: "mod+i",
-  underline: "mod+u",
-  strike: "mod+shift+s",
-  code: "mod+e",
-  superscript: "mod+.",
-  subscript: "mod+,",
+  bold: 'mod+b',
+  italic: 'mod+i',
+  underline: 'mod+u',
+  strike: 'mod+shift+s',
+  code: 'mod+e',
+  superscript: 'mod+.',
+  subscript: 'mod+,',
 }
 
 /**
@@ -75,8 +68,7 @@ export const MARK_SHORTCUT_KEYS: Record<Mark, string> = {
  */
 export function canToggleMark(editor: Editor | null, type: Mark): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isMarkInSchema(type, editor) || isNodeTypeSelected(editor, ["image"]))
-    return false
+  if (!isMarkInSchema(type, editor) || isNodeTypeSelected(editor, ['image'])) return false
 
   return editor.can().toggleMark(type)
 }
@@ -102,11 +94,7 @@ export function toggleMark(editor: Editor | null, type: Mark): boolean {
 /**
  * Determines if the mark button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  type: Mark
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; type: Mark; hideWhenUnavailable: boolean }): boolean {
   const { editor, type, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -119,7 +107,7 @@ export function shouldShowButton(props: {
 
   if (!isMarkInSchema(type, editor)) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canToggleMark(editor, type)
   }
 
@@ -171,12 +159,7 @@ export function getFormattedMarkName(type: Mark): string {
  * ```
  */
 export function useMark(config: UseMarkConfig) {
-  const {
-    editor: providedEditor,
-    type,
-    hideWhenUnavailable = false,
-    onToggled,
-  } = config
+  const { editor: providedEditor, type, hideWhenUnavailable = false, onToggled } = config
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
@@ -192,10 +175,10 @@ export function useMark(config: UseMarkConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, type, hideWhenUnavailable])
 

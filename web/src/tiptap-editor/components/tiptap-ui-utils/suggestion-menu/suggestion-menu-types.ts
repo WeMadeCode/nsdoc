@@ -1,7 +1,7 @@
-import type { UseFloatingOptions } from "@floating-ui/react"
-import type { PluginKey } from "@tiptap/pm/state"
-import type { SuggestionOptions } from "@tiptap/suggestion"
-import type { Editor, Range } from "@tiptap/react"
+import type { UseFloatingOptions } from '@floating-ui/react'
+import type { PluginKey } from '@tiptap/pm/state'
+import type { SuggestionOptions } from '@tiptap/suggestion'
+import type { Editor, Range } from '@tiptap/react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DefaultContext = any
@@ -21,10 +21,7 @@ export interface SuggestionItem<T = DefaultContext> {
   /**
    * Icon or badge to display alongside the suggestion.
    */
-  badge?:
-    | React.MemoExoticComponent<IconComponent>
-    | React.FC<IconProps>
-    | string
+  badge?: React.MemoExoticComponent<IconComponent> | React.FC<IconProps> | string
   /**
    * Group identifier for organizing suggestions.
    */
@@ -58,8 +55,7 @@ export type SuggestionMenuRenderProps<T = DefaultContext> = {
   onSelect: (item: SuggestionItem<T>) => void
 }
 
-export interface SuggestionMenuProps<T = DefaultContext>
-  extends Omit<SuggestionOptions<SuggestionItem<T>>, "pluginKey" | "editor"> {
+export interface SuggestionMenuProps<T = DefaultContext> extends Omit<SuggestionOptions<SuggestionItem<T>>, 'pluginKey' | 'editor'> {
   /**
    * The Tiptap editor instance.
    */

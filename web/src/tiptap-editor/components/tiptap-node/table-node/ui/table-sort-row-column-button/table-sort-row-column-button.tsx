@@ -1,20 +1,19 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTableSortRowColumnConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button"
-import { useTableSortRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button"
+import type { UseTableSortRowColumnConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button'
+import { useTableSortRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableSortRowColumnButtonProps
-  extends Omit<ButtonProps, "type">, UseTableSortRowColumnConfig {
+export interface TableSortRowColumnButtonProps extends Omit<ButtonProps, 'type'>, UseTableSortRowColumnConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -26,10 +25,7 @@ export interface TableSortRowColumnButtonProps
  *
  * For custom button implementations, use the `useTableSortRowColumn` hook instead.
  */
-export const TableSortRowColumnButton = forwardRef<
-  HTMLButtonElement,
-  TableSortRowColumnButtonProps
->(
+export const TableSortRowColumnButton = forwardRef<HTMLButtonElement, TableSortRowColumnButtonProps>(
   (
     {
       editor: providedEditor,
@@ -46,15 +42,14 @@ export const TableSortRowColumnButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleSort, label, canSortRowColumn, Icon } =
-      useTableSortRowColumn({
-        editor,
-        index,
-        orientation,
-        direction,
-        hideWhenUnavailable,
-        onSorted,
-      })
+    const { isVisible, handleSort, label, canSortRowColumn, Icon } = useTableSortRowColumn({
+      editor,
+      index,
+      orientation,
+      direction,
+      hideWhenUnavailable,
+      onSorted,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -96,4 +91,4 @@ export const TableSortRowColumnButton = forwardRef<
   }
 )
 
-TableSortRowColumnButton.displayName = "TableSortRowColumnButton"
+TableSortRowColumnButton.displayName = 'TableSortRowColumnButton'

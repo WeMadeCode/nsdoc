@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { forwardRef, useMemo, useCallback } from "react"
+import { forwardRef, useMemo, useCallback } from 'react'
 
 // --- UI Primitives ---
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
 // --- Lib ---
-import { cn } from "@/tiptap-editor/lib/tiptap-utils"
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { TableColumnIcon } from "@/tiptap-editor/components/tiptap-icons/table-column-icon"
-import { TableRowIcon } from "@/tiptap-editor/components/tiptap-icons/table-row-icon"
+import { TableColumnIcon } from '@/tiptap-editor/components/tiptap-icons/table-column-icon'
+import { TableRowIcon } from '@/tiptap-editor/components/tiptap-icons/table-row-icon'
 
-import "./table-grid-selector.scss"
+import './table-grid-selector.scss'
 
 // --- Types ---
 export interface CellCoordinates {
@@ -72,10 +72,7 @@ interface GridCellProps {
   onClick: () => void
 }
 
-const isCellSelected = (
-  cell: CellCoordinates,
-  hoveredCell: CellCoordinates | null
-): boolean => {
+const isCellSelected = (cell: CellCoordinates, hoveredCell: CellCoordinates | null): boolean => {
   if (!hoveredCell) return false
   return cell.row <= hoveredCell.row && cell.col <= hoveredCell.col
 }
@@ -88,18 +85,11 @@ const generateGridCells = (rows: number, cols: number): CellCoordinates[] => {
   }))
 }
 
-const GridCell = ({
-  row,
-  col,
-  isSelected,
-  disabled,
-  onMouseEnter,
-  onClick,
-}: GridCellProps) => (
+const GridCell = ({ row, col, isSelected, disabled, onMouseEnter, onClick }: GridCellProps) => (
   <Button
     size="small"
     type="button"
-    className={cn("tiptap-table-grid-cell", isSelected && "selected")}
+    className={cn('tiptap-table-grid-cell', isSelected && 'selected')}
     disabled={disabled}
     onMouseEnter={onMouseEnter}
     onClick={onClick}
@@ -107,11 +97,7 @@ const GridCell = ({
   />
 )
 
-const SizeIndicator = ({
-  hoveredCell,
-}: {
-  hoveredCell: CellCoordinates | null
-}) => {
+const SizeIndicator = ({ hoveredCell }: { hoveredCell: CellCoordinates | null }) => {
   const columns = hoveredCell ? hoveredCell.col + 1 : 1
   const rows = hoveredCell ? hoveredCell.row + 1 : 1
 
@@ -147,10 +133,7 @@ const SizeIndicator = ({
  * />
  * ```
  */
-export const TableGridSelector = forwardRef<
-  HTMLDivElement,
-  TableGridSelectorProps
->(
+export const TableGridSelector = forwardRef<HTMLDivElement, TableGridSelectorProps>(
   (
     {
       maxRows = 8,
@@ -165,38 +148,24 @@ export const TableGridSelector = forwardRef<
     },
     ref
   ) => {
-    const gridCells = useMemo(
-      () => generateGridCells(maxRows, maxCols),
-      [maxRows, maxCols]
-    )
+    const gridCells = useMemo(() => generateGridCells(maxRows, maxCols), [maxRows, maxCols])
 
     const gridStyle = useMemo(
       () =>
         ({
-          "--tt-table-columns": maxCols,
-          "--tt-table-rows": maxRows,
+          '--tt-table-columns': maxCols,
+          '--tt-table-rows': maxRows,
         }) as React.CSSProperties,
       [maxCols, maxRows]
     )
 
-    const handleCellHover = useCallback(
-      (row: number, col: number) => () => onCellHover(row, col),
-      [onCellHover]
-    )
+    const handleCellHover = useCallback((row: number, col: number) => () => onCellHover(row, col), [onCellHover])
 
-    const handleCellClick = useCallback(
-      (row: number, col: number) => () => onCellClick(row, col),
-      [onCellClick]
-    )
+    const handleCellClick = useCallback((row: number, col: number) => () => onCellClick(row, col), [onCellClick])
 
     return (
       <>
-        <div
-          ref={ref}
-          className={cn("tiptap-table-grid", className)}
-          onMouseLeave={onMouseLeave}
-          style={gridStyle}
-        >
+        <div ref={ref} className={cn('tiptap-table-grid', className)} onMouseLeave={onMouseLeave} style={gridStyle}>
           {gridCells.map((cell, index) => (
             <GridCell
               key={index}
@@ -216,4 +185,4 @@ export const TableGridSelector = forwardRef<
   }
 )
 
-TableGridSelector.displayName = "TableGridSelector"
+TableGridSelector.displayName = 'TableGridSelector'

@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseDuplicateConfig } from "@/tiptap-editor/components/tiptap-ui/duplicate-button"
-import {
-  DUPLICATE_SHORTCUT_KEY,
-  useDuplicate,
-} from "@/tiptap-editor/components/tiptap-ui/duplicate-button"
+import type { UseDuplicateConfig } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
+import { DUPLICATE_SHORTCUT_KEY, useDuplicate } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface DuplicateButtonProps
-  extends Omit<ButtonProps, "type">, UseDuplicateConfig {
+export interface DuplicateButtonProps extends Omit<ButtonProps, 'type'>, UseDuplicateConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface DuplicateButtonProps
   showShortcut?: boolean
 }
 
-export function DuplicateShortcutBadge({
-  shortcutKeys = DUPLICATE_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function DuplicateShortcutBadge({ shortcutKeys = DUPLICATE_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,30 +38,17 @@ export function DuplicateShortcutBadge({
  *
  * For custom button implementations, use the `useDuplicate` hook instead.
  */
-export const DuplicateButton = forwardRef<
-  HTMLButtonElement,
-  DuplicateButtonProps
->(
+export const DuplicateButton = forwardRef<HTMLButtonElement, DuplicateButtonProps>(
   (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onDuplicated,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
-    },
+    { editor: providedEditor, text, hideWhenUnavailable = false, onDuplicated, showShortcut = false, onClick, children, ...buttonProps },
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleDuplicate, label, shortcutKeys, Icon } =
-      useDuplicate({
-        editor,
-        hideWhenUnavailable,
-        onDuplicated,
-      })
+    const { isVisible, handleDuplicate, label, shortcutKeys, Icon } = useDuplicate({
+      editor,
+      hideWhenUnavailable,
+      onDuplicated,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -100,9 +79,7 @@ export const DuplicateButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <DuplicateShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <DuplicateShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -110,4 +87,4 @@ export const DuplicateButton = forwardRef<
   }
 )
 
-DuplicateButton.displayName = "DuplicateButton"
+DuplicateButton.displayName = 'DuplicateButton'

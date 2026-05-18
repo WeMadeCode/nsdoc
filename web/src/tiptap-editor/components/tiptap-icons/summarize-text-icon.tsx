@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const SummarizeTextIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M3 2C2.44772 2 2 2.44772 2 3C2 3.55228 2.44772 4 3 4H4C4.26522 4 4.51957 4.10536 4.70711 4.29289C4.89464 4.48043 5 4.73478 5 5V10C5 10.7406 5.27387 11.453 5.76552 12.0018C5.28986 12.533 5 13.2337 5 14V19C5 19.2652 4.89464 19.5196 4.70711 19.7071C4.51957 19.8946 4.26522 20 4 20H3C2.44772 20 2 20.4477 2 21C2 21.5523 2.44772 22 3 22H4C4.79565 22 5.55871 21.6839 6.12132 21.1213C6.68393 20.5587 7 19.7957 7 19V14C7 13.4523 7.45228 13 8 13C8.55228 13 9 12.5523 9 12C9 11.4477 8.55228 11 8 11C7.73478 11 7.48043 10.8946 7.29289 10.7071C7.10536 10.5196 7 10.2652 7 10V5C7 4.20435 6.68393 3.44129 6.12132 2.87868C5.55871 2.31607 4.79565 2 4 2H3Z"
         fill="currentColor"
@@ -33,4 +25,4 @@ export const SummarizeTextIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-SummarizeTextIcon.displayName = "SummarizeTextIcon"
+SummarizeTextIcon.displayName = 'SummarizeTextIcon'

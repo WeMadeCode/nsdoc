@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import type { Editor } from "@tiptap/react"
-import { NodeSelection, TextSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import type { Editor } from '@tiptap/react'
+import { NodeSelection, TextSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Icons ---
-import { BlockquoteIcon } from "@/tiptap-editor/components/tiptap-icons/blockquote-icon"
+import { BlockquoteIcon } from '@/tiptap-editor/components/tiptap-icons/blockquote-icon'
 
 // --- UI Utils ---
 import {
@@ -18,9 +18,9 @@ import {
   isNodeTypeSelected,
   isValidPosition,
   selectionWithinConvertibleTypes,
-} from "@/tiptap-editor/lib/tiptap-utils"
+} from '@/tiptap-editor/lib/tiptap-utils'
 
-export const BLOCKQUOTE_SHORTCUT_KEY = "mod+shift+b"
+export const BLOCKQUOTE_SHORTCUT_KEY = 'mod+shift+b'
 
 /**
  * Configuration for the blockquote functionality
@@ -44,38 +44,23 @@ export interface UseBlockquoteConfig {
 /**
  * Checks if blockquote can be toggled in the current editor state
  */
-export function canToggleBlockquote(
-  editor: Editor | null,
-  turnInto: boolean = true
-): boolean {
+export function canToggleBlockquote(editor: Editor | null, turnInto: boolean = true): boolean {
   if (!editor || !editor.isEditable) return false
-  if (
-    !isNodeInSchema("blockquote", editor) ||
-    isNodeTypeSelected(editor, ["image"])
-  )
-    return false
+  if (!isNodeInSchema('blockquote', editor) || isNodeTypeSelected(editor, ['image'])) return false
 
   if (!turnInto) {
-    return editor.can().toggleWrap("blockquote")
+    return editor.can().toggleWrap('blockquote')
   }
 
   // Ensure selection is in nodes we're allowed to convert
   if (
-    !selectionWithinConvertibleTypes(editor, [
-      "paragraph",
-      "heading",
-      "bulletList",
-      "orderedList",
-      "taskList",
-      "blockquote",
-      "codeBlock",
-    ])
+    !selectionWithinConvertibleTypes(editor, ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock'])
   )
     return false
 
   // Either we can wrap in blockquote directly on the selection,
   // or we can clear formatting/nodes to arrive at a blockquote.
-  return editor.can().toggleWrap("blockquote") || editor.can().clearNodes()
+  return editor.can().toggleWrap('blockquote') || editor.can().clearNodes()
 }
 
 /**
@@ -97,20 +82,17 @@ export function toggleBlockquote(editor: Editor | null): boolean {
     // we also dont block the canToggle since it will fall back to the bottom logic
     const isPossibleToTurnInto =
       selectionWithinConvertibleTypes(editor, [
-        "paragraph",
-        "heading",
-        "bulletList",
-        "orderedList",
-        "taskList",
-        "blockquote",
-        "codeBlock",
+        'paragraph',
+        'heading',
+        'bulletList',
+        'orderedList',
+        'taskList',
+        'blockquote',
+        'codeBlock',
       ]) && blocks.length === 1
 
     // No selection, find the the cursor position
-    if (
-      (state.selection.empty || state.selection instanceof TextSelection) &&
-      isPossibleToTurnInto
-    ) {
+    if ((state.selection.empty || state.selection instanceof TextSelection) && isPossibleToTurnInto) {
       const pos = findNodePosition({
         editor,
         node: state.selection.$anchor.node(1),
@@ -131,25 +113,17 @@ export function toggleBlockquote(editor: Editor | null): boolean {
       const firstChild = selection.node.firstChild?.firstChild
       const lastChild = selection.node.lastChild?.lastChild
 
-      const from = firstChild
-        ? selection.from + firstChild.nodeSize
-        : selection.from + 1
+      const from = firstChild ? selection.from + firstChild.nodeSize : selection.from + 1
 
-      const to = lastChild
-        ? selection.to - lastChild.nodeSize
-        : selection.to - 1
+      const to = lastChild ? selection.to - lastChild.nodeSize : selection.to - 1
 
       const resolvedFrom = state.doc.resolve(from)
       const resolvedTo = state.doc.resolve(to)
 
-      chain = chain
-        .setTextSelection(TextSelection.between(resolvedFrom, resolvedTo))
-        .clearNodes()
+      chain = chain.setTextSelection(TextSelection.between(resolvedFrom, resolvedTo)).clearNodes()
     }
 
-    const toggle = editor.isActive("blockquote")
-      ? chain.lift("blockquote")
-      : chain.wrapIn("blockquote")
+    const toggle = editor.isActive('blockquote') ? chain.lift('blockquote') : chain.wrapIn('blockquote')
 
     toggle.run()
 
@@ -164,10 +138,7 @@ export function toggleBlockquote(editor: Editor | null): boolean {
 /**
  * Determines if the blockquote button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -178,9 +149,9 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!isNodeInSchema("blockquote", editor)) return false
+  if (!isNodeInSchema('blockquote', editor)) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canToggleBlockquote(editor)
   }
 
@@ -224,16 +195,12 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useBlockquote(config?: UseBlockquoteConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onToggled,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onToggled } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggle = canToggleBlockquote(editor)
-  const isActive = editor?.isActive("blockquote") || false
+  const isActive = editor?.isActive('blockquote') || false
 
   useEffect(() => {
     if (!editor) return
@@ -244,10 +211,10 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -266,7 +233,7 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: "Blockquote",
+    label: 'Blockquote',
     shortcutKeys: BLOCKQUOTE_SHORTCUT_KEY,
     Icon: BlockquoteIcon,
   }

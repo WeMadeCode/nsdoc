@@ -1,7 +1,7 @@
-import type { Editor } from "@tiptap/core"
-import { Extension } from "@tiptap/core"
-import { canJoin } from "@tiptap/pm/transform"
-import { TextSelection } from "@tiptap/pm/state"
+import type { Editor } from '@tiptap/core'
+import { Extension } from '@tiptap/core'
+import { canJoin } from '@tiptap/pm/transform'
+import { TextSelection } from '@tiptap/pm/state'
 
 /**
  * ListNormalization Extension
@@ -32,10 +32,10 @@ import { TextSelection } from "@tiptap/pm/state"
  * in visual "stuck" vertical spacing that users cannot remove, which feels broken.
  */
 export const ListNormalizationExtension = Extension.create({
-  name: "listNormalization",
+  name: 'listNormalization',
 
   addKeyboardShortcuts() {
-    const listTypes = ["bulletList", "orderedList", "taskList"]
+    const listTypes = ['bulletList', 'orderedList', 'taskList']
 
     const handleBackspace = ({ editor }: { editor: Editor }) => {
       const { state, view } = editor
@@ -47,10 +47,7 @@ export const ListNormalizationExtension = Extension.create({
 
       const currentNode = $from.parent
 
-      if (
-        currentNode.type.name !== "paragraph" ||
-        currentNode.content.size > 0
-      ) {
+      if (currentNode.type.name !== 'paragraph' || currentNode.content.size > 0) {
         return false
       }
 

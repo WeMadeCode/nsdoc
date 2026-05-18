@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import type { Action } from "@/tiptap-editor/components/tiptap-ui-primitive/menu/menu-types"
+import type { Action } from '@/tiptap-editor/components/tiptap-ui-primitive/menu/menu-types'
 
 /**
  * Filters menu items based on search value
@@ -8,30 +8,21 @@ import type { Action } from "@/tiptap-editor/components/tiptap-ui-primitive/menu
  * @param searchValue - The search string to filter against
  * @returns Filtered array of actions
  */
-export function filterMenuItems(
-  { items = [], ...group }: Action,
-  searchValue: string
-): Action[] {
+export function filterMenuItems({ items = [], ...group }: Action, searchValue: string): Action[] {
   if (!searchValue.trim()) return items
 
   const normalizedSearchValue = searchValue.toLowerCase().trim()
 
-  const groupKeywords = [group.label, ...(group.keywords || [])]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase()
+  const groupKeywords = [group.label, ...(group.keywords || [])].filter(Boolean).join(' ').toLowerCase()
 
   if (groupKeywords.includes(normalizedSearchValue)) {
     return items
   }
 
-  return items.filter((item) => {
+  return items.filter(item => {
     if (item.filterItems) return true
 
-    const itemKeywords = [item.label, item.value, ...(item.keywords || [])]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
+    const itemKeywords = [item.label, item.value, ...(item.keywords || [])].filter(Boolean).join(' ').toLowerCase()
 
     return itemKeywords.includes(normalizedSearchValue)
   })
@@ -43,10 +34,7 @@ export function filterMenuItems(
  * @param searchValue - The search string to filter against
  * @returns Filtered array of action groups
  */
-export function filterMenuGroups(
-  menuGroups: Action[],
-  searchValue: string
-): Action[] {
+export function filterMenuGroups(menuGroups: Action[], searchValue: string): Action[] {
   if (!searchValue.trim()) return menuGroups
 
   return menuGroups.reduce<Action[]>((acc, group) => {

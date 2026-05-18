@@ -1,20 +1,17 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { type Editor } from "@tiptap/react"
-import { NodeSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import { NodeSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import {
-  isExtensionAvailable,
-  isNodeTypeSelected,
-} from "@/tiptap-editor/lib/tiptap-utils"
+import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { ImageCaptionIcon } from "@/tiptap-editor/components/tiptap-icons/image-caption-icon"
+import { ImageCaptionIcon } from '@/tiptap-editor/components/tiptap-icons/image-caption-icon'
 
 /**
  * Configuration for the image caption functionality
@@ -40,9 +37,9 @@ export interface UseImageCaptionConfig {
  */
 export function canToggleImageCaption(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ["image"])) return false
+  if (!isExtensionAvailable(editor, ['image'])) return false
 
-  return isNodeTypeSelected(editor, ["image"])
+  return isNodeTypeSelected(editor, ['image'])
 }
 
 /**
@@ -53,8 +50,7 @@ export function isImageCaptionActive(editor: Editor | null): boolean {
 
   try {
     const { selection } = editor.state
-    const isImageSelected =
-      selection instanceof NodeSelection && selection.node.type.name === "image"
+    const isImageSelected = selection instanceof NodeSelection && selection.node.type.name === 'image'
 
     if (!isImageSelected) {
       return false
@@ -77,18 +73,13 @@ export function setImageCaption(editor: Editor | null): boolean {
 
   try {
     const { selection } = editor.state
-    const isImageSelected =
-      selection instanceof NodeSelection && selection.node.type.name === "image"
+    const isImageSelected = selection instanceof NodeSelection && selection.node.type.name === 'image'
 
     if (!isImageSelected) {
       return false
     }
 
-    const captionEnabled = editor
-      .chain()
-      .focus()
-      .updateAttributes("image", { showCaption: true })
-      .run()
+    const captionEnabled = editor.chain().focus().updateAttributes('image', { showCaption: true }).run()
 
     if (!captionEnabled) {
       return false
@@ -110,10 +101,7 @@ export function setImageCaption(editor: Editor | null): boolean {
 /**
  * Determines if the image caption button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -124,7 +112,7 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!isExtensionAvailable(editor, ["image"])) return false
+  if (!isExtensionAvailable(editor, ['image'])) return false
 
   return canToggleImageCaption(editor)
 }
@@ -166,11 +154,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useImageCaption(config?: UseImageCaptionConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onSet,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onSet } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
@@ -187,10 +171,10 @@ export function useImageCaption(config?: UseImageCaptionConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -209,7 +193,7 @@ export function useImageCaption(config?: UseImageCaptionConfig) {
     isActive,
     canToggle,
     handleToggleCaption,
-    label: "Caption",
+    label: 'Caption',
     Icon: ImageCaptionIcon,
   }
 }

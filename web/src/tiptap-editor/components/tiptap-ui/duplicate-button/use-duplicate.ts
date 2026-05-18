@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { type Editor } from "@tiptap/react"
-import { NodeSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { type Editor } from '@tiptap/react'
+import { NodeSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
-import { CopyIcon } from "@/tiptap-editor/components/tiptap-icons/copy-icon"
+import { CopyIcon } from '@/tiptap-editor/components/tiptap-icons/copy-icon'
 
-export const DUPLICATE_SHORTCUT_KEY = "mod+d"
+export const DUPLICATE_SHORTCUT_KEY = 'mod+d'
 
 /**
  * Configuration for the duplicate functionality
@@ -82,15 +82,12 @@ export function duplicateNode(editor: Editor | null): boolean {
       const node = $anchor.node(depth)
 
       // Skip document and other non-duplicatable nodes
-      if (node.type.name === "doc" || !node.type.spec.group) {
+      if (node.type.name === 'doc' || !node.type.spec.group) {
         continue
       }
 
       const nodeStart = $anchor.start(depth)
-      const insertPos = Math.min(
-        nodeStart + node.nodeSize,
-        state.doc.content.size
-      )
+      const insertPos = Math.min(nodeStart + node.nodeSize, state.doc.content.size)
 
       chain.insertContentAt(insertPos, node.toJSON()).run()
       return true
@@ -105,10 +102,7 @@ export function duplicateNode(editor: Editor | null): boolean {
 /**
  * Determines if the duplicate button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -119,7 +113,7 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canDuplicateNode(editor)
   }
 
@@ -162,11 +156,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useDuplicate(config?: UseDuplicateConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onDuplicated,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onDuplicated } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -182,10 +172,10 @@ export function useDuplicate(config?: UseDuplicateConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -201,7 +191,7 @@ export function useDuplicate(config?: UseDuplicateConfig) {
 
   useHotkeys(
     DUPLICATE_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault() // prevent browser default bookmarking
       handleDuplicate()
     },
@@ -216,7 +206,7 @@ export function useDuplicate(config?: UseDuplicateConfig) {
     isVisible,
     handleDuplicate,
     canDuplicate,
-    label: "Duplicate node",
+    label: 'Duplicate node',
     shortcutKeys: DUPLICATE_SHORTCUT_KEY,
     Icon: CopyIcon,
   }

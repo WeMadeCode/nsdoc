@@ -9,8 +9,6 @@ export interface BaseAiMenuInputProps {
   onPlaceholderClick?: () => void
 }
 
-export interface AiMenuInputTextareaProps
-  extends BaseAiMenuInputProps,
-    Omit<React.ComponentProps<"div">, "style"> {
+export interface AiMenuInputTextareaProps extends BaseAiMenuInputProps, Omit<React.ComponentProps<'div'>, 'style'> {
   placeholder?: string
 }

@@ -1,10 +1,10 @@
-import type { NodeWithPos } from "@tiptap/core"
-import { Extension } from "@tiptap/core"
-import type { EditorState, Transaction } from "@tiptap/pm/state"
-import { getSelectedNodesOfType } from "@/tiptap-editor/lib/tiptap-utils"
-import { updateNodesAttr } from "@/tiptap-editor/lib/tiptap-utils"
+import type { NodeWithPos } from '@tiptap/core'
+import { Extension } from '@tiptap/core'
+import type { EditorState, Transaction } from '@tiptap/pm/state'
+import { getSelectedNodesOfType } from '@/tiptap-editor/lib/tiptap-utils'
+import { updateNodesAttr } from '@/tiptap-editor/lib/tiptap-utils'
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     nodeAlignment: {
       setNodeTextAlign: (textAlign: string) => ReturnType
@@ -13,10 +13,7 @@ declare module "@tiptap/core" {
       setNodeVAlign: (verticalAlign: string) => ReturnType
       unsetNodeVAlign: () => ReturnType
       toggleNodeVAlign: (verticalAlign: string) => ReturnType
-      setNodeAlignment: (
-        textAlign?: string,
-        verticalAlign?: string
-      ) => ReturnType
+      setNodeAlignment: (textAlign?: string, verticalAlign?: string) => ReturnType
       unsetNodeAlignment: () => ReturnType
     }
   }
@@ -45,11 +42,7 @@ export interface NodeAlignmentOptions {
   verticalAlignValues: string[]
 }
 
-function getToggleValue(
-  targets: NodeWithPos[],
-  attributeName: string,
-  inputValue: string
-): string | null {
+function getToggleValue(targets: NodeWithPos[], attributeName: string, inputValue: string): string | null {
   if (targets.length === 0) return null
 
   for (const target of targets) {
@@ -62,14 +55,14 @@ function getToggleValue(
 }
 
 export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
-  name: "nodeAlignment",
+  name: 'nodeAlignment',
 
   addOptions() {
     return {
-      types: ["paragraph", "heading", "blockquote", "tableCell", "tableHeader"],
+      types: ['paragraph', 'heading', 'blockquote', 'tableCell', 'tableHeader'],
       useStyle: true,
-      textAlignValues: ["left", "center", "right", "justify"],
-      verticalAlignValues: ["top", "middle", "bottom"],
+      textAlignValues: ['left', 'center', 'right', 'justify'],
+      verticalAlignValues: ['top', 'middle', 'bottom'],
     }
   },
 
@@ -83,32 +76,25 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
 
             parseHTML: (element: HTMLElement) => {
               const styleAlign = element.style?.textAlign
-              if (
-                styleAlign &&
-                this.options.textAlignValues.includes(styleAlign)
-              ) {
+              if (styleAlign && this.options.textAlignValues.includes(styleAlign)) {
                 return styleAlign
               }
 
-              const dataAlign = element.getAttribute("data-node-text-align")
-              if (
-                dataAlign &&
-                this.options.textAlignValues.includes(dataAlign)
-              ) {
+              const dataAlign = element.getAttribute('data-node-text-align')
+              if (dataAlign && this.options.textAlignValues.includes(dataAlign)) {
                 return dataAlign
               }
               return null
             },
 
-            renderHTML: (attributes) => {
+            renderHTML: attributes => {
               const align = attributes.nodeTextAlign as string | null
-              if (!align || !this.options.textAlignValues.includes(align))
-                return {}
+              if (!align || !this.options.textAlignValues.includes(align)) return {}
 
               if (this.options.useStyle) {
                 return { style: `text-align: ${align}` }
               } else {
-                return { "data-node-text-align": align }
+                return { 'data-node-text-align': align }
               }
             },
           },
@@ -118,33 +104,24 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
 
             parseHTML: (element: HTMLElement) => {
               const styleVAlign = element.style?.verticalAlign
-              if (
-                styleVAlign &&
-                this.options.verticalAlignValues.includes(styleVAlign)
-              ) {
+              if (styleVAlign && this.options.verticalAlignValues.includes(styleVAlign)) {
                 return styleVAlign
               }
-              const dataVAlign = element.getAttribute(
-                "data-node-vertical-align"
-              )
-              if (
-                dataVAlign &&
-                this.options.verticalAlignValues.includes(dataVAlign)
-              ) {
+              const dataVAlign = element.getAttribute('data-node-vertical-align')
+              if (dataVAlign && this.options.verticalAlignValues.includes(dataVAlign)) {
                 return dataVAlign
               }
               return null
             },
 
-            renderHTML: (attributes) => {
+            renderHTML: attributes => {
               const vAlign = attributes.nodeVerticalAlign as string | null
-              if (!vAlign || !this.options.verticalAlignValues.includes(vAlign))
-                return {}
+              if (!vAlign || !this.options.verticalAlignValues.includes(vAlign)) return {}
 
               if (this.options.useStyle) {
                 return { style: `vertical-align: ${vAlign}` }
               } else {
-                return { "data-node-vertical-align": vAlign }
+                return { 'data-node-vertical-align': vAlign }
               }
             },
           },
@@ -155,18 +132,12 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
 
   addCommands() {
     const executeAlignmentCommand = (
-      attributeName: "nodeTextAlign" | "nodeVerticalAlign",
-      getTargetValue: (
-        targets: NodeWithPos[],
-        inputValue?: string
-      ) => string | null
+      attributeName: 'nodeTextAlign' | 'nodeVerticalAlign',
+      getTargetValue: (targets: NodeWithPos[], inputValue?: string) => string | null
     ) => {
       return (inputValue?: string) =>
         ({ state, tr }: { state: EditorState; tr: Transaction }) => {
-          const targets = getSelectedNodesOfType(
-            state.selection,
-            this.options.types
-          )
+          const targets = getSelectedNodesOfType(state.selection, this.options.types)
           if (targets.length === 0) return false
           const targetValue = getTargetValue(targets, inputValue)
           return updateNodesAttr(tr, targets, attributeName, targetValue)
@@ -175,57 +146,32 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
 
     return {
       // TEXT ALIGN
-      setNodeTextAlign: executeAlignmentCommand(
-        "nodeTextAlign",
-        (_, inputValue) => {
-          if (!inputValue || !this.options.textAlignValues.includes(inputValue))
-            return null
-          return inputValue
-        }
-      ),
-      unsetNodeTextAlign: executeAlignmentCommand("nodeTextAlign", () => null),
-      toggleNodeTextAlign: executeAlignmentCommand(
-        "nodeTextAlign",
-        (targets, inputValue) => {
-          if (!inputValue || !this.options.textAlignValues.includes(inputValue))
-            return null
-          return getToggleValue(targets, "nodeTextAlign", inputValue)
-        }
-      ),
+      setNodeTextAlign: executeAlignmentCommand('nodeTextAlign', (_, inputValue) => {
+        if (!inputValue || !this.options.textAlignValues.includes(inputValue)) return null
+        return inputValue
+      }),
+      unsetNodeTextAlign: executeAlignmentCommand('nodeTextAlign', () => null),
+      toggleNodeTextAlign: executeAlignmentCommand('nodeTextAlign', (targets, inputValue) => {
+        if (!inputValue || !this.options.textAlignValues.includes(inputValue)) return null
+        return getToggleValue(targets, 'nodeTextAlign', inputValue)
+      }),
 
       // VERTICAL ALIGN
-      setNodeVAlign: executeAlignmentCommand(
-        "nodeVerticalAlign",
-        (_, inputValue) => {
-          if (
-            !inputValue ||
-            !this.options.verticalAlignValues.includes(inputValue)
-          )
-            return null
-          return inputValue
-        }
-      ),
-      unsetNodeVAlign: executeAlignmentCommand("nodeVerticalAlign", () => null),
-      toggleNodeVAlign: executeAlignmentCommand(
-        "nodeVerticalAlign",
-        (targets, inputValue) => {
-          if (
-            !inputValue ||
-            !this.options.verticalAlignValues.includes(inputValue)
-          )
-            return null
-          return getToggleValue(targets, "nodeVerticalAlign", inputValue)
-        }
-      ),
+      setNodeVAlign: executeAlignmentCommand('nodeVerticalAlign', (_, inputValue) => {
+        if (!inputValue || !this.options.verticalAlignValues.includes(inputValue)) return null
+        return inputValue
+      }),
+      unsetNodeVAlign: executeAlignmentCommand('nodeVerticalAlign', () => null),
+      toggleNodeVAlign: executeAlignmentCommand('nodeVerticalAlign', (targets, inputValue) => {
+        if (!inputValue || !this.options.verticalAlignValues.includes(inputValue)) return null
+        return getToggleValue(targets, 'nodeVerticalAlign', inputValue)
+      }),
 
       // BOTH
       setNodeAlignment:
         (textAlign?: string, verticalAlign?: string) =>
         ({ state, tr }: { state: EditorState; tr: Transaction }) => {
-          const targets = getSelectedNodesOfType(
-            state.selection,
-            this.options.types
-          )
+          const targets = getSelectedNodesOfType(state.selection, this.options.types)
           if (targets.length === 0) return false
 
           let hasChanges = false
@@ -238,10 +184,7 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
               hasChanges = true
             }
 
-            if (
-              verticalAlign &&
-              this.options.verticalAlignValues.includes(verticalAlign)
-            ) {
+            if (verticalAlign && this.options.verticalAlignValues.includes(verticalAlign)) {
               newAttrs.nodeVerticalAlign = verticalAlign
               hasChanges = true
             }
@@ -255,10 +198,7 @@ export const NodeAlignment = Extension.create<NodeAlignmentOptions>({
       unsetNodeAlignment:
         () =>
         ({ state, tr }: { state: EditorState; tr: Transaction }) => {
-          const targets = getSelectedNodesOfType(
-            state.selection,
-            this.options.types
-          )
+          const targets = getSelectedNodesOfType(state.selection, this.options.types)
           if (targets.length === 0) return false
 
           let hasChanges = false

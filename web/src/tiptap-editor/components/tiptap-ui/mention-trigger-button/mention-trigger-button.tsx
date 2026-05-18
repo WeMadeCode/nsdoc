@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseMentionTriggerConfig } from "@/tiptap-editor/components/tiptap-ui/mention-trigger-button"
-import {
-  MENTION_TRIGGER_SHORTCUT_KEY,
-  useMentionTrigger,
-} from "@/tiptap-editor/components/tiptap-ui/mention-trigger-button"
+import type { UseMentionTriggerConfig } from '@/tiptap-editor/components/tiptap-ui/mention-trigger-button'
+import { MENTION_TRIGGER_SHORTCUT_KEY, useMentionTrigger } from '@/tiptap-editor/components/tiptap-ui/mention-trigger-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface MentionTriggerButtonProps
-  extends Omit<ButtonProps, "type">, UseMentionTriggerConfig {
+export interface MentionTriggerButtonProps extends Omit<ButtonProps, 'type'>, UseMentionTriggerConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface MentionTriggerButtonProps
   showShortcut?: boolean
 }
 
-export function MentionShortcutBadge({
-  shortcutKeys = MENTION_TRIGGER_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function MentionShortcutBadge({ shortcutKeys = MENTION_TRIGGER_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,17 +38,14 @@ export function MentionShortcutBadge({
  *
  * For custom button implementations, use the `useMention` hook instead.
  */
-export const MentionTriggerButton = forwardRef<
-  HTMLButtonElement,
-  MentionTriggerButtonProps
->(
+export const MentionTriggerButton = forwardRef<HTMLButtonElement, MentionTriggerButtonProps>(
   (
     {
       editor: providedEditor,
       node,
       nodePos,
       text,
-      trigger = "@",
+      trigger = '@',
       hideWhenUnavailable = false,
       onTriggered,
       showShortcut = false,
@@ -67,15 +56,14 @@ export const MentionTriggerButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, canInsert, handleMention, label, shortcutKeys, Icon } =
-      useMentionTrigger({
-        editor,
-        node,
-        nodePos,
-        trigger,
-        hideWhenUnavailable,
-        onTriggered,
-      })
+    const { isVisible, canInsert, handleMention, label, shortcutKeys, Icon } = useMentionTrigger({
+      editor,
+      node,
+      nodePos,
+      trigger,
+      hideWhenUnavailable,
+      onTriggered,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -108,9 +96,7 @@ export const MentionTriggerButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <MentionShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <MentionShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -118,4 +104,4 @@ export const MentionTriggerButton = forwardRef<
   }
 )
 
-MentionTriggerButton.displayName = "MentionTriggerButton"
+MentionTriggerButton.displayName = 'MentionTriggerButton'

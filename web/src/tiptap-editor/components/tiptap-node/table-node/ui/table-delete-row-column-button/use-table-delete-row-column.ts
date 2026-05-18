@@ -1,24 +1,24 @@
-"use client"
+'use client'
 
-import { useCallback, useMemo } from "react"
-import type { Editor } from "@tiptap/react"
-import { deleteRow, deleteColumn, CellSelection } from "@tiptap/pm/tables"
-import type { Transaction } from "@tiptap/pm/state"
+import { useCallback, useMemo } from 'react'
+import type { Editor } from '@tiptap/react'
+import { deleteRow, deleteColumn, CellSelection } from '@tiptap/pm/tables'
+import type { Transaction } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/tiptap-editor/lib/tiptap-utils"
-import type { Orientation } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
   getTable,
   getTableSelectionType,
   selectCellsByCoords,
-} from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 // --- Icons ---
-import { TrashIcon } from "@/tiptap-editor/components/tiptap-icons/trash-icon"
+import { TrashIcon } from '@/tiptap-editor/components/tiptap-icons/trash-icon'
 
 export interface UseTableDeleteRowColumnConfig {
   /**
@@ -49,11 +49,11 @@ export interface UseTableDeleteRowColumnConfig {
   onDeleted?: () => void
 }
 
-const REQUIRED_EXTENSIONS = ["table"]
+const REQUIRED_EXTENSIONS = ['table']
 
 export const tableDeleteRowColumnLabels: Record<Orientation, string> = {
-  row: "Delete row",
-  column: "Delete column",
+  row: 'Delete row',
+  column: 'Delete column',
 }
 
 /**
@@ -71,11 +71,7 @@ function canDeleteRowColumn({
   orientation?: Orientation
   tablePos?: number
 }): boolean {
-  if (
-    !editor ||
-    !editor.isEditable ||
-    !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)
-  ) {
+  if (!editor || !editor.isEditable || !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
     return false
   }
 
@@ -106,10 +102,7 @@ function tableDeleteRowColumn({
   orientation?: Orientation
   tablePos?: number
 }): boolean {
-  if (
-    !canDeleteRowColumn({ editor, index, orientation, tablePos }) ||
-    !editor
-  ) {
+  if (!canDeleteRowColumn({ editor, index, orientation, tablePos }) || !editor) {
     return false
   }
 
@@ -119,7 +112,7 @@ function tableDeleteRowColumn({
 
     const { orientation: finalOrientation, index: finalIndex } = selectionType
 
-    const isRow = finalOrientation === "row"
+    const isRow = finalOrientation === 'row'
     const dispatch = (tr: Transaction) => editor.view.dispatch(tr)
     const deleteOperation = isRow ? deleteRow : deleteColumn
 
@@ -130,12 +123,10 @@ function tableDeleteRowColumn({
     const table = getTable(editor, tablePos)
     if (!table) return false
 
-    const cellCoords = isRow
-      ? { row: finalIndex, col: 0 }
-      : { row: 0, col: finalIndex }
+    const cellCoords = isRow ? { row: finalIndex, col: 0 } : { row: 0, col: finalIndex }
 
     const cellState = selectCellsByCoords(editor, table.pos, [cellCoords], {
-      mode: "state",
+      mode: 'state',
     })
 
     if (!cellState) return false
@@ -166,9 +157,7 @@ function shouldShowButton({
 }): boolean {
   if (!editor || !editor.isEditable) return false
   if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
-  return hideWhenUnavailable
-    ? canDeleteRowColumn({ editor, index, orientation, tablePos })
-    : true
+  return hideWhenUnavailable ? canDeleteRowColumn({ editor, index, orientation, tablePos }) : true
 }
 
 /**
@@ -214,14 +203,7 @@ function shouldShowButton({
  * ```
  */
 export function useTableDeleteRowColumn(config: UseTableDeleteRowColumnConfig) {
-  const {
-    editor: providedEditor,
-    index,
-    orientation,
-    tablePos,
-    hideWhenUnavailable = false,
-    onDeleted,
-  } = config
+  const { editor: providedEditor, index, orientation, tablePos, hideWhenUnavailable = false, onDeleted } = config
 
   const { editor } = useTiptapEditor(providedEditor)
 
@@ -253,7 +235,7 @@ export function useTableDeleteRowColumn(config: UseTableDeleteRowColumnConfig) {
   }, [editor, index, orientation, tablePos, onDeleted])
 
   const label = useMemo(() => {
-    return tableDeleteRowColumnLabels[selectionType?.orientation || "row"]
+    return tableDeleteRowColumnLabels[selectionType?.orientation || 'row']
   }, [selectionType])
 
   return {

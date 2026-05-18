@@ -1,20 +1,19 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseImageCaptionConfig } from "@/tiptap-editor/components/tiptap-ui/image-caption-button"
-import { useImageCaption } from "@/tiptap-editor/components/tiptap-ui/image-caption-button"
+import type { UseImageCaptionConfig } from '@/tiptap-editor/components/tiptap-ui/image-caption-button'
+import { useImageCaption } from '@/tiptap-editor/components/tiptap-ui/image-caption-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface ImageCaptionButtonProps
-  extends Omit<ButtonProps, "type">, UseImageCaptionConfig {
+export interface ImageCaptionButtonProps extends Omit<ButtonProps, 'type'>, UseImageCaptionConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -27,29 +26,14 @@ export interface ImageCaptionButtonProps
  *
  * For custom button implementations, use the `useImageCaption` hook instead.
  */
-export const ImageCaptionButton = React.forwardRef<
-  HTMLButtonElement,
-  ImageCaptionButtonProps
->(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onSet,
-      onClick,
-      children,
-      ...buttonProps
-    },
-    ref
-  ) => {
+export const ImageCaptionButton = React.forwardRef<HTMLButtonElement, ImageCaptionButtonProps>(
+  ({ editor: providedEditor, text, hideWhenUnavailable = false, onSet, onClick, children, ...buttonProps }, ref) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, isActive, canToggle, handleToggleCaption, label, Icon } =
-      useImageCaption({
-        editor,
-        hideWhenUnavailable,
-        onSet,
-      })
+    const { isVisible, isActive, canToggle, handleToggleCaption, label, Icon } = useImageCaption({
+      editor,
+      hideWhenUnavailable,
+      onSet,
+    })
 
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +52,7 @@ export const ImageCaptionButton = React.forwardRef<
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canToggle}
@@ -90,4 +74,4 @@ export const ImageCaptionButton = React.forwardRef<
   }
 )
 
-ImageCaptionButton.displayName = "ImageCaptionButton"
+ImageCaptionButton.displayName = 'ImageCaptionButton'

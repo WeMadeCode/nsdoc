@@ -1,21 +1,16 @@
-"use client"
+'use client'
 
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { getAvatar } from "@/tiptap-editor/lib/tiptap-collab-utils"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarImage,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/avatar"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { getAvatar } from '@/tiptap-editor/lib/tiptap-collab-utils'
+import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from '@/tiptap-editor/components/tiptap-ui-primitive/avatar'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu"
+} from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
 
 type User = { clientId: number; id: string; name: string; color: string }
 
@@ -26,24 +21,19 @@ export function CollaborationUsers() {
     return null
   }
 
-  const collaborationUsers: User[] =
-    editor.storage.collaborationCaret.users.map((user) => ({
-      clientId: user.clientId,
-      id: String(user.clientId),
-      name: user.name || "Anonymous",
-      color: user.color || "#000000",
-    }))
+  const collaborationUsers: User[] = editor.storage.collaborationCaret.users.map(user => ({
+    clientId: user.clientId,
+    id: String(user.clientId),
+    name: user.name || 'Anonymous',
+    color: user.color || '#000000',
+  }))
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          data-appearence="subdued"
-          style={{ padding: "0.25rem" }}
-        >
+        <Button variant="ghost" data-appearence="subdued" style={{ padding: '0.25rem' }}>
           <AvatarGroup maxVisible={3}>
-            {collaborationUsers.map((user) => (
+            {collaborationUsers.map(user => (
               <Avatar key={user.id} userColor={user.color}>
                 <AvatarImage src={getAvatar(user.name)} />
                 <AvatarFallback>{user.name?.toUpperCase()[0]}</AvatarFallback>
@@ -54,7 +44,7 @@ export function CollaborationUsers() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          {collaborationUsers.map((user) => (
+          {collaborationUsers.map(user => (
             <DropdownMenuItem key={user.id} asChild>
               <Button variant="ghost">
                 <Avatar userColor={user.color}>

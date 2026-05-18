@@ -1,28 +1,25 @@
-"use client"
+'use client'
 
-import { forwardRef } from "react"
-import type { Editor } from "@tiptap/react"
+import { forwardRef } from 'react'
+import type { Editor } from '@tiptap/react'
 
 // --- Tiptap UI ---
-import type { UseTurnIntoDropdownConfig } from "@/tiptap-editor/components/tiptap-ui/turn-into-dropdown"
-import {
-  useTurnIntoDropdown,
-  getFilteredBlockTypeOptions,
-} from "@/tiptap-editor/components/tiptap-ui/turn-into-dropdown"
+import type { UseTurnIntoDropdownConfig } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
+import { useTurnIntoDropdown, getFilteredBlockTypeOptions } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI Components ---
-import { TextButton } from "@/tiptap-editor/components/tiptap-ui/text-button"
-import { HeadingButton } from "@/tiptap-editor/components/tiptap-ui/heading-button"
-import { ListButton } from "@/tiptap-editor/components/tiptap-ui/list-button"
-import { BlockquoteButton } from "@/tiptap-editor/components/tiptap-ui/blockquote-button"
-import { CodeBlockButton } from "@/tiptap-editor/components/tiptap-ui/code-block-button"
+import { TextButton } from '@/tiptap-editor/components/tiptap-ui/text-button'
+import { HeadingButton } from '@/tiptap-editor/components/tiptap-ui/heading-button'
+import { ListButton } from '@/tiptap-editor/components/tiptap-ui/list-button'
+import { BlockquoteButton } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
+import { CodeBlockButton } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -30,114 +27,73 @@ import {
   DropdownMenuItem,
   DropdownMenuGroup,
   DropdownMenuLabel,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu"
+} from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
 
 export interface TurnIntoDropdownContentProps {
   blockTypes?: string[]
   editor?: Editor | null
 }
 
-export function TurnIntoDropdownContent({
-  blockTypes,
-  editor,
-}: TurnIntoDropdownContentProps) {
+export function TurnIntoDropdownContent({ blockTypes, editor }: TurnIntoDropdownContentProps) {
   const filteredOptions = getFilteredBlockTypeOptions(blockTypes)
 
   return (
     <DropdownMenuGroup>
       <DropdownMenuLabel>Turn into</DropdownMenuLabel>
-      {filteredOptions.map((option, index) =>
-        renderBlockTypeButton(
-          option,
-          `${option.type}-${option.level ?? index}`,
-          editor
-        )
-      )}
+      {filteredOptions.map((option, index) => renderBlockTypeButton(option, `${option.type}-${option.level ?? index}`, editor))}
     </DropdownMenuGroup>
   )
 }
 
-function renderBlockTypeButton(
-  option: ReturnType<typeof getFilteredBlockTypeOptions>[0],
-  key: string,
-  editor?: Editor | null
-) {
+function renderBlockTypeButton(option: ReturnType<typeof getFilteredBlockTypeOptions>[0], key: string, editor?: Editor | null) {
   switch (option.type) {
-    case "paragraph":
+    case 'paragraph':
       return (
         <DropdownMenuItem key={key} asChild>
           <TextButton editor={editor} showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "heading":
+    case 'heading':
       if (!option.level) return null
       return (
         <DropdownMenuItem key={key} asChild>
-          <HeadingButton
-            editor={editor}
-            level={option.level}
-            showTooltip={false}
-            text={option.label}
-          />
+          <HeadingButton editor={editor} level={option.level} showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "bulletList":
+    case 'bulletList':
       return (
         <DropdownMenuItem key={key} asChild>
-          <ListButton
-            editor={editor}
-            type="bulletList"
-            showTooltip={false}
-            text={option.label}
-          />
+          <ListButton editor={editor} type="bulletList" showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "orderedList":
+    case 'orderedList':
       return (
         <DropdownMenuItem key={key} asChild>
-          <ListButton
-            editor={editor}
-            type="orderedList"
-            showTooltip={false}
-            text={option.label}
-          />
+          <ListButton editor={editor} type="orderedList" showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "taskList":
+    case 'taskList':
       return (
         <DropdownMenuItem key={key} asChild>
-          <ListButton
-            editor={editor}
-            type="taskList"
-            showTooltip={false}
-            text={option.label}
-          />
+          <ListButton editor={editor} type="taskList" showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "blockquote":
+    case 'blockquote':
       return (
         <DropdownMenuItem key={key} asChild>
-          <BlockquoteButton
-            editor={editor}
-            showTooltip={false}
-            text={option.label}
-          />
+          <BlockquoteButton editor={editor} showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
-    case "codeBlock":
+    case 'codeBlock':
       return (
         <DropdownMenuItem key={key} asChild>
-          <CodeBlockButton
-            editor={editor}
-            showTooltip={false}
-            text={option.label}
-          />
+          <CodeBlockButton editor={editor} showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 
@@ -146,8 +102,7 @@ function renderBlockTypeButton(
   }
 }
 
-export interface TurnIntoDropdownProps
-  extends Omit<ButtonProps, "type">, UseTurnIntoDropdownConfig {
+export interface TurnIntoDropdownProps extends Omit<ButtonProps, 'type'>, UseTurnIntoDropdownConfig {
   modal?: boolean
 }
 
@@ -155,31 +110,12 @@ export interface TurnIntoDropdownProps
  * Dropdown component for transforming block types in a Tiptap editor.
  * For custom dropdown implementations, use the `useTurnIntoDropdown` hook instead.
  */
-export const TurnIntoDropdown = forwardRef<
-  HTMLButtonElement,
-  TurnIntoDropdownProps
->(function TurnIntoDropdown(
-  {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    blockTypes,
-    onOpenChange,
-    modal = true,
-    children,
-    ...buttonProps
-  },
+export const TurnIntoDropdown = forwardRef<HTMLButtonElement, TurnIntoDropdownProps>(function TurnIntoDropdown(
+  { editor: providedEditor, hideWhenUnavailable = false, blockTypes, onOpenChange, modal = true, children, ...buttonProps },
   ref
 ) {
   const { editor } = useTiptapEditor(providedEditor)
-  const {
-    isVisible,
-    canToggle,
-    isOpen,
-    activeBlockType,
-    handleOpenChange,
-    label,
-    Icon,
-  } = useTurnIntoDropdown({
+  const { isVisible, canToggle, isOpen, activeBlockType, handleOpenChange, label, Icon } = useTurnIntoDropdown({
     editor,
     hideWhenUnavailable,
     blockTypes,
@@ -205,9 +141,7 @@ export const TurnIntoDropdown = forwardRef<
         >
           {children ?? (
             <>
-              <span className="tiptap-button-text">
-                {activeBlockType?.label || "Text"}
-              </span>
+              <span className="tiptap-button-text">{activeBlockType?.label || 'Text'}</span>
               <Icon className="tiptap-button-dropdown-small" />
             </>
           )}
@@ -221,4 +155,4 @@ export const TurnIntoDropdown = forwardRef<
   )
 })
 
-TurnIntoDropdown.displayName = "TurnIntoDropdown"
+TurnIntoDropdown.displayName = 'TurnIntoDropdown'

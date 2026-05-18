@@ -30,8 +30,6 @@ import { Placeholder, Selection } from '@tiptap/extensions'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit'
-import { Ai } from '@tiptap-pro/extension-ai'
-import type { TiptapCollabProvider } from '@tiptap-pro/provider'
 import { useContext, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import type { Doc as YDoc } from 'yjs'
@@ -61,7 +59,6 @@ import { NotionEditorHeader } from '@/tiptap-editor/components/tiptap-templates/
 import { MobileToolbar } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor-mobile-toolbar'
 import { NotionToolbarFloating } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor-toolbar-floating'
 import { SetupErrorMessage } from '@/tiptap-editor/components/tiptap-templates/notion-like/setup-error-message'
-import { AiMenu } from '@/tiptap-editor/components/tiptap-ui/ai-menu'
 import { useScrollToHash } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button/use-scroll-to-hash'
 import { DragContextMenu } from '@/tiptap-editor/components/tiptap-ui/drag-context-menu'
 // --- Tiptap UI ---
@@ -75,7 +72,6 @@ import { CollabProvider, useCollab } from '@/tiptap-editor/contexts/collab-conte
 import { UserProvider, useUser } from '@/tiptap-editor/contexts/user-context'
 // --- Hooks ---
 import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
-import { TIPTAP_AI_APP_ID } from '@/tiptap-editor/lib/tiptap-collab-utils'
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
 
@@ -85,12 +81,10 @@ export interface NotionEditorProps {
 }
 
 export interface EditorProviderProps {
-  provider: TiptapCollabProvider | null
+  provider: unknown
   ydoc: YDoc
   placeholder?: string
-  aiToken: string | null
   hasCollab: boolean
-  hasAi: boolean
 }
 
 /**
@@ -122,7 +116,8 @@ export function EditorContentArea() {
     if (!editor) return
 
     if (!aiGenerationIsLoading && aiGenerationIsSelection && aiGenerationHasMessage) {
-      editor.chain().focus().aiAccept().run()
+      // AI commands are provided by the private @tiptap-pro/extension-ai package.
+      // Keep the state reset path harmless for local builds without that package.
       editor.commands.resetUiState()
     }
   }, [aiGenerationHasMessage, aiGenerationIsLoading, aiGenerationIsSelection, editor])
@@ -143,7 +138,6 @@ export function EditorContentArea() {
       }}
     >
       <DragContextMenu />
-      <AiMenu />
       <EmojiDropdownMenu />
       <MentionDropdownMenu />
       <SlashDropdownMenu />
@@ -157,7 +151,7 @@ export function EditorContentArea() {
  * Component that creates and provides the editor instance
  */
 export function EditorProvider(props: EditorProviderProps) {
-  const { provider, ydoc, placeholder = 'Start writing...', aiToken, hasCollab, hasAi } = props
+  const { provider, ydoc, placeholder = 'Start writing...', hasCollab } = props
 
   const { user } = useUser()
   const { setTocContent } = useToc()
@@ -185,7 +179,7 @@ export function EditorProvider(props: EditorProviderProps) {
         ? [
             Collaboration.configure({ document: ydoc }),
             CollaborationCaret.configure({
-              provider,
+              provider: provider as never,
               user: { id: user.id, name: user.name, color: user.color },
             }),
           ]
@@ -244,30 +238,6 @@ export function EditorProvider(props: EditorProviderProps) {
       TocNode.configure({
         topOffset: 48,
       }),
-      ...(hasAi && aiToken
-        ? [
-            Ai.configure({
-              appId: TIPTAP_AI_APP_ID,
-              token: aiToken,
-              autocompletion: false,
-              showDecorations: true,
-              hideDecorationsOnStreamEnd: false,
-              onLoading: context => {
-                context.editor.commands.aiGenerationSetIsLoading(true)
-                context.editor.commands.aiGenerationHasMessage(false)
-              },
-              onChunk: context => {
-                context.editor.commands.aiGenerationSetIsLoading(true)
-                context.editor.commands.aiGenerationHasMessage(true)
-              },
-              onSuccess: context => {
-                const hasMessage = !!context.response
-                context.editor.commands.aiGenerationSetIsLoading(false)
-                context.editor.commands.aiGenerationHasMessage(hasMessage)
-              },
-            }),
-          ]
-        : []),
     ],
   })
 
@@ -319,7 +289,7 @@ export function NotionEditor({ room, placeholder = 'Start writing...' }: NotionE
  */
 export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
   const { provider, ydoc, hasCollab, setupError: collabSetupError } = useCollab()
-  const { aiToken, hasAi, setupError: aiSetupError } = useAi()
+  const { setupError: aiSetupError } = useAi()
 
   // Show setup error if either collab or AI setup failed
   if (collabSetupError || aiSetupError) {
@@ -327,11 +297,9 @@ export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
   }
 
   const collabIsReady = !hasCollab || !!provider
-  const aiIsReady = !hasAi || !!aiToken
-
-  if (!collabIsReady || !aiIsReady) {
+  if (!collabIsReady) {
     return <LoadingSpinner />
   }
 
-  return <EditorProvider provider={provider} ydoc={ydoc} placeholder={placeholder} aiToken={aiToken} hasCollab={hasCollab} hasAi={hasAi} />
+  return <EditorProvider provider={provider} ydoc={ydoc} placeholder={placeholder} hasCollab={hasCollab} />
 }

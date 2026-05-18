@@ -1,19 +1,19 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { type Editor } from "@tiptap/react"
+import { useCallback, useEffect, useState } from 'react'
+import { type Editor } from '@tiptap/react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/tiptap-editor/lib/tiptap-utils"
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { IndentIncreaseIcon } from "@/tiptap-editor/components/tiptap-icons/indent-increase-icon"
-import { IndentDecreaseIcon } from "@/tiptap-editor/components/tiptap-icons/indent-decrease-icon"
+import { IndentIncreaseIcon } from '@/tiptap-editor/components/tiptap-icons/indent-increase-icon'
+import { IndentDecreaseIcon } from '@/tiptap-editor/components/tiptap-icons/indent-decrease-icon'
 
-export type IndentAction = "indent" | "outdent"
+export type IndentAction = 'indent' | 'outdent'
 
 /**
  * Configuration for the indent functionality
@@ -39,8 +39,8 @@ export interface UseIndentConfig {
 }
 
 export const INDENT_SHORTCUT_KEYS: Record<IndentAction, string> = {
-  indent: "Tab",
-  outdent: "Shift-Tab",
+  indent: 'Tab',
+  outdent: 'Shift-Tab',
 }
 
 export const indentIcons = {
@@ -49,21 +49,18 @@ export const indentIcons = {
 }
 
 export const indentLabels: Record<IndentAction, string> = {
-  indent: "Increase indent",
-  outdent: "Decrease indent",
+  indent: 'Increase indent',
+  outdent: 'Decrease indent',
 }
 
 /**
  * Checks if indent action can be performed in the current editor state
  */
-export function canPerformIndent(
-  editor: Editor | null,
-  action: IndentAction
-): boolean {
+export function canPerformIndent(editor: Editor | null, action: IndentAction): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, "indent")) return false
+  if (!isExtensionAvailable(editor, 'indent')) return false
 
-  if (action === "indent") {
+  if (action === 'indent') {
     return editor.can().indent()
   }
 
@@ -73,14 +70,11 @@ export function canPerformIndent(
 /**
  * Performs the indent action in the editor
  */
-export function performIndent(
-  editor: Editor | null,
-  action: IndentAction
-): boolean {
+export function performIndent(editor: Editor | null, action: IndentAction): boolean {
   if (!editor || !editor.isEditable) return false
   if (!canPerformIndent(editor, action)) return false
 
-  if (action === "indent") {
+  if (action === 'indent') {
     return editor.chain().focus().indent().run()
   }
 
@@ -90,11 +84,7 @@ export function performIndent(
 /**
  * Determines if the indent button should be shown
  */
-export function shouldShowIndentButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-  action: IndentAction
-}): boolean {
+export function shouldShowIndentButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; action: IndentAction }): boolean {
   const { editor, hideWhenUnavailable, action } = props
 
   if (!editor) return false
@@ -105,7 +95,7 @@ export function shouldShowIndentButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!isExtensionAvailable(editor, "indent")) return false
+  if (!isExtensionAvailable(editor, 'indent')) return false
 
   return canPerformIndent(editor, action)
 }
@@ -148,12 +138,7 @@ export function shouldShowIndentButton(props: {
  * ```
  */
 export function useIndent(config: UseIndentConfig) {
-  const {
-    editor: providedEditor,
-    action,
-    hideWhenUnavailable = false,
-    onIndented,
-  } = config
+  const { editor: providedEditor, action, hideWhenUnavailable = false, onIndented } = config
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
@@ -163,19 +148,17 @@ export function useIndent(config: UseIndentConfig) {
     if (!editor) return
 
     const handleUpdate = () => {
-      setIsVisible(
-        shouldShowIndentButton({ editor, action, hideWhenUnavailable })
-      )
+      setIsVisible(shouldShowIndentButton({ editor, action, hideWhenUnavailable }))
     }
 
     handleUpdate()
 
-    editor.on("selectionUpdate", handleUpdate)
-    editor.on("transaction", handleUpdate)
+    editor.on('selectionUpdate', handleUpdate)
+    editor.on('transaction', handleUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleUpdate)
-      editor.off("transaction", handleUpdate)
+      editor.off('selectionUpdate', handleUpdate)
+      editor.off('transaction', handleUpdate)
     }
   }, [editor, hideWhenUnavailable, action])
 

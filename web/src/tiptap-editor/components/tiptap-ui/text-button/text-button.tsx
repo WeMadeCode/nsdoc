@@ -1,24 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTextConfig } from "@/tiptap-editor/components/tiptap-ui/text-button"
-import { TEXT_SHORTCUT_KEY, useText } from "@/tiptap-editor/components/tiptap-ui/text-button"
+import type { UseTextConfig } from '@/tiptap-editor/components/tiptap-ui/text-button'
+import { TEXT_SHORTCUT_KEY, useText } from '@/tiptap-editor/components/tiptap-ui/text-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface TextButtonProps
-  extends Omit<ButtonProps, "type">, UseTextConfig {
+export interface TextButtonProps extends Omit<ButtonProps, 'type'>, UseTextConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -30,11 +29,7 @@ export interface TextButtonProps
   showShortcut?: boolean
 }
 
-export function TextShortcutBadge({
-  shortcutKeys = TEXT_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function TextShortcutBadge({ shortcutKeys = TEXT_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -45,28 +40,11 @@ export function TextShortcutBadge({
  */
 export const TextButton = forwardRef<HTMLButtonElement, TextButtonProps>(
   (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
-    },
+    { editor: providedEditor, text, hideWhenUnavailable = false, onToggled, showShortcut = false, onClick, children, ...buttonProps },
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useText({
+    const { isVisible, canToggle, isActive, handleToggle, label, shortcutKeys, Icon } = useText({
       editor,
       hideWhenUnavailable,
       onToggled,
@@ -89,7 +67,7 @@ export const TextButton = forwardRef<HTMLButtonElement, TextButtonProps>(
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canToggle}
@@ -113,4 +91,4 @@ export const TextButton = forwardRef<HTMLButtonElement, TextButtonProps>(
   }
 )
 
-TextButton.displayName = "TextButton"
+TextButton.displayName = 'TextButton'

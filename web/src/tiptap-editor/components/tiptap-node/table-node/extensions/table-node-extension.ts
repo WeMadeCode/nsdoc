@@ -1,35 +1,19 @@
-import type { ViewMutationRecord } from "@tiptap/pm/view"
-import { Table } from "@tiptap/extension-table/table"
-import type {
-  TableCellOptions,
-  TableHeaderOptions,
-  TableOptions,
-  TableRowOptions,
-} from "@tiptap/extension-table"
-import { TableCell, TableHeader, TableRow } from "@tiptap/extension-table"
-import type { Node } from "@tiptap/pm/model"
-import { Extension } from "@tiptap/core"
-import {
-  cellAround,
-  columnResizing,
-  tableEditing,
-  TableView,
-} from "@tiptap/pm/tables"
-import { TextSelection } from "@tiptap/pm/state"
+import type { ViewMutationRecord } from '@tiptap/pm/view'
+import { Table } from '@tiptap/extension-table/table'
+import type { TableCellOptions, TableHeaderOptions, TableOptions, TableRowOptions } from '@tiptap/extension-table'
+import { TableCell, TableHeader, TableRow } from '@tiptap/extension-table'
+import type { Node } from '@tiptap/pm/model'
+import { Extension } from '@tiptap/core'
+import { cellAround, columnResizing, tableEditing, TableView } from '@tiptap/pm/tables'
+import { TextSelection } from '@tiptap/pm/state'
 
-import {
-  EMPTY_CELL_WIDTH,
-  RESIZE_MIN_WIDTH,
-} from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { EMPTY_CELL_WIDTH, RESIZE_MIN_WIDTH } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 export const TableNode = Table.extend<TableOptions>({
   addProseMirrorPlugins() {
     const isResizable = this.options.resizable && this.editor.isEditable
 
-    const defaultCellMinWidth =
-      this.options.cellMinWidth < EMPTY_CELL_WIDTH
-        ? EMPTY_CELL_WIDTH
-        : this.options.cellMinWidth
+    const defaultCellMinWidth = this.options.cellMinWidth < EMPTY_CELL_WIDTH ? EMPTY_CELL_WIDTH : this.options.cellMinWidth
 
     return [
       ...(isResizable
@@ -61,11 +45,7 @@ export const TableNode = Table.extend<TableOptions>({
         declare readonly minCellWidth: number
         private readonly containerAttributes: Record<string, string>
 
-        constructor(
-          node: Node,
-          minCellWidth: number,
-          containerAttributes: Record<string, string>
-        ) {
+        constructor(node: Node, minCellWidth: number, containerAttributes: Record<string, string>) {
           super(node, minCellWidth)
 
           this.containerAttributes = containerAttributes ?? {}
@@ -79,35 +59,35 @@ export const TableNode = Table.extend<TableOptions>({
         }
 
         private createBlockContainer(): HTMLDivElement {
-          const container = document.createElement("div")
-          container.setAttribute("data-content-type", "table")
+          const container = document.createElement('div')
+          container.setAttribute('data-content-type', 'table')
 
           this.applyContainerAttributes(container)
           return container
         }
 
         private createInnerTableContainer(): HTMLDivElement {
-          const container = document.createElement("div")
-          container.className = "table-container"
+          const container = document.createElement('div')
+          container.className = 'table-container'
           return container
         }
 
         private createWidgetsContainer(): HTMLDivElement {
-          const container = document.createElement("div")
-          container.className = "table-controls"
-          container.style.position = "relative"
+          const container = document.createElement('div')
+          container.className = 'table-controls'
+          container.style.position = 'relative'
           return container
         }
 
         private createOverlayContainer(): HTMLDivElement {
-          const container = document.createElement("div")
-          container.className = "table-selection-overlay-container"
+          const container = document.createElement('div')
+          container.className = 'table-selection-overlay-container'
           return container
         }
 
         private applyContainerAttributes(element: HTMLDivElement): void {
           Object.entries(this.containerAttributes).forEach(([key, value]) => {
-            if (key !== "class") {
+            if (key !== 'class') {
               element.setAttribute(key, value)
             }
           })
@@ -132,16 +112,13 @@ export const TableNode = Table.extend<TableOptions>({
 
         ignoreMutation(mutation: ViewMutationRecord): boolean {
           const target = mutation.target as HTMLElement
-          const isInsideTable = target.closest(".table-container")
+          const isInsideTable = target.closest('.table-container')
 
           return !isInsideTable || super.ignoreMutation(mutation)
         }
       }
 
-      const cellMinWidth =
-        this.options.cellMinWidth < EMPTY_CELL_WIDTH
-          ? EMPTY_CELL_WIDTH
-          : this.options.cellMinWidth
+      const cellMinWidth = this.options.cellMinWidth < EMPTY_CELL_WIDTH ? EMPTY_CELL_WIDTH : this.options.cellMinWidth
       return new TiptapTableView(node, cellMinWidth, HTMLAttributes)
     }
   },
@@ -151,7 +128,7 @@ const TableCellNode = TableCell.extend<TableCellOptions>({
   addKeyboardShortcuts() {
     return {
       ...this.parent?.(),
-      "Mod-a": () => {
+      'Mod-a': () => {
         const { state, view } = this.editor
         const { selection, doc } = state
 
@@ -221,7 +198,7 @@ export interface TableNodeOptions {
  * It’s a good starting point for building your own table in Tiptap.
  */
 export const TableKit = Extension.create<TableNodeOptions>({
-  name: "tableKit",
+  name: 'tableKit',
 
   addExtensions() {
     const extensions = []

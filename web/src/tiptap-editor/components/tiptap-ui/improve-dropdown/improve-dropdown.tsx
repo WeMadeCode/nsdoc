@@ -1,38 +1,32 @@
-"use client"
+'use client'
 
-import { useMemo } from "react"
-import { type Editor } from "@tiptap/react"
-import type { TextOptions, Tone } from "@tiptap-pro/extension-ai"
+import { useMemo } from 'react'
+import { type Editor } from '@tiptap/react'
+import type { TextOptions, Tone } from '@tiptap-pro/extension-ai'
 
 // --- Hooks ---
-import {
-  useImproveDropdown,
-  type AICommand,
-} from "@/tiptap-editor/components/tiptap-ui/improve-dropdown"
+import { useImproveDropdown, type AICommand } from '@/tiptap-editor/components/tiptap-ui/improve-dropdown'
 
 // --- Icons ---
-import { MicAiIcon } from "@/tiptap-editor/components/tiptap-icons/mic-ai-icon"
-import { AiSparklesIcon } from "@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon"
-import { CheckAiIcon } from "@/tiptap-editor/components/tiptap-icons/check-ai-icon"
-import { TextExtendIcon } from "@/tiptap-editor/components/tiptap-icons/text-extend-icon"
-import { TextReduceIcon } from "@/tiptap-editor/components/tiptap-icons/text-reduce-icon"
-import { Simplify2Icon } from "@/tiptap-editor/components/tiptap-icons/simplify-2-icon"
-import { SmileAiIcon } from "@/tiptap-editor/components/tiptap-icons/smile-ai-icon"
-import { CompleteSentenceIcon } from "@/tiptap-editor/components/tiptap-icons/complete-sentence-icon"
-import { SummarizeTextIcon } from "@/tiptap-editor/components/tiptap-icons/summarize-text-icon"
-import { LanguagesIcon } from "@/tiptap-editor/components/tiptap-icons/languages-icon"
-import { ChevronRightIcon } from "@/tiptap-editor/components/tiptap-icons/chevron-right-icon"
+import { MicAiIcon } from '@/tiptap-editor/components/tiptap-icons/mic-ai-icon'
+import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
+import { CheckAiIcon } from '@/tiptap-editor/components/tiptap-icons/check-ai-icon'
+import { TextExtendIcon } from '@/tiptap-editor/components/tiptap-icons/text-extend-icon'
+import { TextReduceIcon } from '@/tiptap-editor/components/tiptap-icons/text-reduce-icon'
+import { Simplify2Icon } from '@/tiptap-editor/components/tiptap-icons/simplify-2-icon'
+import { SmileAiIcon } from '@/tiptap-editor/components/tiptap-icons/smile-ai-icon'
+import { CompleteSentenceIcon } from '@/tiptap-editor/components/tiptap-icons/complete-sentence-icon'
+import { SummarizeTextIcon } from '@/tiptap-editor/components/tiptap-icons/summarize-text-icon'
+import { LanguagesIcon } from '@/tiptap-editor/components/tiptap-icons/languages-icon'
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
 
 // --- Tiptap UI ---
-import {
-  SUPPORTED_LANGUAGES,
-  SUPPORTED_TONES,
-} from "@/tiptap-editor/components/tiptap-ui/ai-menu"
-import { AiAskButton } from "@/tiptap-editor/components/tiptap-ui/ai-ask-button"
+import { SUPPORTED_LANGUAGES, SUPPORTED_TONES } from '@/tiptap-editor/components/tiptap-ui/ai-menu'
+import { AiAskButton } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -43,8 +37,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuGroup,
   DropdownMenuPortal,
-} from "@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu"
-import { Separator } from "@/tiptap-editor/components/tiptap-ui-primitive/separator"
+} from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 
 export interface ToneOption {
   label: string
@@ -52,7 +46,7 @@ export interface ToneOption {
   icon?: React.ComponentType<{ className?: string }>
 }
 
-export interface ImproveDropdownProps extends Omit<ButtonProps, "type"> {
+export interface ImproveDropdownProps extends Omit<ButtonProps, 'type'> {
   /**
    * Optional editor instance. If not provided, will use editor from context
    */
@@ -108,7 +102,7 @@ function SubMenuButton({ action }: { action: SubMenuAction }) {
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
           <DropdownMenuGroup>
-            {action.items.map((item) => (
+            {action.items.map(item => (
               <DropdownMenuItem key={item.value} asChild>
                 <Button type="button" variant="ghost" onClick={item.onClick}>
                   {item.icon && <item.icon className="tiptap-button-icon" />}
@@ -130,15 +124,7 @@ export function ImproveDropdown({
   modal = true,
   ...props
 }: ImproveDropdownProps) {
-  const {
-    isVisible,
-    isDisabled,
-    isOpen,
-    handleOpenChange,
-    executeAICommand,
-    adjustTone,
-    translate,
-  } = useImproveDropdown({
+  const { isVisible, isDisabled, isOpen, handleOpenChange, executeAICommand, adjustTone, translate } = useImproveDropdown({
     editor: providedEditor,
     hideWhenUnavailable,
     textOptions,
@@ -148,33 +134,33 @@ export function ImproveDropdown({
     () => [
       {
         icon: CheckAiIcon,
-        label: "Fix spelling & grammar",
-        command: "fixSpellingAndGrammar",
-        onClick: () => executeAICommand("fixSpellingAndGrammar"),
+        label: 'Fix spelling & grammar',
+        command: 'fixSpellingAndGrammar',
+        onClick: () => executeAICommand('fixSpellingAndGrammar'),
       },
       {
         icon: TextExtendIcon,
-        label: "Extend text",
-        command: "extend",
-        onClick: () => executeAICommand("extend"),
+        label: 'Extend text',
+        command: 'extend',
+        onClick: () => executeAICommand('extend'),
       },
       {
         icon: TextReduceIcon,
-        label: "Reduce text",
-        command: "shorten",
-        onClick: () => executeAICommand("shorten"),
+        label: 'Reduce text',
+        command: 'shorten',
+        onClick: () => executeAICommand('shorten'),
       },
       {
         icon: Simplify2Icon,
-        label: "Simplify text",
-        command: "simplify",
-        onClick: () => executeAICommand("simplify"),
+        label: 'Simplify text',
+        command: 'simplify',
+        onClick: () => executeAICommand('simplify'),
       },
       {
         icon: SmileAiIcon,
-        label: "Emojify",
-        command: "emojify",
-        onClick: () => executeAICommand("emojify"),
+        label: 'Emojify',
+        command: 'emojify',
+        onClick: () => executeAICommand('emojify'),
       },
     ],
     [executeAICommand]
@@ -184,15 +170,15 @@ export function ImproveDropdown({
     () => [
       {
         icon: CompleteSentenceIcon,
-        label: "Complete sentence",
-        command: "complete",
-        onClick: () => executeAICommand("complete"),
+        label: 'Complete sentence',
+        command: 'complete',
+        onClick: () => executeAICommand('complete'),
       },
       {
         icon: SummarizeTextIcon,
-        label: "Summarize",
-        command: "summarize",
-        onClick: () => executeAICommand("summarize"),
+        label: 'Summarize',
+        command: 'summarize',
+        onClick: () => executeAICommand('summarize'),
       },
     ],
     [executeAICommand]
@@ -202,8 +188,8 @@ export function ImproveDropdown({
     () => [
       {
         icon: MicAiIcon,
-        label: "Adjust tone",
-        items: SUPPORTED_TONES.map((option) => ({
+        label: 'Adjust tone',
+        items: SUPPORTED_TONES.map(option => ({
           label: option.label,
           value: option.value,
           onClick: () => adjustTone(option.value),
@@ -216,8 +202,8 @@ export function ImproveDropdown({
   const translateSubMenu: SubMenuAction = useMemo(
     () => ({
       icon: LanguagesIcon,
-      label: "Translate",
-      items: SUPPORTED_LANGUAGES.map((option) => ({
+      label: 'Translate',
+      items: SUPPORTED_LANGUAGES.map(option => ({
         label: option.label,
         value: option.value,
         icon: LanguagesIcon,

@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseCopyToClipboardConfig } from "@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button"
-import {
-  COPY_TO_CLIPBOARD_SHORTCUT_KEY,
-  useCopyToClipboard,
-} from "@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button"
+import type { UseCopyToClipboardConfig } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
+import { COPY_TO_CLIPBOARD_SHORTCUT_KEY, useCopyToClipboard } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface CopyToClipboardButtonProps
-  extends Omit<ButtonProps, "type">, UseCopyToClipboardConfig {
+export interface CopyToClipboardButtonProps extends Omit<ButtonProps, 'type'>, UseCopyToClipboardConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -33,11 +29,7 @@ export interface CopyToClipboardButtonProps
   showShortcut?: boolean
 }
 
-export function CopyToClipboardShortcutBadge({
-  shortcutKeys = COPY_TO_CLIPBOARD_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function CopyToClipboardShortcutBadge({ shortcutKeys = COPY_TO_CLIPBOARD_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -46,10 +38,7 @@ export function CopyToClipboardShortcutBadge({
  *
  * For custom button implementations, use the `useCopyToClipboard` hook instead.
  */
-export const CopyToClipboardButton = forwardRef<
-  HTMLButtonElement,
-  CopyToClipboardButtonProps
->(
+export const CopyToClipboardButton = forwardRef<HTMLButtonElement, CopyToClipboardButtonProps>(
   (
     {
       editor: providedEditor,
@@ -65,13 +54,12 @@ export const CopyToClipboardButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleCopyToClipboard, label, shortcutKeys, Icon } =
-      useCopyToClipboard({
-        editor,
-        copyWithFormatting,
-        hideWhenUnavailable,
-        onCopied,
-      })
+    const { isVisible, handleCopyToClipboard, label, shortcutKeys, Icon } = useCopyToClipboard({
+      editor,
+      copyWithFormatting,
+      hideWhenUnavailable,
+      onCopied,
+    })
 
     const handleClick = useCallback(
       async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -102,9 +90,7 @@ export const CopyToClipboardButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <CopyToClipboardShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <CopyToClipboardShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -112,4 +98,4 @@ export const CopyToClipboardButton = forwardRef<
   }
 )
 
-CopyToClipboardButton.displayName = "CopyToClipboardButton"
+CopyToClipboardButton.displayName = 'CopyToClipboardButton'

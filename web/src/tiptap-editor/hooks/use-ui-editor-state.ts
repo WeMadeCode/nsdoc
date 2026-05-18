@@ -1,11 +1,8 @@
-"use client"
+'use client'
 
-import type { Editor } from "@tiptap/react"
-import { useEditorState } from "@tiptap/react"
-import {
-  defaultUiState,
-  type UiState,
-} from "@/tiptap-editor/components/tiptap-extension/ui-state-extension"
+import type { Editor } from '@tiptap/react'
+import { useEditorState } from '@tiptap/react'
+import { defaultUiState, type UiState } from '@/tiptap-editor/components/tiptap-extension/ui-state-extension'
 
 export function useUiEditorState(editor: Editor | null): UiState {
   return (
@@ -16,9 +13,7 @@ export function useUiEditorState(editor: Editor | null): UiState {
 
         const state = editor.storage.uiState
         if (!state) {
-          console.warn(
-            "Editor storage uiState is not initialized. Ensure you have the uiState extension added to your editor."
-          )
+          console.warn('Editor storage uiState is not initialized. Ensure you have the uiState extension added to your editor.')
           return defaultUiState
         }
 

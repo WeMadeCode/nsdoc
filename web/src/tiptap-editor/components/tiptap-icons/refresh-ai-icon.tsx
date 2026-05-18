@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const RefreshAiIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M11.9949 2.00001C9.22128 2.01079 6.55914 3.0932 4.56496 5.02103L4.55289 5.03289L4 5.58579V3C4 2.44771 3.55228 2 3 2C2.44771 2 2 2.44771 2 3V7.99931L2 8.003C2.0004 8.1375 2.02735 8.26575 2.07588 8.38278C2.12357 8.49805 2.19374 8.6062 2.2864 8.70055L2.29945 8.7136C2.3938 8.80626 2.50195 8.87643 2.61722 8.92412C2.73512 8.97301 2.86441 9 3 9H8C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7H5.41421L5.96097 6.45325C7.58334 4.8878 9.74744 4.00891 12.0021 4C13.7624 4.00045 15.4735 4.58152 16.8701 5.65317C18.2673 6.72525 19.2716 8.22838 19.7274 9.92945C19.8704 10.4629 20.4187 10.7795 20.9522 10.6366C21.4856 10.4936 21.8022 9.94528 21.6593 9.41181C21.0895 7.28548 19.8341 5.40656 18.0876 4.06647C16.3412 2.72637 14.2014 2 12 2L11.9962 2.00001L11.9949 2.00001Z"
         fill="currentColor"
@@ -31,4 +23,4 @@ export const RefreshAiIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-RefreshAiIcon.displayName = "RefreshAiIcon"
+RefreshAiIcon.displayName = 'RefreshAiIcon'

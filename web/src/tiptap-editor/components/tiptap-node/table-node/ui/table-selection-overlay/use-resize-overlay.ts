@@ -1,14 +1,11 @@
-"use client"
+'use client'
 
-import { useEffect, useCallback, useRef } from "react"
-import type { Editor } from "@tiptap/react"
-import { columnResizingPluginKey } from "@tiptap/pm/tables"
-import type { Transaction } from "@tiptap/pm/state"
+import { useEffect, useCallback, useRef } from 'react'
+import type { Editor } from '@tiptap/react'
+import { columnResizingPluginKey } from '@tiptap/pm/tables'
+import type { Transaction } from '@tiptap/pm/state'
 
-export function useResizeOverlay(
-  editor: Editor | null,
-  updateSelectionRect: () => void
-) {
+export function useResizeOverlay(editor: Editor | null, updateSelectionRect: () => void) {
   const rafId = useRef<number | null>(null)
 
   const stopLoop = useCallback(() => {
@@ -46,32 +43,26 @@ export function useResizeOverlay(
       if (!meta) return
 
       // drag start
-      if (
-        Object.prototype.hasOwnProperty.call(meta, "setDragging") &&
-        meta.setDragging
-      ) {
+      if (Object.prototype.hasOwnProperty.call(meta, 'setDragging') && meta.setDragging) {
         startLoop()
       }
 
       // drag end is also a tx with setDragging: null — rAF loop will notice and stop itself
-      if (
-        Object.prototype.hasOwnProperty.call(meta, "setDragging") &&
-        meta.setDragging == null
-      ) {
+      if (Object.prototype.hasOwnProperty.call(meta, 'setDragging') && meta.setDragging == null) {
         // if loop missed it for any reason, force a stop + final sync
         stopLoop()
         updateSelectionRect()
       }
 
       // handle-only hover (optional): update once for cursor changes, etc.
-      if (Object.prototype.hasOwnProperty.call(meta, "setHandle")) {
+      if (Object.prototype.hasOwnProperty.call(meta, 'setHandle')) {
         updateSelectionRect()
       }
     }
 
-    editor.on("transaction", onTx)
+    editor.on('transaction', onTx)
     return () => {
-      editor.off("transaction", onTx)
+      editor.off('transaction', onTx)
       stopLoop()
     }
   }, [editor, startLoop, stopLoop, updateSelectionRect])

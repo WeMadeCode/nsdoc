@@ -1,20 +1,19 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTableAlignCellConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button"
-import { useTableAlignCell } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button"
+import type { UseTableAlignCellConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button'
+import { useTableAlignCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableAlignCellButtonProps
-  extends Omit<ButtonProps, "type">, UseTableAlignCellConfig {
+export interface TableAlignCellButtonProps extends Omit<ButtonProps, 'type'>, UseTableAlignCellConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -53,10 +52,7 @@ export interface TableAlignCellButtonProps
  * />
  * ```
  */
-export const TableAlignCellButton = forwardRef<
-  HTMLButtonElement,
-  TableAlignCellButtonProps
->(
+export const TableAlignCellButton = forwardRef<HTMLButtonElement, TableAlignCellButtonProps>(
   (
     {
       editor: providedEditor,
@@ -74,16 +70,15 @@ export const TableAlignCellButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleAlign, label, canAlignCell, Icon, isActive } =
-      useTableAlignCell({
-        editor,
-        alignmentType,
-        alignment,
-        index,
-        orientation,
-        hideWhenUnavailable,
-        onAligned,
-      })
+    const { isVisible, handleAlign, label, canAlignCell, Icon, isActive } = useTableAlignCell({
+      editor,
+      alignmentType,
+      alignment,
+      index,
+      orientation,
+      hideWhenUnavailable,
+      onAligned,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -103,7 +98,7 @@ export const TableAlignCellButton = forwardRef<
         type="button"
         disabled={!canAlignCell}
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         data-disabled={!canAlignCell}
         role="button"
         tabIndex={-1}
@@ -125,4 +120,4 @@ export const TableAlignCellButton = forwardRef<
   }
 )
 
-TableAlignCellButton.displayName = "TableAlignCellButton"
+TableAlignCellButton.displayName = 'TableAlignCellButton'

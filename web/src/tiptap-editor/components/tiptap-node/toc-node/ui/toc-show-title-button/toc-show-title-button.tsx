@@ -1,22 +1,21 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTocShowTitleConfig } from "@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button/toc-show-title"
-import { useTocShowTitle } from "@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button/toc-show-title"
+import type { UseTocShowTitleConfig } from '@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button/toc-show-title'
+import { useTocShowTitle } from '@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button/toc-show-title'
 
 // --- UI Primitives ---
 
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TocShowTitleButtonProps
-  extends Omit<ButtonProps, "type" | "onToggle">, UseTocShowTitleConfig {
+export interface TocShowTitleButtonProps extends Omit<ButtonProps, 'type' | 'onToggle'>, UseTocShowTitleConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -29,30 +28,15 @@ export interface TocShowTitleButtonProps
  *
  * For custom button implementations, use the `useTocShowTitle` hook instead.
  */
-export const TocShowTitleButton = React.forwardRef<
-  HTMLButtonElement,
-  TocShowTitleButtonProps
->(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggle,
-      onClick,
-      children,
-      ...buttonProps
-    },
-    ref
-  ) => {
+export const TocShowTitleButton = React.forwardRef<HTMLButtonElement, TocShowTitleButtonProps>(
+  ({ editor: providedEditor, text, hideWhenUnavailable = false, onToggle, onClick, children, ...buttonProps }, ref) => {
     const { editor } = useTiptapEditor(providedEditor)
 
-    const { isVisible, isActive, canToggle, handleToggle, label, Icon } =
-      useTocShowTitle({
-        editor,
-        hideWhenUnavailable,
-        onToggle,
-      })
+    const { isVisible, isActive, canToggle, handleToggle, label, Icon } = useTocShowTitle({
+      editor,
+      hideWhenUnavailable,
+      onToggle,
+    })
 
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,7 +55,7 @@ export const TocShowTitleButton = React.forwardRef<
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canToggle}
@@ -94,4 +78,4 @@ export const TocShowTitleButton = React.forwardRef<
   }
 )
 
-TocShowTitleButton.displayName = "TocShowTitleButton"
+TocShowTitleButton.displayName = 'TocShowTitleButton'

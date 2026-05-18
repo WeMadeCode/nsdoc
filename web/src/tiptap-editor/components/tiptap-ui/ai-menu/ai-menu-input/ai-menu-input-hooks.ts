@@ -1,20 +1,16 @@
-import { isHotkey } from "is-hotkey"
-import { useCallback } from "react"
+import { isHotkey } from 'is-hotkey'
+import { useCallback } from 'react'
 
-export function useKeyboardHandlers(
-  promptValue: string | undefined,
-  onClose?: () => void,
-  onInputSubmit?: () => void
-) {
+export function useKeyboardHandlers(promptValue: string | undefined, onClose?: () => void, onInputSubmit?: () => void) {
   return useCallback(
     (event: React.KeyboardEvent) => {
-      if (isHotkey("backspace", event) && !promptValue?.length) {
+      if (isHotkey('backspace', event) && !promptValue?.length) {
         event.preventDefault()
         onClose?.()
-      } else if (isHotkey("enter", event) && !event.shiftKey) {
+      } else if (isHotkey('enter', event) && !event.shiftKey) {
         event.preventDefault()
         onInputSubmit?.()
-      } else if (isHotkey("escape", event)) {
+      } else if (isHotkey('escape', event)) {
         event.preventDefault()
         onClose?.()
       }
@@ -23,11 +19,7 @@ export function useKeyboardHandlers(
   )
 }
 
-export function useBlurHandler(
-  isEmpty: boolean,
-  onBlur?: () => void,
-  onEmptyBlur?: () => void
-) {
+export function useBlurHandler(isEmpty: boolean, onBlur?: () => void, onEmptyBlur?: () => void) {
   return useCallback(
     (e: React.FocusEvent<HTMLElement>) => {
       const hasFocus = e.currentTarget.contains(e.relatedTarget as Node)

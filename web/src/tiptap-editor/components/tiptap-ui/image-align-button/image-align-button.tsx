@@ -1,30 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type {
-  ImageAlign,
-  UseImageAlignConfig,
-} from "@/tiptap-editor/components/tiptap-ui/image-align-button"
-import {
-  IMAGE_ALIGN_SHORTCUT_KEYS,
-  useImageAlign,
-} from "@/tiptap-editor/components/tiptap-ui/image-align-button"
+import type { ImageAlign, UseImageAlignConfig } from '@/tiptap-editor/components/tiptap-ui/image-align-button'
+import { IMAGE_ALIGN_SHORTCUT_KEYS, useImageAlign } from '@/tiptap-editor/components/tiptap-ui/image-align-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
-export interface ImageAlignButtonProps
-  extends Omit<ButtonProps, "type">, UseImageAlignConfig {
+export interface ImageAlignButtonProps extends Omit<ButtonProps, 'type'>, UseImageAlignConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -51,17 +44,14 @@ export function ImageAlignShortcutBadge({
  *
  * For custom button implementations, use the `useImageAlign` hook instead.
  */
-export const ImageAlignButton = forwardRef<
-  HTMLButtonElement,
-  ImageAlignButtonProps
->(
+export const ImageAlignButton = forwardRef<HTMLButtonElement, ImageAlignButtonProps>(
   (
     {
       editor: providedEditor,
       align,
       text,
       extensionName,
-      attributeName = "data-align",
+      attributeName = 'data-align',
       hideWhenUnavailable = false,
       onAligned,
       showShortcut = false,
@@ -72,15 +62,7 @@ export const ImageAlignButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      handleImageAlign,
-      label,
-      canAlign,
-      isActive,
-      Icon,
-      shortcutKeys,
-    } = useImageAlign({
+    const { isVisible, handleImageAlign, label, canAlign, isActive, Icon, shortcutKeys } = useImageAlign({
       editor,
       align,
       extensionName,
@@ -107,7 +89,7 @@ export const ImageAlignButton = forwardRef<
         type="button"
         disabled={!canAlign}
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         data-disabled={!canAlign}
         role="button"
         tabIndex={-1}
@@ -122,12 +104,7 @@ export const ImageAlignButton = forwardRef<
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut ? (
-              <ImageAlignShortcutBadge
-                align={align}
-                shortcutKeys={shortcutKeys}
-              />
-            ) : null}
+            {showShortcut ? <ImageAlignShortcutBadge align={align} shortcutKeys={shortcutKeys} /> : null}
           </>
         )}
       </Button>
@@ -135,4 +112,4 @@ export const ImageAlignButton = forwardRef<
   }
 )
 
-ImageAlignButton.displayName = "ImageAlignButton"
+ImageAlignButton.displayName = 'ImageAlignButton'

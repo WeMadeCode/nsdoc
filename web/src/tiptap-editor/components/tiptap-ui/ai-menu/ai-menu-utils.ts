@@ -1,5 +1,5 @@
-import { type Editor } from "@tiptap/react"
-import { getSelectedDOMElement } from "@/tiptap-editor/lib/tiptap-advanced-utils"
+import { type Editor } from '@tiptap/react'
+import { getSelectedDOMElement } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 /**
  * Computes the content-area rect of the editor (excluding padding/border).
@@ -16,8 +16,7 @@ export function getEditorContentRect(editorDom: HTMLElement) {
   const borderRight = parseFloat(style.borderRightWidth)
 
   const left = editorRect.left + borderLeft + paddingLeft
-  const width =
-    editorRect.width - paddingLeft - paddingRight - borderLeft - borderRight
+  const width = editorRect.width - paddingLeft - paddingRight - borderLeft - borderRight
 
   return { left, width }
 }
@@ -28,10 +27,7 @@ export function getEditorContentRect(editorDom: HTMLElement) {
  * @param sourceRect
  * @returns
  */
-export function createEditorWidthAnchorRect(
-  editorDom: HTMLElement,
-  sourceRect: DOMRect
-): DOMRect {
+export function createEditorWidthAnchorRect(editorDom: HTMLElement, sourceRect: DOMRect): DOMRect {
   const { left, width } = getEditorContentRect(editorDom)
   return new DOMRect(left, sourceRect.top, width, sourceRect.height)
 }
@@ -79,20 +75,17 @@ export function getSelectionRangeRect(editor: Editor): DOMRect | null {
  * the offset relative to the reference and computing fresh viewport
  * coordinates on each getBoundingClientRect() call.
  */
-export function createVirtualAnchor(
-  rect: DOMRect,
-  referenceElement?: HTMLElement | null
-): HTMLElement {
-  const anchor = document.createElement("div")
+export function createVirtualAnchor(rect: DOMRect, referenceElement?: HTMLElement | null): HTMLElement {
+  const anchor = document.createElement('div')
   Object.assign(anchor.style, {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "0",
-    height: "0",
-    pointerEvents: "none",
-    opacity: "0",
-    zIndex: "-1",
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '0',
+    height: '0',
+    pointerEvents: 'none',
+    opacity: '0',
+    zIndex: '-1',
   })
 
   if (referenceElement) {
@@ -104,23 +97,18 @@ export function createVirtualAnchor(
 
     anchor.getBoundingClientRect = () => {
       const currentRefRect = referenceElement.getBoundingClientRect()
-      return new DOMRect(
-        currentRefRect.left + offsetLeft,
-        currentRefRect.top + offsetTop,
-        rect.width,
-        rect.height
-      )
+      return new DOMRect(currentRefRect.left + offsetLeft, currentRefRect.top + offsetTop, rect.width, rect.height)
     }
   } else {
     anchor.getBoundingClientRect = () => rect
   }
-  anchor.setAttribute("data-fallback-anchor", "true")
+  anchor.setAttribute('data-fallback-anchor', 'true')
   document.body.appendChild(anchor)
   return anchor
 }
 
 export function getContextAndInsertAt(editor: Editor) {
-  let context: string | undefined = ""
+  let context: string | undefined = ''
   let insertAt = { from: 0, to: 0 }
   let isSelection = true
   const generatedWith = editor.storage.ai.generatedWith
@@ -138,13 +126,8 @@ export function getContextAndInsertAt(editor: Editor) {
 
     const selectionContent = selection.content()
 
-    const htmlContent =
-      editor.view.serializeForClipboard(selectionContent).dom.innerHTML
-    const textContent = selectionContent.content.textBetween(
-      0,
-      selectionContent.content.size,
-      "\n"
-    )
+    const htmlContent = editor.view.serializeForClipboard(selectionContent).dom.innerHTML
+    const textContent = selectionContent.content.textBetween(0, selectionContent.content.size, '\n')
 
     context = htmlContent || textContent
     insertAt = { from, to }
@@ -154,41 +137,36 @@ export function getContextAndInsertAt(editor: Editor) {
 }
 
 export function createPositionAnchor(rect: DOMRect): HTMLElement {
-  const anchor = document.createElement("div")
+  const anchor = document.createElement('div')
   Object.assign(anchor.style, {
-    position: "absolute",
+    position: 'absolute',
     left: `${rect.left}px`,
     top: `${rect.top}px`,
     width: `${rect.width}px`,
     height: `${rect.height}px`,
-    pointerEvents: "none",
-    opacity: "0",
-    zIndex: "-1",
+    pointerEvents: 'none',
+    opacity: '0',
+    zIndex: '-1',
   })
 
-  anchor.setAttribute("data-fallback-anchor", "true")
+  anchor.setAttribute('data-fallback-anchor', 'true')
   document.body.appendChild(anchor)
   return anchor
 }
 
 export function cleanupFallbackAnchors(): void {
-  document
-    .querySelectorAll('[data-fallback-anchor="true"]')
-    .forEach((el) => el.remove())
+  document.querySelectorAll('[data-fallback-anchor="true"]').forEach(el => el.remove())
 }
 
-export function getTopMostParentInsideEditor(
-  element: HTMLElement,
-  editorRoot: HTMLElement
-): HTMLElement {
+export function getTopMostParentInsideEditor(element: HTMLElement, editorRoot: HTMLElement): HTMLElement {
   if (!element || !editorRoot) {
-    throw new Error("Both element and editorRoot must be provided")
+    throw new Error('Both element and editorRoot must be provided')
   }
 
   if (element === editorRoot) return element
 
   if (!editorRoot.contains(element)) {
-    throw new Error("Element is not inside the editor root")
+    throw new Error('Element is not inside the editor root')
   }
 
   let parent = element
@@ -201,9 +179,7 @@ export function getTopMostParentInsideEditor(
 
 export function findAiMarkedDOMElement(editor: Editor): HTMLElement | null {
   const view = editor.view
-  const aiMarkedElements = view.dom.querySelectorAll(
-    ".tiptap-ai-insertion"
-  ) as NodeListOf<HTMLElement>
+  const aiMarkedElements = view.dom.querySelectorAll('.tiptap-ai-insertion') as NodeListOf<HTMLElement>
 
   if (aiMarkedElements.length === 0) return null
 

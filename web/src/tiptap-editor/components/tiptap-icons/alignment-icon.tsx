@@ -1,18 +1,10 @@
-import { memo } from "react"
+import { memo } from 'react'
 
-type SvgProps = React.ComponentPropsWithoutRef<"svg">
+type SvgProps = React.ComponentPropsWithoutRef<'svg'>
 
 export const AlignmentIcon = memo(({ className, ...props }: SvgProps) => {
   return (
-    <svg
-      width="24"
-      height="24"
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="24" height="24" className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M3 16C3.55228 16 4 16.4477 4 17V19L4.00488 19.0986C4.02757 19.3276 4.12883 19.5429 4.29297 19.707C4.48051 19.8946 4.73478 20 5 20H7C7.55228 20 8 20.4477 8 21C8 21.5523 7.55228 22 7 22H5C4.20435 22 3.44151 21.6837 2.87891 21.1211C2.3163 20.5585 2 19.7957 2 19V17C2 16.4477 2.44772 16 3 16Z"
         fill="currentColor"
@@ -49,10 +41,7 @@ export const AlignmentIcon = memo(({ className, ...props }: SvgProps) => {
         d="M7 2C7.55228 2 8 2.44772 8 3C8 3.55228 7.55228 4 7 4H5C4.73478 4 4.4805 4.10543 4.29297 4.29297C4.10543 4.4805 4 4.73478 4 5V7C4 7.55228 3.55228 8 3 8C2.44772 8 2 7.55228 2 7V5C2 4.20435 2.3163 3.44152 2.87891 2.87891C3.44152 2.3163 4.20435 2 5 2H7Z"
         fill="currentColor"
       />
-      <path
-        d="M7 6C7.55228 6 8 6.44772 8 7C8 7.55228 7.55228 8 7 8C6.44772 8 6 7.55228 6 7C6 6.44772 6.44772 6 7 6Z"
-        fill="currentColor"
-      />
+      <path d="M7 6C7.55228 6 8 6.44772 8 7C8 7.55228 7.55228 8 7 8C6.44772 8 6 7.55228 6 7C6 6.44772 6.44772 6 7 6Z" fill="currentColor" />
       <path
         d="M12 6C12.5523 6 13 6.44772 13 7C13 7.55228 12.5523 8 12 8C11.4477 8 11 7.55228 11 7C11 6.44772 11.4477 6 12 6Z"
         fill="currentColor"
@@ -69,4 +58,4 @@ export const AlignmentIcon = memo(({ className, ...props }: SvgProps) => {
   )
 })
 
-AlignmentIcon.displayName = "AlignmentIcon"
+AlignmentIcon.displayName = 'AlignmentIcon'

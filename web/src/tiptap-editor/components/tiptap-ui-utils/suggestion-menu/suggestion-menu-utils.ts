@@ -1,5 +1,5 @@
-import type { Node } from "@tiptap/pm/model"
-import type { SuggestionItem } from "@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types"
+import type { Node } from '@tiptap/pm/model'
+import type { SuggestionItem } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types'
 
 /**
  * Calculates the start position of a suggestion command in the text.
@@ -9,11 +9,7 @@ import type { SuggestionItem } from "@/tiptap-editor/components/tiptap-ui-utils/
  * @param triggerChar Character that triggers the suggestion
  * @returns The position where the command starts
  */
-export function calculateStartPosition(
-  cursorPosition: number,
-  previousNode: Node | null,
-  triggerChar?: string
-): number {
+export function calculateStartPosition(cursorPosition: number, previousNode: Node | null, triggerChar?: string): number {
   if (!previousNode?.text || !triggerChar) {
     return cursorPosition
   }
@@ -45,7 +41,7 @@ export function filterSuggestionItems(items: SuggestionItem[], query: string) {
   }
 
   return items
-    .filter((item) => {
+    .filter(item => {
       if (item.title.toLowerCase().includes(normalizedQuery)) {
         return true
       }
@@ -54,11 +50,7 @@ export function filterSuggestionItems(items: SuggestionItem[], query: string) {
         return true
       }
 
-      if (
-        item.keywords?.some((keyword) =>
-          keyword.toLowerCase().includes(normalizedQuery)
-        )
-      ) {
+      if (item.keywords?.some(keyword => keyword.toLowerCase().includes(normalizedQuery))) {
         return true
       }
 
@@ -71,16 +63,8 @@ export function filterSuggestionItems(items: SuggestionItem[], query: string) {
 
       if (aTitle === normalizedQuery && bTitle !== normalizedQuery) return -1
       if (bTitle === normalizedQuery && aTitle !== normalizedQuery) return 1
-      if (
-        aTitle.startsWith(normalizedQuery) &&
-        !bTitle.startsWith(normalizedQuery)
-      )
-        return -1
-      if (
-        bTitle.startsWith(normalizedQuery) &&
-        !aTitle.startsWith(normalizedQuery)
-      )
-        return 1
+      if (aTitle.startsWith(normalizedQuery) && !bTitle.startsWith(normalizedQuery)) return -1
+      if (bTitle.startsWith(normalizedQuery) && !aTitle.startsWith(normalizedQuery)) return 1
 
       return 0
     })

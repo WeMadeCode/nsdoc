@@ -1,9 +1,6 @@
-import type { Editor } from "@tiptap/react"
+import type { Editor } from '@tiptap/react'
 
-export const isElementWithinEditor = (
-  editor: Editor | null,
-  element: Node | null
-) => {
+export const isElementWithinEditor = (editor: Editor | null, element: Node | null) => {
   if (!element || !editor) {
     return false
   }
@@ -15,20 +12,10 @@ export const isElementWithinEditor = (
     return false
   }
 
-  return (
-    editorWrapper === element ||
-    editorDom === element ||
-    editorWrapper.contains(element)
-  )
+  return editorWrapper === element || editorDom === element || editorWrapper.contains(element)
 }
 
-export const isElementWithinExternalPortal = (
-  element: Node | null
-): boolean => {
+export const isElementWithinExternalPortal = (element: Node | null): boolean => {
   if (!(element instanceof HTMLElement)) return false
-  return (
-    element.closest(
-      ["[data-radix-popper-content-wrapper]", "[data-base-ui-portal]"].join(",")
-    ) !== null
-  )
+  return element.closest(['[data-radix-popper-content-wrapper]', '[data-base-ui-portal]'].join(',')) !== null
 }

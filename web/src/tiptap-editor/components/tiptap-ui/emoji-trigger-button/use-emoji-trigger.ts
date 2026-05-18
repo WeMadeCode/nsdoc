@@ -1,25 +1,21 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
-import { type Editor } from "@tiptap/react"
-import type { Node } from "@tiptap/pm/model"
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { type Editor } from '@tiptap/react'
+import type { Node } from '@tiptap/pm/model'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useIsBreakpoint } from "@/tiptap-editor/hooks/use-is-breakpoint"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Lib ---
-import {
-  findNodePosition,
-  isNodeTypeSelected,
-  isValidPosition,
-} from "@/tiptap-editor/lib/tiptap-utils"
+import { findNodePosition, isNodeTypeSelected, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { SmilePlusIcon } from "@/tiptap-editor/components/tiptap-icons/smile-plus-icon"
+import { SmilePlusIcon } from '@/tiptap-editor/components/tiptap-icons/smile-plus-icon'
 
-export const EMOJI_TRIGGER_SHORTCUT_KEY = "mod+shift+e"
+export const EMOJI_TRIGGER_SHORTCUT_KEY = 'mod+shift+e'
 
 /**
  * Configuration for the emoji trigger functionality
@@ -58,7 +54,7 @@ export interface UseEmojiTriggerConfig {
  */
 export function canAddEmojiTrigger(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  if (isNodeTypeSelected(editor, ["image"])) return false
+  if (isNodeTypeSelected(editor, ['image'])) return false
 
   return true
 }
@@ -66,12 +62,7 @@ export function canAddEmojiTrigger(editor: Editor | null): boolean {
 /**
  * Inserts a trigger in a block node at a specified position or after the current selection
  */
-function insertTriggerInBlockNode(
-  editor: Editor,
-  trigger: string,
-  node?: Node | null,
-  nodePos?: number | null
-): boolean {
+function insertTriggerInBlockNode(editor: Editor, trigger: string, node?: Node | null, nodePos?: number | null): boolean {
   if ((node !== undefined && node !== null) || isValidPosition(nodePos)) {
     const foundPos = findNodePosition({
       editor,
@@ -83,16 +74,14 @@ function insertTriggerInBlockNode(
       return false
     }
 
-    const isEmpty =
-      foundPos.node.type.name === "paragraph" &&
-      foundPos.node.content.size === 0
+    const isEmpty = foundPos.node.type.name === 'paragraph' && foundPos.node.content.size === 0
     const posAndNodeSize = foundPos.pos + foundPos.node.nodeSize
 
     return editor
       .chain()
       .insertContentAt(isEmpty ? foundPos.pos : posAndNodeSize, {
-        type: "paragraph",
-        content: [{ type: "text", text: trigger }],
+        type: 'paragraph',
+        content: [{ type: 'text', text: trigger }],
       })
       .focus(isEmpty ? foundPos.pos + 2 : posAndNodeSize + trigger.length + 1)
       .run()
@@ -103,8 +92,8 @@ function insertTriggerInBlockNode(
   return editor
     .chain()
     .insertContentAt($from.after(), {
-      type: "paragraph",
-      content: [{ type: "text", text: trigger }],
+      type: 'paragraph',
+      content: [{ type: 'text', text: trigger }],
     })
     .focus()
     .run()
@@ -113,12 +102,7 @@ function insertTriggerInBlockNode(
 /**
  * Inserts a trigger in a text node at the current selection
  */
-function insertTriggerInTextNode(
-  editor: Editor,
-  trigger: string,
-  node?: Node | null,
-  nodePos?: number | null
-): boolean {
+function insertTriggerInTextNode(editor: Editor, trigger: string, node?: Node | null, nodePos?: number | null): boolean {
   if ((node !== undefined && node !== null) || isValidPosition(nodePos)) {
     const foundPos = findNodePosition({
       editor,
@@ -130,38 +114,28 @@ function insertTriggerInTextNode(
       return false
     }
 
-    const isEmpty =
-      foundPos.node.type.name === "paragraph" &&
-      foundPos.node.content.size === 0
+    const isEmpty = foundPos.node.type.name === 'paragraph' && foundPos.node.content.size === 0
     const posAndNodeSize = foundPos.pos + foundPos.node.nodeSize
 
     editor.view.dispatch(
       editor.view.state.tr
         .scrollIntoView()
-        .insertText(
-          trigger,
-          isEmpty ? foundPos.pos : posAndNodeSize,
-          isEmpty ? foundPos.pos : posAndNodeSize
-        )
+        .insertText(trigger, isEmpty ? foundPos.pos : posAndNodeSize, isEmpty ? foundPos.pos : posAndNodeSize)
     )
 
-    editor.commands.focus(
-      isEmpty ? foundPos.pos + 2 : posAndNodeSize + trigger.length + 1
-    )
+    editor.commands.focus(isEmpty ? foundPos.pos + 2 : posAndNodeSize + trigger.length + 1)
 
     return true
   }
 
   const { $from } = editor.state.selection
   const currentNode = $from.node()
-  const hasContentBefore =
-    $from.parentOffset > 0 &&
-    currentNode.textContent[$from.parentOffset - 1] !== " "
+  const hasContentBefore = $from.parentOffset > 0 && currentNode.textContent[$from.parentOffset - 1] !== ' '
 
   return editor
     .chain()
     .insertContent({
-      type: "text",
+      type: 'text',
       text: hasContentBefore ? ` ${trigger}` : trigger,
     })
     .focus()
@@ -171,12 +145,7 @@ function insertTriggerInTextNode(
 /**
  * Adds an emoji trigger at the current selection or specified node position
  */
-export function addEmojiTrigger(
-  editor: Editor | null,
-  trigger: string = ":",
-  node?: Node | null,
-  nodePos?: number | null
-): boolean {
+export function addEmojiTrigger(editor: Editor | null, trigger: string = ':', node?: Node | null, nodePos?: number | null): boolean {
   if (!editor || !editor.isEditable) return false
   if (!canAddEmojiTrigger(editor)) return false
 
@@ -198,10 +167,7 @@ export function addEmojiTrigger(
 /**
  * Determines if the emoji trigger button should be shown
  */
-export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
   if (!editor) return false
@@ -212,7 +178,7 @@ export function shouldShowButton(props: {
 
   if (!editor.isEditable) return false
 
-  if (!editor.isActive("code")) {
+  if (!editor.isActive('code')) {
     return canAddEmojiTrigger(editor)
   }
 
@@ -256,14 +222,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
-  const {
-    editor: providedEditor,
-    node,
-    nodePos,
-    trigger = ":",
-    hideWhenUnavailable = false,
-    onTriggerApplied,
-  } = config || {}
+  const { editor: providedEditor, node, nodePos, trigger = ':', hideWhenUnavailable = false, onTriggerApplied } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const isMobile = useIsBreakpoint()
@@ -279,10 +238,10 @@ export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -298,7 +257,7 @@ export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
 
   useHotkeys(
     EMOJI_TRIGGER_SHORTCUT_KEY,
-    (event) => {
+    event => {
       event.preventDefault()
       handleAddTrigger()
     },
@@ -313,7 +272,7 @@ export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
     isVisible,
     handleAddTrigger,
     canAddTrigger,
-    label: "Add emoji",
+    label: 'Add emoji',
     shortcutKeys: EMOJI_TRIGGER_SHORTCUT_KEY,
     trigger,
     Icon: SmilePlusIcon,

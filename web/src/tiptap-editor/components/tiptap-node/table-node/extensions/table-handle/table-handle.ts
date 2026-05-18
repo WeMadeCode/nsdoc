@@ -1,11 +1,11 @@
-import { Extension } from "@tiptap/core"
-import type { TableHandlesState } from "@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle"
+import { Extension } from '@tiptap/core'
+import type { TableHandlesState } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
 import {
   TableHandlePlugin,
   tableHandlePluginKey,
-} from "@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle/table-handle-plugin"
+} from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle/table-handle-plugin'
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     tableHandle: {
       freezeHandles: () => ReturnType
@@ -19,7 +19,7 @@ declare module "@tiptap/core" {
 }
 
 export const TableHandleExtension = Extension.create({
-  name: "tableHandleExtension",
+  name: 'tableHandleExtension',
 
   addCommands() {
     return {
@@ -42,8 +42,8 @@ export const TableHandleExtension = Extension.create({
   addProseMirrorPlugins() {
     const { editor } = this
     return [
-      TableHandlePlugin(editor, (state) => {
-        this.editor.emit("tableHandleState", state)
+      TableHandlePlugin(editor, state => {
+        this.editor.emit('tableHandleState', state)
       }),
     ]
   },

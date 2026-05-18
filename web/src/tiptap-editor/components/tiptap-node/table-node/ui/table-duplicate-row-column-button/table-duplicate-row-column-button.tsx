@@ -1,27 +1,23 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTableDuplicateRowColumnConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button"
-import { useTableDuplicateRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button"
+import type { UseTableDuplicateRowColumnConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
+import { useTableDuplicateRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableDuplicateRowColumnButtonProps
-  extends Omit<ButtonProps, "type">, UseTableDuplicateRowColumnConfig {
+export interface TableDuplicateRowColumnButtonProps extends Omit<ButtonProps, 'type'>, UseTableDuplicateRowColumnConfig {
   text?: string
 }
 
-export const TableDuplicateRowColumnButton = forwardRef<
-  HTMLButtonElement,
-  TableDuplicateRowColumnButtonProps
->(
+export const TableDuplicateRowColumnButton = forwardRef<HTMLButtonElement, TableDuplicateRowColumnButtonProps>(
   (
     {
       editor: providedEditor,
@@ -38,15 +34,14 @@ export const TableDuplicateRowColumnButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleDuplicate, label, canDuplicateRowColumn, Icon } =
-      useTableDuplicateRowColumn({
-        editor,
-        index,
-        orientation,
-        tablePos,
-        hideWhenUnavailable,
-        onDuplicated,
-      })
+    const { isVisible, handleDuplicate, label, canDuplicateRowColumn, Icon } = useTableDuplicateRowColumn({
+      editor,
+      index,
+      orientation,
+      tablePos,
+      hideWhenUnavailable,
+      onDuplicated,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -88,4 +83,4 @@ export const TableDuplicateRowColumnButton = forwardRef<
   }
 )
 
-TableDuplicateRowColumnButton.displayName = "TableDuplicateRowColumnButton"
+TableDuplicateRowColumnButton.displayName = 'TableDuplicateRowColumnButton'

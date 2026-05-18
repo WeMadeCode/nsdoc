@@ -1,20 +1,19 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseTableAddRowColumnConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button"
-import { useTableAddRowColumn } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button"
+import type { UseTableAddRowColumnConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button'
+import { useTableAddRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableAddRowColumnButtonProps
-  extends Omit<ButtonProps, "type">, UseTableAddRowColumnConfig {
+export interface TableAddRowColumnButtonProps extends Omit<ButtonProps, 'type'>, UseTableAddRowColumnConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -26,10 +25,7 @@ export interface TableAddRowColumnButtonProps
  *
  * For custom button implementations, use the `useTableAddRowColumn` hook instead.
  */
-export const TableAddRowColumnButton = forwardRef<
-  HTMLButtonElement,
-  TableAddRowColumnButtonProps
->(
+export const TableAddRowColumnButton = forwardRef<HTMLButtonElement, TableAddRowColumnButtonProps>(
   (
     {
       editor: providedEditor,
@@ -47,16 +43,15 @@ export const TableAddRowColumnButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, handleAdd, label, canAddRowColumn, Icon } =
-      useTableAddRowColumn({
-        editor,
-        index,
-        orientation,
-        side,
-        tablePos,
-        hideWhenUnavailable,
-        onAdded,
-      })
+    const { isVisible, handleAdd, label, canAddRowColumn, Icon } = useTableAddRowColumn({
+      editor,
+      index,
+      orientation,
+      side,
+      tablePos,
+      hideWhenUnavailable,
+      onAdded,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -98,4 +93,4 @@ export const TableAddRowColumnButton = forwardRef<
   }
 )
 
-TableAddRowColumnButton.displayName = "TableAddRowColumnButton"
+TableAddRowColumnButton.displayName = 'TableAddRowColumnButton'

@@ -1,40 +1,33 @@
-"use client"
+'use client'
 
-import { useCallback, useMemo } from "react"
-import type { Editor } from "@tiptap/react"
-import type { TableMap } from "@tiptap/pm/tables"
-import {
-  CellSelection,
-  columnIsHeader,
-  moveTableColumn,
-  moveTableRow,
-  rowIsHeader,
-  selectedRect,
-} from "@tiptap/pm/tables"
-import type { Transaction } from "@tiptap/pm/state"
-import type { Node } from "@tiptap/pm/model"
+import { useCallback, useMemo } from 'react'
+import type { Editor } from '@tiptap/react'
+import type { TableMap } from '@tiptap/pm/tables'
+import { CellSelection, columnIsHeader, moveTableColumn, moveTableRow, rowIsHeader, selectedRect } from '@tiptap/pm/tables'
+import type { Transaction } from '@tiptap/pm/state'
+import type { Node } from '@tiptap/pm/model'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/tiptap-editor/lib/tiptap-utils"
-import type { Orientation } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
+  cellsOverlapRectangle,
   getTable,
   getTableSelectionType,
-  selectCellsByCoords,
-  cellsOverlapRectangle,
   getIndexCoordinates,
-} from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+  selectCellsByCoords,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/tiptap-editor/components/tiptap-icons/arrow-left-icon"
-import { ArrowRightIcon } from "@/tiptap-editor/components/tiptap-icons/arrow-right-icon"
-import { ArrowUpIcon } from "@/tiptap-editor/components/tiptap-icons/arrow-up-icon"
-import { ArrowDownIcon } from "@/tiptap-editor/components/tiptap-icons/arrow-down-icon"
+import { ArrowLeftIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-left-icon'
+import { ArrowRightIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-right-icon'
+import { ArrowUpIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-up-icon'
+import { ArrowDownIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-down-icon'
 
-export type MoveDirection = "up" | "down" | "left" | "right"
+export type MoveDirection = 'up' | 'down' | 'left' | 'right'
 
 export interface UseTableMoveRowColumnConfig {
   /**
@@ -71,23 +64,20 @@ export interface UseTableMoveRowColumnConfig {
   onMoved?: () => void
 }
 
-const REQUIRED_EXTENSIONS = ["tableHandleExtension"]
+const REQUIRED_EXTENSIONS = ['tableHandleExtension']
 
-export const tableMoveRowColumnLabels: Record<
-  Orientation,
-  Record<MoveDirection, string>
-> = {
+export const tableMoveRowColumnLabels: Record<Orientation, Record<MoveDirection, string>> = {
   row: {
-    up: "Move row up",
-    down: "Move row down",
-    left: "Move row left",
-    right: "Move row right",
+    up: 'Move row up',
+    down: 'Move row down',
+    left: 'Move row left',
+    right: 'Move row right',
   },
   column: {
-    up: "Move column up",
-    down: "Move column down",
-    left: "Move column left",
-    right: "Move column right",
+    up: 'Move column up',
+    down: 'Move column down',
+    left: 'Move column left',
+    right: 'Move column right',
   },
 }
 
@@ -117,14 +107,11 @@ function safeRowIsHeader(map: TableMap, node: Node, index: number): boolean {
 /**
  * Validates that the direction is compatible with the orientation.
  */
-function isValidDirectionForOrientation(
-  orientation: Orientation,
-  direction: MoveDirection
-): boolean {
-  if (orientation === "row") {
-    return direction === "up" || direction === "down"
-  } else if (orientation === "column") {
-    return direction === "left" || direction === "right"
+function isValidDirectionForOrientation(orientation: Orientation, direction: MoveDirection): boolean {
+  if (orientation === 'row') {
+    return direction === 'up' || direction === 'down'
+  } else if (orientation === 'column') {
+    return direction === 'left' || direction === 'right'
   }
   return false
 }
@@ -145,11 +132,7 @@ function canMoveRowColumn({
   direction: MoveDirection
   tablePos?: number
 }): boolean {
-  if (
-    !editor ||
-    !editor.isEditable ||
-    !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)
-  ) {
+  if (!editor || !editor.isEditable || !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
     return false
   }
 
@@ -169,17 +152,11 @@ function canMoveRowColumn({
     // START
     // This is just internal preference, you can comment it out if you want
     // to allow moving header rows/columns
-    if (
-      finalOrientation === "row" &&
-      safeRowIsHeader(table.map, table.node, finalIndex)
-    ) {
+    if (finalOrientation === 'row' && safeRowIsHeader(table.map, table.node, finalIndex)) {
       return false
     }
 
-    if (
-      finalOrientation === "column" &&
-      safeColumnIsHeader(table.map, table.node, finalIndex)
-    ) {
+    if (finalOrientation === 'column' && safeColumnIsHeader(table.map, table.node, finalIndex)) {
       return false
     }
     // END
@@ -187,15 +164,15 @@ function canMoveRowColumn({
     const { width, height } = table.map
 
     const targetIndex =
-      finalOrientation === "row"
-        ? direction === "up"
+      finalOrientation === 'row'
+        ? direction === 'up'
           ? finalIndex - 1
           : finalIndex + 1
-        : direction === "left"
+        : direction === 'left'
           ? finalIndex - 1
           : finalIndex + 1
 
-    const maxIndex = finalOrientation === "row" ? height : width
+    const maxIndex = finalOrientation === 'row' ? height : width
     if (targetIndex < 0 || targetIndex >= maxIndex) {
       return false
     }
@@ -214,36 +191,23 @@ function canMoveRowColumn({
     })
     if (!sourceCoords || !targetCoords) return false
 
-    const sourceSelection = selectCellsByCoords(
-      editor,
-      table.pos,
-      sourceCoords,
-      { mode: "state" }
-    )
+    const sourceSelection = selectCellsByCoords(editor, table.pos, sourceCoords, { mode: 'state' })
     if (!sourceSelection) return false
     const sourceRect = selectedRect(sourceSelection)
 
-    const targetSelection = selectCellsByCoords(
-      editor,
-      table.pos,
-      targetCoords,
-      { mode: "state" }
-    )
+    const targetSelection = selectCellsByCoords(editor, table.pos, targetCoords, { mode: 'state' })
     if (!targetSelection) return false
     const targetRect = selectedRect(targetSelection)
 
-    if (
-      cellsOverlapRectangle(table.map, sourceRect) &&
-      cellsOverlapRectangle(table.map, targetRect)
-    ) {
+    if (cellsOverlapRectangle(table.map, sourceRect) && cellsOverlapRectangle(table.map, targetRect)) {
       return false
     }
 
-    return finalOrientation === "row"
-      ? direction === "up"
+    return finalOrientation === 'row'
+      ? direction === 'up'
         ? finalIndex > 0
         : finalIndex < height - 1
-      : direction === "left"
+      : direction === 'left'
         ? finalIndex > 0
         : finalIndex < width - 1
   } catch {
@@ -267,10 +231,7 @@ function tableMoveRowColumn({
   direction: MoveDirection
   tablePos?: number
 }): boolean {
-  if (
-    !canMoveRowColumn({ editor, index, orientation, direction, tablePos }) ||
-    !editor
-  ) {
+  if (!canMoveRowColumn({ editor, index, orientation, direction, tablePos }) || !editor) {
     return false
   }
 
@@ -296,18 +257,14 @@ function tableMoveRowColumn({
 
     const to = from + delta[direction]
 
-    const moveOperation =
-      finalOrientation === "row" ? moveTableRow : moveTableColumn
+    const moveOperation = finalOrientation === 'row' ? moveTableRow : moveTableColumn
 
     console.log({ from, to, finalOrientation, direction })
 
     const dispatch = (tr: Transaction) => editor.view.dispatch(tr)
 
     if (editor.state.selection instanceof CellSelection) {
-      return moveOperation({ from, to, select: true, pos: table.start })(
-        editor.state,
-        dispatch
-      )
+      return moveOperation({ from, to, select: true, pos: table.start })(editor.state, dispatch)
     } else {
       const sourceCoords = getIndexCoordinates({
         editor,
@@ -317,22 +274,14 @@ function tableMoveRowColumn({
       })
       if (!sourceCoords) return false
 
-      const selectionState = selectCellsByCoords(
-        editor,
-        table.pos,
-        sourceCoords,
-        { mode: "state" }
-      )
+      const selectionState = selectCellsByCoords(editor, table.pos, sourceCoords, { mode: 'state' })
 
       if (!selectionState) return false
 
-      return moveOperation({ from, to, select: true, pos: table.start })(
-        selectionState,
-        dispatch
-      )
+      return moveOperation({ from, to, select: true, pos: table.start })(selectionState, dispatch)
     }
   } catch (error) {
-    console.error("Error moving table row/column:", error)
+    console.error('Error moving table row/column:', error)
     return false
   }
 }
@@ -366,9 +315,7 @@ function shouldShowButton({
     return false
   }
 
-  return hideWhenUnavailable
-    ? canMoveRowColumn({ editor, index, orientation, direction, tablePos })
-    : true
+  return hideWhenUnavailable ? canMoveRowColumn({ editor, index, orientation, direction, tablePos }) : true
 }
 
 /**
@@ -415,15 +362,7 @@ function shouldShowButton({
  * ```
  */
 export function useTableMoveRowColumn(config: UseTableMoveRowColumnConfig) {
-  const {
-    editor: providedEditor,
-    index,
-    orientation,
-    tablePos,
-    direction,
-    hideWhenUnavailable = false,
-    onMoved,
-  } = config
+  const { editor: providedEditor, index, orientation, tablePos, direction, hideWhenUnavailable = false, onMoved } = config
 
   const { editor } = useTiptapEditor(providedEditor)
 
@@ -459,12 +398,8 @@ export function useTableMoveRowColumn(config: UseTableMoveRowColumnConfig) {
   }, [editor, index, orientation, direction, tablePos, onMoved])
 
   const label = useMemo(() => {
-    const orientationLabels =
-      tableMoveRowColumnLabels[selectionType?.orientation || "row"]
-    return (
-      orientationLabels[direction] ||
-      `Move ${selectionType?.orientation} ${direction}`
-    )
+    const orientationLabels = tableMoveRowColumnLabels[selectionType?.orientation || 'row']
+    return orientationLabels[direction] || `Move ${selectionType?.orientation} ${direction}`
   }, [selectionType, direction])
 
   const Icon = useMemo(() => {

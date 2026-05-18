@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   Children,
@@ -11,11 +11,11 @@ import {
   useLayoutEffect,
   useMemo,
   useState,
-} from "react"
-import "@/tiptap-editor/components/tiptap-ui-primitive/avatar/avatar.scss"
+} from 'react'
+import '@/tiptap-editor/components/tiptap-ui-primitive/avatar/avatar.scss'
 
-type ImageLoadingStatus = "idle" | "loading" | "loaded" | "error"
-type Size = "default" | "sm" | "lg" | "xl"
+type ImageLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
+type Size = 'default' | 'sm' | 'lg' | 'xl'
 
 interface AvatarContextValue {
   imageLoadingStatus: ImageLoadingStatus
@@ -28,10 +28,7 @@ interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   userColor?: string
 }
 
-interface AvatarImageProps extends Omit<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  "onLoadingStatusChange" | "src"
-> {
+interface AvatarImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'onLoadingStatusChange' | 'src'> {
   src?: string
   onLoadingStatusChange?: (status: ImageLoadingStatus) => void
 }
@@ -50,18 +47,14 @@ const AvatarContext = createContext<AvatarContextValue | undefined>(undefined)
 const useAvatarContext = () => {
   const context = useContext(AvatarContext)
   if (!context) {
-    throw new Error("Avatar components must be used within an Avatar.Root")
+    throw new Error('Avatar components must be used within an Avatar.Root')
   }
   return context
 }
 
-const useImageLoadingStatus = (
-  src?: string,
-  referrerPolicy?: React.HTMLAttributeReferrerPolicy
-): ImageLoadingStatus => {
-  const initialStatus = !src ? "error" : "loading"
-  const [loadingStatus, setLoadingStatus] =
-    useState<ImageLoadingStatus>(initialStatus)
+const useImageLoadingStatus = (src?: string, referrerPolicy?: React.HTMLAttributeReferrerPolicy): ImageLoadingStatus => {
+  const initialStatus = !src ? 'error' : 'loading'
+  const [loadingStatus, setLoadingStatus] = useState<ImageLoadingStatus>(initialStatus)
 
   useLayoutEffect(() => {
     if (!src) {
@@ -76,8 +69,8 @@ const useImageLoadingStatus = (
       setLoadingStatus(status)
     }
 
-    image.onload = updateStatus("loaded")
-    image.onerror = updateStatus("error")
+    image.onload = updateStatus('loaded')
+    image.onerror = updateStatus('error')
     image.src = src
     if (referrerPolicy) image.referrerPolicy = referrerPolicy
 
@@ -90,19 +83,12 @@ const useImageLoadingStatus = (
 }
 
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
-  (
-    { children, className = "", size = "default", userColor, ...props },
-    ref
-  ) => {
-    const [imageLoadingStatus, setImageLoadingStatus] =
-      useState<ImageLoadingStatus>("idle")
+  ({ children, className = '', size = 'default', userColor, ...props }, ref) => {
+    const [imageLoadingStatus, setImageLoadingStatus] = useState<ImageLoadingStatus>('idle')
 
-    const onImageLoadingStatusChange = useCallback(
-      (status: ImageLoadingStatus) => {
-        setImageLoadingStatus(status)
-      },
-      []
-    )
+    const onImageLoadingStatusChange = useCallback((status: ImageLoadingStatus) => {
+      setImageLoadingStatus(status)
+    }, [])
 
     const contextValue = useMemo(
       () => ({
@@ -113,19 +99,11 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
       [imageLoadingStatus, onImageLoadingStatusChange, size]
     )
 
-    const style = userColor
-      ? ({ "--dynamic-user-color": userColor } as React.CSSProperties)
-      : undefined
+    const style = userColor ? ({ '--dynamic-user-color': userColor } as React.CSSProperties) : undefined
 
     return (
       <AvatarContext.Provider value={contextValue}>
-        <span
-          {...props}
-          ref={ref}
-          className={`tiptap-avatar ${className}`}
-          style={style}
-          data-size={size}
-        >
+        <span {...props} ref={ref} className={`tiptap-avatar ${className}`} style={style} data-size={size}>
           <span className="tiptap-avatar-item">{children}</span>
         </span>
       </AvatarContext.Provider>
@@ -133,87 +111,66 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
   }
 )
 
-Avatar.displayName = "Avatar"
+Avatar.displayName = 'Avatar'
 
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
-  ({ onLoadingStatusChange, src, className = "", ...props }, ref) => {
+  ({ onLoadingStatusChange, src, className = '', ...props }, ref) => {
     const { onImageLoadingStatusChange } = useAvatarContext()
     const imageLoadingStatus = useImageLoadingStatus(src, props.referrerPolicy)
 
     useLayoutEffect(() => {
-      if (imageLoadingStatus !== "idle") {
+      if (imageLoadingStatus !== 'idle') {
         onLoadingStatusChange?.(imageLoadingStatus)
         onImageLoadingStatusChange(imageLoadingStatus)
       }
     }, [imageLoadingStatus, onLoadingStatusChange, onImageLoadingStatusChange])
 
-    if (imageLoadingStatus !== "loaded") return null
+    if (imageLoadingStatus !== 'loaded') return null
 
-    return (
-      <img
-        alt=""
-        {...props}
-        ref={ref}
-        src={src}
-        className={`tiptap-avatar-image ${className}`}
-      />
-    )
+    return <img alt="" {...props} ref={ref} src={src} className={`tiptap-avatar-image ${className}`} />
   }
 )
 
-AvatarImage.displayName = "AvatarImage"
+AvatarImage.displayName = 'AvatarImage'
 
-export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(
-  ({ delayMs, className = "", children, ...props }, ref) => {
-    const context = useAvatarContext()
-    const [canRender, setCanRender] = useState(delayMs === undefined)
+export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>(({ delayMs, className = '', children, ...props }, ref) => {
+  const context = useAvatarContext()
+  const [canRender, setCanRender] = useState(delayMs === undefined)
 
-    useEffect(() => {
-      if (delayMs !== undefined) {
-        const timerId = window.setTimeout(() => setCanRender(true), delayMs)
-        return () => window.clearTimeout(timerId)
-      }
-    }, [delayMs])
+  useEffect(() => {
+    if (delayMs !== undefined) {
+      const timerId = window.setTimeout(() => setCanRender(true), delayMs)
+      return () => window.clearTimeout(timerId)
+    }
+  }, [delayMs])
 
-    if (!canRender || context.imageLoadingStatus === "loaded") return null
+  if (!canRender || context.imageLoadingStatus === 'loaded') return null
 
-    return (
-      <>
-        <span className={`tiptap-avatar-bg ${className}`} />
-        <span
-          {...props}
-          ref={ref}
-          className={`tiptap-avatar-fallback ${className}`}
-        >
-          {children}
-        </span>
-      </>
-    )
-  }
-)
+  return (
+    <>
+      <span className={`tiptap-avatar-bg ${className}`} />
+      <span {...props} ref={ref} className={`tiptap-avatar-fallback ${className}`}>
+        {children}
+      </span>
+    </>
+  )
+})
 
-AvatarFallback.displayName = "AvatarFallback"
+AvatarFallback.displayName = 'AvatarFallback'
 
-export const AvatarGroup: React.FC<AvatarGroupProps> = ({
-  maxVisible,
-  children,
-  className = "",
-  ...props
-}) => {
+export const AvatarGroup: React.FC<AvatarGroupProps> = ({ maxVisible, children, className = '', ...props }) => {
   const childrenArray = Children.toArray(children)
-  const visibleAvatars = maxVisible
-    ? childrenArray.slice(0, maxVisible)
-    : childrenArray
+  const visibleAvatars = maxVisible ? childrenArray.slice(0, maxVisible) : childrenArray
   const remainingCount = childrenArray.length - visibleAvatars.length
 
   let avatarProps: AvatarProps = {}
 
-  Children.forEach(children, (child) => {
+  Children.forEach(children, child => {
     if (
       isValidElement(child) &&
       child.type &&
-      typeof child.type !== "string" &&
-      (child.type as { displayName?: string }).displayName === "Avatar"
+      typeof child.type !== 'string' &&
+      (child.type as { displayName?: string }).displayName === 'Avatar'
     ) {
       avatarProps = { ...avatarProps, ...(child.props as AvatarProps) }
       return
@@ -221,11 +178,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   })
 
   return (
-    <div
-      {...props}
-      className={`tiptap-avatar-group ${className}`}
-      data-max-user-visible={maxVisible}
-    >
+    <div {...props} className={`tiptap-avatar-group ${className}`} data-max-user-visible={maxVisible}>
       {visibleAvatars}
       {remainingCount > 0 && (
         <Avatar {...avatarProps}>
@@ -236,4 +189,4 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   )
 }
 
-AvatarGroup.displayName = "AvatarGroup"
+AvatarGroup.displayName = 'AvatarGroup'

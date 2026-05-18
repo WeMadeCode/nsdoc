@@ -1,20 +1,17 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useState } from "react"
-import { type Editor } from "@tiptap/react"
-import { NodeSelection } from "@tiptap/pm/state"
+import { useCallback, useEffect, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import { NodeSelection } from '@tiptap/pm/state'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Lib ---
-import {
-  isExtensionAvailable,
-  isNodeTypeSelected,
-} from "@/tiptap-editor/lib/tiptap-utils"
+import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { ListIndentedIcon } from "@/tiptap-editor/components/tiptap-icons/list-indented-icon"
+import { ListIndentedIcon } from '@/tiptap-editor/components/tiptap-icons/list-indented-icon'
 
 /**
  * Configuration for the TOC show title functionality
@@ -40,9 +37,9 @@ export interface UseTocShowTitleConfig {
  */
 export function canToggleTocTitle(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ["tocNode"])) return false
+  if (!isExtensionAvailable(editor, ['tocNode'])) return false
 
-  return isNodeTypeSelected(editor, ["tocNode"])
+  return isNodeTypeSelected(editor, ['tocNode'])
 }
 
 /**
@@ -54,9 +51,7 @@ export function isTocTitleActive(editor: Editor | null): boolean {
   try {
     const { selection } = editor.state
 
-    const isTocSelected =
-      selection instanceof NodeSelection &&
-      selection.node.type.name === "tocNode"
+    const isTocSelected = selection instanceof NodeSelection && selection.node.type.name === 'tocNode'
 
     if (!isTocSelected) {
       return false
@@ -80,9 +75,7 @@ export function toggleTocTitle(editor: Editor | null): boolean {
   try {
     const { selection } = editor.state
 
-    const isTocSelected =
-      selection instanceof NodeSelection &&
-      selection.node.type.name === "tocNode"
+    const isTocSelected = selection instanceof NodeSelection && selection.node.type.name === 'tocNode'
 
     if (!isTocSelected) {
       return false
@@ -91,11 +84,7 @@ export function toggleTocTitle(editor: Editor | null): boolean {
     const tocNode = selection.node
     const currentShowTitle = tocNode.attrs.showTitle === true
 
-    return editor
-      .chain()
-      .focus()
-      .updateAttributes("tocNode", { showTitle: !currentShowTitle })
-      .run()
+    return editor.chain().focus().updateAttributes('tocNode', { showTitle: !currentShowTitle }).run()
   } catch {
     return false
   }
@@ -113,7 +102,7 @@ export function shouldShowButton(props: {
 
   if (!editor || !editor.isEditable) return false
 
-  if (!isExtensionAvailable(editor, ["tocNode"])) return false
+  if (!isExtensionAvailable(editor, ['tocNode'])) return false
 
   if (hideWhenUnavailable) {
     return canToggleTocTitle(editor)
@@ -160,11 +149,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useTocShowTitle(config?: UseTocShowTitleConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onToggle,
-  } = config || {}
+  const { editor: providedEditor, hideWhenUnavailable = false, onToggle } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
   const [isVisible, setIsVisible] = useState<boolean>(true)
@@ -181,10 +166,10 @@ export function useTocShowTitle(config?: UseTocShowTitleConfig) {
 
     handleSelectionUpdate()
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on('selectionUpdate', handleSelectionUpdate)
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
+      editor.off('selectionUpdate', handleSelectionUpdate)
     }
   }, [editor, hideWhenUnavailable])
 
@@ -205,7 +190,7 @@ export function useTocShowTitle(config?: UseTocShowTitleConfig) {
     isActive,
     canToggle,
     handleToggle,
-    label: "Show title",
+    label: 'Show title',
     Icon: ListIndentedIcon,
   }
 }

@@ -1,18 +1,17 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react'
 
 // --- Hooks ---
-import { useTableFitToWidth } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width"
-import type { UseTableFitToWidthConfig } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width"
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTableFitToWidth } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width'
+import type { UseTableFitToWidthConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
-export interface TableFitToWidthButtonProps
-  extends Omit<ButtonProps, "type">, UseTableFitToWidthConfig {
+export interface TableFitToWidthButtonProps extends Omit<ButtonProps, 'type'>, UseTableFitToWidthConfig {
   text?: string
 }
 
@@ -31,29 +30,14 @@ export interface TableFitToWidthButtonProps
  * />
  * ```
  */
-export const TableFitToWidthButton = forwardRef<
-  HTMLButtonElement,
-  TableFitToWidthButtonProps
->(
-  (
-    {
-      editor: providedEditor,
-      hideWhenUnavailable = false,
-      onWidthAdjusted,
-      text,
-      onClick,
-      children,
-      ...buttonProps
-    },
-    ref
-  ) => {
+export const TableFitToWidthButton = forwardRef<HTMLButtonElement, TableFitToWidthButtonProps>(
+  ({ editor: providedEditor, hideWhenUnavailable = false, onWidthAdjusted, text, onClick, children, ...buttonProps }, ref) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const { isVisible, canFitToWidth, label, Icon, handleFitToWidth } =
-      useTableFitToWidth({
-        editor,
-        hideWhenUnavailable,
-        onWidthAdjusted,
-      })
+    const { isVisible, canFitToWidth, label, Icon, handleFitToWidth } = useTableFitToWidth({
+      editor,
+      hideWhenUnavailable,
+      onWidthAdjusted,
+    })
 
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,4 +78,4 @@ export const TableFitToWidthButton = forwardRef<
   }
 )
 
-TableFitToWidthButton.displayName = "TableFitToWidthButton"
+TableFitToWidthButton.displayName = 'TableFitToWidthButton'

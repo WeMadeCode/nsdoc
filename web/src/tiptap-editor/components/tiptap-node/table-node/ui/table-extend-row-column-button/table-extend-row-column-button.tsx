@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { useCallback, useEffect, useRef, useState } from "react"
-import { type Editor } from "@tiptap/react"
-import type { Node } from "@tiptap/pm/model"
-import { TableMap } from "@tiptap/pm/tables"
-import { FloatingPortal } from "@floating-ui/react"
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { type Editor } from '@tiptap/react'
+import type { Node } from '@tiptap/pm/model'
+import { TableMap } from '@tiptap/pm/tables'
+import { FloatingPortal } from '@floating-ui/react'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
-import { useTableHandleState } from "@/tiptap-editor/components/tiptap-node/table-node/hooks/use-table-handle-state"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useTableHandleState } from '@/tiptap-editor/components/tiptap-node/table-node/hooks/use-table-handle-state'
 
 // --- Lib ---
-import type { Orientation } from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
   EMPTY_CELL_HEIGHT,
   EMPTY_CELL_WIDTH,
@@ -20,15 +20,15 @@ import {
   marginRound,
   selectLastCell,
   runPreservingCursor,
-} from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
-import { cn } from "@/tiptap-editor/lib/tiptap-utils"
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
-import { PlusSmallIcon } from "@/tiptap-editor/components/tiptap-icons/plus-small-icon"
+import { PlusSmallIcon } from '@/tiptap-editor/components/tiptap-icons/plus-small-icon'
 
 // --- Internal ---
-import { useTableExtendRowColumnButtonsPositioning } from "@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button/use-table-extend-row-column"
-import "./table-extend-row-column-button.scss"
+import { useTableExtendRowColumnButtonsPositioning } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button/use-table-extend-row-column'
+import './table-extend-row-column-button.scss'
 
 interface TableExtendRowColumnButtonProps {
   editor?: Editor | null
@@ -42,9 +42,7 @@ interface TableExtendRowColumnButtonProps {
 /**
  * Simplified button component for extending/reducing table dimensions
  */
-export const TableExtendRowColumnButton: React.FC<
-  TableExtendRowColumnButtonProps
-> = ({
+export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProps> = ({
   editor: providedEditor,
   onMouseDown,
   onMouseUp,
@@ -53,7 +51,7 @@ export const TableExtendRowColumnButton: React.FC<
 }) => {
   const { editor } = useTiptapEditor(providedEditor)
   const state = useTableHandleState({ editor })
-  const isRowOrientation = orientation === "row"
+  const isRowOrientation = orientation === 'row'
 
   const movedRef = useRef(false)
   const [dragState, setDragState] = useState<{
@@ -106,17 +104,10 @@ export const TableExtendRowColumnButton: React.FC<
       const cellSize = isRowOrientation ? EMPTY_CELL_HEIGHT : EMPTY_CELL_WIDTH
 
       const currentDims = TableMap.get(state.block)
-      const currentCount = isRowOrientation
-        ? currentDims.height
-        : currentDims.width
-      const originalCount = isRowOrientation
-        ? dragState.originalHeight
-        : dragState.originalWidth
+      const currentCount = isRowOrientation ? currentDims.height : currentDims.width
+      const originalCount = isRowOrientation ? dragState.originalHeight : dragState.originalWidth
 
-      const newCount = Math.max(
-        1,
-        originalCount + marginRound(diff / cellSize, 0.3)
-      )
+      const newCount = Math.max(1, originalCount + marginRound(diff / cellSize, 0.3))
       const delta = newCount - currentCount
 
       if (delta === 0) return
@@ -165,12 +156,12 @@ export const TableExtendRowColumnButton: React.FC<
       onMouseUp()
     }
 
-    window.addEventListener("mousemove", handleMove)
-    window.addEventListener("mouseup", handleUp)
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('mouseup', handleUp)
 
     return () => {
-      window.removeEventListener("mousemove", handleMove)
-      window.removeEventListener("mouseup", handleUp)
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('mouseup', handleUp)
     }
   }, [dragState, editor, isRowOrientation, orientation, onMouseUp, state])
 
@@ -179,18 +170,14 @@ export const TableExtendRowColumnButton: React.FC<
   return (
     <button
       className={cn(
-        "tiptap-table-extend-row-column-button",
-        isRowOrientation
-          ? "tiptap-table-row-end-add-remove"
-          : "tiptap-table-column-end-add-remove",
-        dragState && "editing"
+        'tiptap-table-extend-row-column-button',
+        isRowOrientation ? 'tiptap-table-row-end-add-remove' : 'tiptap-table-column-end-add-remove',
+        dragState && 'editing'
       )}
       onClick={handleClick}
       onMouseDown={startDrag}
       type="button"
-      aria-label={
-        isRowOrientation ? "Add or remove rows" : "Add or remove columns"
-      }
+      aria-label={isRowOrientation ? 'Add or remove rows' : 'Add or remove columns'}
     >
       {children ?? <PlusSmallIcon className="tiptap-button-icon" />}
     </button>
@@ -203,9 +190,11 @@ export interface TableExtendRowColumnButtonsProps {
   onMouseUp?: () => void
 }
 
-export const TableExtendRowColumnButtons: React.FC<
-  TableExtendRowColumnButtonsProps
-> = ({ editor: providedEditor, onMouseDown, onMouseUp }) => {
+export const TableExtendRowColumnButtons: React.FC<TableExtendRowColumnButtonsProps> = ({
+  editor: providedEditor,
+  onMouseDown,
+  onMouseUp,
+}) => {
   const { editor } = useTiptapEditor(providedEditor)
   const state = useTableHandleState({ editor })
   const { columnButton, rowButton } = useTableExtendRowColumnButtonsPositioning(
@@ -231,13 +220,7 @@ export const TableExtendRowColumnButtons: React.FC<
   return (
     <FloatingPortal root={state.widgetContainer}>
       <div ref={rowButton.ref} style={rowButton.style}>
-        <TableExtendRowColumnButton
-          editor={editor}
-          orientation="row"
-          block={state.block}
-          onMouseDown={handleDown}
-          onMouseUp={handleUp}
-        />
+        <TableExtendRowColumnButton editor={editor} orientation="row" block={state.block} onMouseDown={handleDown} onMouseUp={handleUp} />
       </div>
 
       <div ref={columnButton.ref} style={columnButton.style}>

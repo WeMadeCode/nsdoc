@@ -1,30 +1,26 @@
-"use client"
+'use client'
 
-import { forwardRef, useCallback, useMemo } from "react"
+import { forwardRef, useCallback, useMemo } from 'react'
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/tiptap-editor/lib/tiptap-utils"
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --- Tiptap UI ---
-import type { UseColorTextConfig } from "@/tiptap-editor/components/tiptap-ui/color-text-button"
-import {
-  COLOR_TEXT_SHORTCUT_KEY,
-  useColorText,
-} from "@/tiptap-editor/components/tiptap-ui/color-text-button"
+import type { UseColorTextConfig } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
+import { COLOR_TEXT_SHORTCUT_KEY, useColorText } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Button } from "@/tiptap-editor/components/tiptap-ui-primitive/button"
-import { Badge } from "@/tiptap-editor/components/tiptap-ui-primitive/badge"
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 
 // --- Styles ---
-import "@/tiptap-editor/components/tiptap-ui/color-text-button/color-text-button.scss"
+import '@/tiptap-editor/components/tiptap-ui/color-text-button/color-text-button.scss'
 
-export interface ColorTextButtonProps
-  extends Omit<ButtonProps, "type">, UseColorTextConfig {
+export interface ColorTextButtonProps extends Omit<ButtonProps, 'type'>, UseColorTextConfig {
   /**
    * Optional text to display alongside the icon.
    */
@@ -36,11 +32,7 @@ export interface ColorTextButtonProps
   showShortcut?: boolean
 }
 
-export function ColorTextShortcutBadge({
-  shortcutKeys = COLOR_TEXT_SHORTCUT_KEY,
-}: {
-  shortcutKeys?: string
-}) {
+export function ColorTextShortcutBadge({ shortcutKeys = COLOR_TEXT_SHORTCUT_KEY }: { shortcutKeys?: string }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
@@ -49,10 +41,7 @@ export function ColorTextShortcutBadge({
  *
  * For custom button implementations, use the `useColorText` hook instead.
  */
-export const ColorTextButton = forwardRef<
-  HTMLButtonElement,
-  ColorTextButtonProps
->(
+export const ColorTextButton = forwardRef<HTMLButtonElement, ColorTextButtonProps>(
   (
     {
       editor: providedEditor,
@@ -69,15 +58,7 @@ export const ColorTextButton = forwardRef<
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor)
-    const {
-      isVisible,
-      canColorText,
-      isActive,
-      handleColorText,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useColorText({
+    const { isVisible, canColorText, isActive, handleColorText, label, shortcutKeys, Icon } = useColorText({
       editor,
       textColor,
       label: text || `Color text to ${textColor}`,
@@ -98,7 +79,7 @@ export const ColorTextButton = forwardRef<
       () =>
         ({
           ...style,
-          "--color-text-button-color": textColor,
+          '--color-text-button-color': textColor,
         }) as React.CSSProperties,
       [textColor, style]
     )
@@ -111,7 +92,7 @@ export const ColorTextButton = forwardRef<
       <Button
         type="button"
         variant="ghost"
-        data-active-state={isActive ? "on" : "off"}
+        data-active-state={isActive ? 'on' : 'off'}
         role="button"
         tabIndex={-1}
         disabled={!canColorText}
@@ -126,19 +107,11 @@ export const ColorTextButton = forwardRef<
       >
         {children ?? (
           <>
-            <span
-              className="tiptap-button-color-text"
-              style={{ color: textColor }}
-            >
-              <Icon
-                className="tiptap-button-icon"
-                style={{ color: textColor, flexGrow: 1 }}
-              />
+            <span className="tiptap-button-color-text" style={{ color: textColor }}>
+              <Icon className="tiptap-button-icon" style={{ color: textColor, flexGrow: 1 }} />
             </span>
             {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <ColorTextShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
+            {showShortcut && <ColorTextShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -146,4 +119,4 @@ export const ColorTextButton = forwardRef<
   }
 )
 
-ColorTextButton.displayName = "ColorTextButton"
+ColorTextButton.displayName = 'ColorTextButton'

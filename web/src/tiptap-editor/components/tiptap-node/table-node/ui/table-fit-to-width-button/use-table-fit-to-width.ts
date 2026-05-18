@@ -1,20 +1,17 @@
-"use client"
+'use client'
 
-import { useCallback } from "react"
-import type { Editor } from "@tiptap/react"
+import { useCallback } from 'react'
+import type { Editor } from '@tiptap/react'
 
 // --Hooks ---
-import { useTiptapEditor } from "@/tiptap-editor/hooks/use-tiptap-editor"
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 // --Lib ---
-import { isExtensionAvailable } from "@/tiptap-editor/lib/tiptap-utils"
-import {
-  getTable,
-  RESIZE_MIN_WIDTH,
-} from "@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import { getTable, RESIZE_MIN_WIDTH } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 // --Icons ---
-import { MoveHorizontalIcon } from "@/tiptap-editor/components/tiptap-icons/move-horizontal-icon"
+import { MoveHorizontalIcon } from '@/tiptap-editor/components/tiptap-icons/move-horizontal-icon'
 
 export interface UseTableFitToWidthConfig {
   /**
@@ -38,7 +35,7 @@ export interface UseTableFitToWidthConfig {
  * - `table` to target the node and update attributes
  * - `tableHandleExtension` (or your table controls) to ensure table tooling is enabled
  */
-const REQUIRED_EXTENSIONS = ["table", "tableHandleExtension"]
+const REQUIRED_EXTENSIONS = ['table', 'tableHandleExtension']
 
 /**
  * Returns whether a "fit to width" action can run in the current state.
@@ -46,20 +43,12 @@ const REQUIRED_EXTENSIONS = ["table", "tableHandleExtension"]
  * and that the selection is somewhere inside a table.
  */
 function canFitTableToWidth(editor: Editor | null): boolean {
-  if (
-    !editor ||
-    !editor.isEditable ||
-    !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)
-  ) {
+  if (!editor || !editor.isEditable || !isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
     return false
   }
 
   try {
-    return (
-      editor.isActive("table") ||
-      editor.isActive("tableCell") ||
-      editor.isActive("tableHeader")
-    )
+    return editor.isActive('table') || editor.isActive('tableCell') || editor.isActive('tableHeader')
   } catch {
     return false
   }
@@ -104,10 +93,7 @@ function setTableAutoWidth(editor: Editor | null): boolean {
 
     const tr = editor.state.tr
     table.node.descendants((child, childPos) => {
-      if (
-        child.type.name === "tableCell" ||
-        child.type.name === "tableHeader"
-      ) {
+      if (child.type.name === 'tableCell' || child.type.name === 'tableHeader') {
         const absolutePos = table.start + childPos
         const colspan = child.attrs.colspan || 1
 
@@ -125,7 +111,7 @@ function setTableAutoWidth(editor: Editor | null): boolean {
 
     return true
   } catch (error) {
-    console.error("Error setting table auto width:", error)
+    console.error('Error setting table auto width:', error)
     return false
   }
 }
@@ -142,7 +128,7 @@ function tableFitToWidth({ editor }: { editor: Editor | null }) {
   try {
     return setTableAutoWidth(editor)
   } catch (error) {
-    console.error("Error adjusting table width:", error)
+    console.error('Error adjusting table width:', error)
     return false
   }
 }
@@ -151,13 +137,7 @@ function tableFitToWidth({ editor }: { editor: Editor | null }) {
  * Determines whether a UI control should be visible based on the editor
  * state and `hideWhenUnavailable` setting.
  */
-function shouldShowButton({
-  editor,
-  hideWhenUnavailable,
-}: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}): boolean {
+function shouldShowButton({ editor, hideWhenUnavailable }: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   if (!editor || !editor.isEditable) return false
   if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
 
@@ -208,11 +188,7 @@ function shouldShowButton({
  * }
  */
 export function useTableFitToWidth(config: UseTableFitToWidthConfig = {}) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onWidthAdjusted,
-  } = config
+  const { editor: providedEditor, hideWhenUnavailable = false, onWidthAdjusted } = config
 
   const { editor } = useTiptapEditor(providedEditor)
 
@@ -229,7 +205,7 @@ export function useTableFitToWidth(config: UseTableFitToWidthConfig = {}) {
     return success
   }, [editor, onWidthAdjusted])
 
-  const label = "Fit to width"
+  const label = 'Fit to width'
   const Icon = MoveHorizontalIcon
 
   return {
