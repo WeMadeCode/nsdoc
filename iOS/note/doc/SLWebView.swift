@@ -11,9 +11,25 @@ import ObjectiveC.runtime
 
 struct JavaScriptCommand {
     let id: UUID = UUID()
+    let namespace: String
     let methodName: String
-    let arguments: [Any]?
-    var completion: ((Any?) -> Void)?
+    let params: [String: Any]?
+    let timeout: TimeInterval
+    var completion: ((Result<Any?, NSBridgeRuntimeError>) -> Void)?
+
+    init(
+        namespace: String = "editor",
+        methodName: String,
+        params: [String: Any]? = nil,
+        timeout: TimeInterval = 2,
+        completion: ((Result<Any?, NSBridgeRuntimeError>) -> Void)? = nil
+    ) {
+        self.namespace = namespace
+        self.methodName = methodName
+        self.params = params
+        self.timeout = timeout
+        self.completion = completion
+    }
 }
 
 struct SLWebView: UIViewRepresentable {
@@ -21,22 +37,29 @@ struct SLWebView: UIViewRepresentable {
     let url: URL
     @Binding var javaScriptCommand: JavaScriptCommand?
     let isLoadFinsh: (() -> Void)?
+    let bridgeReady: (() -> Void)?
+    let contentChanged: (() -> Void)?
     let toolsUpdate: (([ToolType: Bool]) -> Void)?
     
     init(url: URL,
          javaScriptCommand: Binding<JavaScriptCommand?>,
          isLoadFinsh: (() -> Void)? = nil,
+         bridgeReady: (() -> Void)? = nil,
+         contentChanged: (() -> Void)? = nil,
          toolsUpdate: (([ToolType: Bool]) -> Void)? = nil
     ) {
         self.url = url
         self._javaScriptCommand = javaScriptCommand
         self.isLoadFinsh = isLoadFinsh
+        self.bridgeReady = bridgeReady
+        self.contentChanged = contentChanged
         self.toolsUpdate = toolsUpdate
     }
 
     func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
+        let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
         let wkWebView = WKWebView(frame: .zero, configuration: configuration)
+        context.coordinator.bridge.attach(webView: wkWebView)
         wkWebView.hideKeyboardAccessoryBar()
         wkWebView.navigationDelegate = context.coordinator
         wkWebView.isOpaque = false
@@ -50,8 +73,17 @@ struct SLWebView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
+        context.coordinator.parent = self
+
         if let javaScriptCommand {
-            javaScriptCommand.completion?(nil)
+            context.coordinator.bridge.callWeb(
+                namespace: javaScriptCommand.namespace,
+                method: javaScriptCommand.methodName,
+                params: javaScriptCommand.params,
+                timeout: javaScriptCommand.timeout
+            ) { result in
+                javaScriptCommand.completion?(result)
+            }
             self.javaScriptCommand = nil
         }
     }
@@ -64,9 +96,30 @@ struct SLWebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate {
         
         var parent: SLWebView
+        let bridge = NSBridgeNative()
         
         init(_ parent: SLWebView) {
             self.parent = parent
+            super.init()
+            EditorBridgeHandlers.register(
+                on: bridge,
+                onReady: { [weak self] in
+                    self?.parent.bridgeReady?()
+                },
+                onContentChanged: { [weak self] in
+                    self?.parent.contentChanged?()
+                },
+                onSelectionChanged: { [weak self] activeTools in
+                    self?.parent.toolsUpdate?(activeTools)
+                },
+                onError: { errorMessage in
+                    print("编辑器 Bridge 错误：\(errorMessage)")
+                }
+            )
+        }
+
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            bridge.resetForNavigation()
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

@@ -29,7 +29,7 @@
 - 主界面：`NavigationStack` 承载单一笔记首页。
 - 笔记首页：SwiftUI 自定义首页 + SwiftData `@Query`。
 - 编辑页面：SwiftUI `EditorView` 承载 WebView。
-- WebView：自定义 `DWKWebView`/`WKWebView`，通过 DSBridge 与 Web 编辑器通信。
+- WebView：自定义 `WKWebView`，通过自研 JS Bridge 与 Web 编辑器通信。
 - Web 编辑器：React + Tiptap + Vite。
 - Web 资源承载：iOS 内置 `doc.bundle`，运行时通过 Swifter 本地 HTTP 服务访问 `http://localhost:8080/index.html`。
 - 编辑器内容：当前以 Tiptap JSON 序列化结果字符串保存到 `Article.markdownText`。
@@ -193,7 +193,7 @@ Web 编辑器由 React + Tiptap 构成，只负责编辑器内部体验。
 
 ### 5.5 Bridge 层
 
-iOS 与 Web 通过 DSBridge 通信。
+iOS 与 Web 通过自研 JS Bridge 通信，底层基于 `WKScriptMessageHandler` 和 `evaluateJavaScript`。
 
 Bridge 层原则：
 
@@ -202,9 +202,9 @@ Bridge 层原则：
 - Web 只发送编辑器事件，不直接写 iOS 数据库。
 - 所有 Bridge 调用都需要考虑超时、失败和编辑器未就绪状态。
 
-建议把 Bridge 协议独立成文档：
+Bridge 协议独立成文档：
 
-- `docs/editor-bridge-protocol.md`
+- [js-bridge-design.md](./js-bridge-design.md)
 
 ## 6. 关键数据流
 
@@ -533,7 +533,7 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 3. 将 `EditorView.saveInfo()` 中的保存流程抽到 `ArticleService` 或新的 `EditorSaveCoordinator`。
 4. 修正保存时未更新 `updateDate` 的问题。
 5. 为 SwifterServer 增加启动状态保护，避免重复启动。
-6. 统一 Bridge 方法命名，例如 `toggleCodeBlcok` 后续应迁移为 `toggleCodeBlock`。
+6. 按 `js-bridge-design.md` 重建 Bridge 方法命名，不继承旧实现中的拼写错误和散装调用。
 7. 为 `setContent` 增加 JSON 解析失败保护。
 8. 生产环境关闭 `wkWebView.isInspectable`。
 9. 增加 Web 构建到 `doc.bundle` 的自动脚本。

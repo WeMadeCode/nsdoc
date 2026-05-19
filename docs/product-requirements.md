@@ -545,5 +545,5 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架。
 
 - `docs/technical-architecture.md`：技术架构设计。
 - `docs/cloudkit-sync-design.md`：CloudKit 数据与同步方案。
-- `docs/editor-bridge-protocol.md`：iOS 与 Tiptap JSBridge 协议。
+- `docs/js-bridge-design.md`：iOS 与 Tiptap JS Bridge 技术设计。
 - `docs/mvp-roadmap.md`：MVP 迭代计划与任务拆分。

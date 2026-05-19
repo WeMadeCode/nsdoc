@@ -91,7 +91,7 @@ enum ToolType {
         case .h1, .h2, .h3, .h4, .h5:
             "toggleHeading"
         case .text:
-            "clearParagraph"
+            "setParagraph"
         case .order:
             "toggleOrderedList"
         case .unOrder:
@@ -99,14 +99,14 @@ enum ToolType {
         case .check:
             "toggleTaskList"
         case .code:
-            "toggleCodeBlcok"
+            "toggleCodeBlock"
             
         case .bold:
             "toggleBold"
         case .italic:
             "toggleItalic"
         case .strikethrough:
-            "toggleUnderline"
+            "toggleStrike"
         case .line:
             "setHorizontalRule"
         case .reference:
@@ -127,24 +127,24 @@ enum ToolType {
         }
     }
     
-    var jsArguments: [Any]? {
+    var jsParams: [String: Any]? {
         switch self {
         case .h1:
-            [1]
+            ["level": 1]
         case .h2:
-            [2]
+            ["level": 2]
         case .h3:
-            [3]
+            ["level": 3]
         case .h4:
-            [4]
+            ["level": 4]
         case .h5:
-            [5]
+            ["level": 5]
         case .right:
-            ["right"]
+            ["align": "right"]
         case .center:
-            ["center"]
+            ["align": "center"]
         case .left:
-            ["left"]
+            ["align": "left"]
         default:
             nil
         }

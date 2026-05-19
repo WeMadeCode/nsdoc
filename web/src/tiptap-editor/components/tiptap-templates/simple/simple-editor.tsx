@@ -52,7 +52,7 @@ export function SimpleEditor() {
   })
 
   useEffect(() => {
-    setupBridge(editor)
+    return setupBridge(editor)
   }, [editor])
 
   return (

@@ -49,9 +49,12 @@ struct Tools: View {
                             if itemValue.isRealTool == false {
                                 item.wrappedValue.isSelected.toggle()
                             } else {
+                                guard !itemValue.toolType.jsMethodName.isEmpty else {
+                                    return
+                                }
                                 javaScriptCommand = JavaScriptCommand(
                                     methodName: itemValue.toolType.jsMethodName,
-                                    arguments: itemValue.toolType.jsArguments,
+                                    params: itemValue.toolType.jsParams,
                                     completion: nil)
                             }
                         }
@@ -93,9 +96,12 @@ struct Tools: View {
             ForEach(items) { item in
                 ToolBarButton(item: item) {
                     let itemValue = item.wrappedValue
+                    guard !itemValue.toolType.jsMethodName.isEmpty else {
+                        return
+                    }
                     javaScriptCommand = JavaScriptCommand(
                         methodName: itemValue.toolType.jsMethodName,
-                        arguments: itemValue.toolType.jsArguments,
+                        params: itemValue.toolType.jsParams,
                         completion: nil
                     )
                 }

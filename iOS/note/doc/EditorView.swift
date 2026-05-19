@@ -16,6 +16,8 @@ struct EditorView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var workingDocument: Document?
     @State private var isKeyboardShow: Bool = false
+    @State private var didApplyInitialContent = false
+    @State private var isDirty = false
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
@@ -59,21 +61,10 @@ struct EditorView: View {
         VStack {
             if let editorURL = Self.editorURL {
                 SLWebView(url: editorURL, javaScriptCommand: $javaScriptCommand) {
-                    Task {
-                        try await Task.sleep(nanoseconds: 300_000_000)
-                        await MainActor.run {
-                            guard let content = loadContentJSON() else {
-                                return
-                            }
-                            javaScriptCommand = JavaScriptCommand(
-                                methodName: "setContent",
-                                arguments: [[
-                                    "content": content,
-                                    "isFocus": false
-                                ]]
-                            )
-                        }
-                    }
+                } bridgeReady: {
+                    applyInitialContentIfNeeded()
+                } contentChanged: {
+                    isDirty = true
                 } toolsUpdate: { activeTools in
                     viewModel.updateSelected(activeTools: activeTools)
                 }
@@ -92,75 +83,115 @@ struct EditorView: View {
     private static var editorURL: URL? {
         URL(string: "http://localhost:5173/")
     }
-    
+
+    private func applyInitialContentIfNeeded() {
+        guard !didApplyInitialContent else {
+            return
+        }
+        didApplyInitialContent = true
+
+        guard
+            let content = loadContentJSON(),
+            let contentObject = jsonObject(from: content)
+        else {
+            return
+        }
+
+        javaScriptCommand = JavaScriptCommand(
+            methodName: "setContent",
+            params: [
+                "content": contentObject,
+                "focus": false
+            ],
+            timeout: 3
+        )
+    }
+
     private func saveInfo() {
-        DispatchQueue.global().async {
-            let titleResult = requestJavaScriptResult(methodName: "getDocTitle") as? String
-            let contentJSONResult = contentJSONString(
-                from: requestJavaScriptResult(methodName: "getContent")
-            )
+        Task {
+            await saveInfoAsync()
+        }
+    }
 
-            DispatchQueue.main.async {
-                do {
-                    let saveResult: Document
-                    if let workingDocument {
-                        saveResult = workingDocument
-                    } else {
-                        saveResult = try makeNewDocument()
-                        workingDocument = saveResult
-                    }
+    @MainActor
+    private func saveInfoAsync() async {
+        do {
+            let titleResult = try await requestJavaScriptResult(methodName: "getTitle", timeout: 3) as? [String: Any]
+            let contentResult = try await requestJavaScriptResult(methodName: "getContent", timeout: 3) as? [String: Any]
+            let contentJSONResult = contentJSONString(from: contentResult?["content"])
+            let plainTextResult = contentResult?["plainText"] as? String
 
-                    if let titleResult {
-                        saveResult.title = titleResult
-                    }
-                    if let contentJSONResult {
-                        saveContentJSON(contentJSONResult, for: saveResult)
-                        let plainText = extractPlainText(from: contentJSONResult)
-                        saveResult.plainText = plainText
-                        saveResult.excerpt = String(plainText.prefix(120))
-                        saveResult.contentVersion += 1
-                    }
-                    saveResult.updatedAt = Date()
-                    saveResult.syncStatus = DocumentSyncStatus.pendingUpload
+            let saveResult: Document
+            if let workingDocument {
+                saveResult = workingDocument
+            } else {
+                saveResult = try makeNewDocument()
+                workingDocument = saveResult
+            }
 
-                    try modelContext.save()
-                    print("保存成功：\(saveResult.title)")
-                } catch {
-                    print("保存失败：\(error.localizedDescription)")
+            if let title = titleResult?["title"] as? String {
+                saveResult.title = title
+            }
+            if let contentJSONResult {
+                saveContentJSON(contentJSONResult, for: saveResult)
+                let plainText = plainTextResult ?? extractPlainText(from: contentJSONResult)
+                saveResult.plainText = plainText
+                saveResult.excerpt = String(plainText.prefix(120))
+                saveResult.contentVersion += 1
+            }
+            saveResult.updatedAt = Date()
+            saveResult.syncStatus = DocumentSyncStatus.pendingUpload
+
+            try modelContext.save()
+            isDirty = false
+            print("保存成功：\(saveResult.title)")
+        } catch {
+            print("保存失败：\(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    private func requestJavaScriptResult(methodName: String, params: [String: Any]? = nil, timeout: TimeInterval = 2) async throws -> Any? {
+        try await withCheckedThrowingContinuation { continuation in
+            javaScriptCommand = JavaScriptCommand(methodName: methodName, params: params, timeout: timeout) { result in
+                switch result {
+                case .success(let value):
+                    continuation.resume(returning: value)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
             }
         }
     }
 
-    private func requestJavaScriptResult(methodName: String) -> Any? {
-        var resultValue: Any?
-        let group = DispatchGroup()
-
-        group.enter()
-        DispatchQueue.main.async {
-            javaScriptCommand = JavaScriptCommand(methodName: methodName, arguments: nil) { result in
-                resultValue = result
-                group.leave()
-            }
-        }
-        group.wait()
-
-        return resultValue
-    }
-
     private func contentJSONString(from result: Any?) -> String? {
-        guard let dictionary = result as? [String: Any] else {
+        guard let result else {
+            return nil
+        }
+
+        guard JSONSerialization.isValidJSONObject(result) else {
             return nil
         }
 
         guard
-            let jsonData = try? JSONSerialization.data(withJSONObject: dictionary),
+            let jsonData = try? JSONSerialization.data(withJSONObject: result),
             let jsonString = String(data: jsonData, encoding: .utf8)
         else {
             return nil
         }
 
         return jsonString
+    }
+
+    private func jsonObject(from jsonString: String) -> Any? {
+        guard
+            let data = jsonString.data(using: .utf8),
+            let object = try? JSONSerialization.jsonObject(with: data)
+        else {
+            return nil
+        }
+
+        return object
     }
 
     private func loadContentJSON() -> String? {

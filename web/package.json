@@ -67,7 +67,6 @@
     "@tiptap/suggestion": "^3.20.5",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
-    "dsbridge": "^3.1.4",
     "highlight.js": "^11.11.1",
     "is-hotkey": "^0.2.0",
     "lodash.throttle": "^4.1.1",
