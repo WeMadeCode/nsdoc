@@ -6,9 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ListView: View {
     @State private var isPrivateFolderExpanded = true
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
+    @Query(sort: \Document.updatedAt, order: .reverse) private var documents: [Document]
+
+    private var defaultFolder: Folder? {
+        folders.first { $0.isDefault && $0.deletedAt == nil }
+    }
+
+    private var currentFolderName: String {
+        defaultFolder?.name ?? DefaultFolderService.defaultFolderName
+    }
+
+    private var currentFolderDocuments: [Document] {
+        guard let defaultFolder else {
+            return []
+        }
+
+        return documents.filter { document in
+            document.folderId == defaultFolder.id && document.deletedAt == nil
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -20,7 +42,8 @@ struct ListView: View {
                         .padding(.bottom, 34)
 
                     PrivateSectionHeader(
-                        folder: MockLibraryData.privateFolder,
+                        title: currentFolderName,
+                        documentCount: currentFolderDocuments.count,
                         isExpanded: isPrivateFolderExpanded
                     ) {
                         withAnimation(.easeInOut(duration: 0.18)) {
@@ -32,7 +55,7 @@ struct ListView: View {
                     .zIndex(1)
 
                     NotesTree(
-                        notes: MockLibraryData.privateFolder.notes,
+                        documents: currentFolderDocuments,
                         isExpanded: isPrivateFolderExpanded
                     )
                 }
@@ -41,8 +64,20 @@ struct ListView: View {
             .background(Color(.systemBackground))
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
-                HomeActionBar()
+                HomeActionBar(documents: currentFolderDocuments)
             }
+            .task {
+                ensureDefaultFolder()
+            }
+        }
+    }
+
+    @MainActor
+    private func ensureDefaultFolder() {
+        do {
+            _ = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
+        } catch {
+            print("默认文件夹初始化失败：\(error.localizedDescription)")
         }
     }
 }
@@ -93,7 +128,8 @@ private struct HeaderIconButton: View {
 }
 
 private struct PrivateSectionHeader: View {
-    let folder: MockFolder
+    let title: String
+    let documentCount: Int
     let isExpanded: Bool
     let toggle: () -> Void
 
@@ -101,7 +137,7 @@ private struct PrivateSectionHeader: View {
         HStack(spacing: 8) {
             Button(action: toggle) {
                 HStack(spacing: 8) {
-                    Text(folder.name)
+                    Text(title)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(.secondary)
 
@@ -113,7 +149,7 @@ private struct PrivateSectionHeader: View {
 
                     Spacer()
 
-                    Text("\(folder.notes.count)")
+                    Text("\(documentCount)")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
@@ -136,26 +172,26 @@ private struct PrivateSectionHeader: View {
 }
 
 private struct NotesTree: View {
-    let notes: [MockNote]
+    let documents: [Document]
     let isExpanded: Bool
     private let rowHeight: CGFloat = 62
     private let rowSpacing: CGFloat = 2
 
     private var expandedHeight: CGFloat {
-        guard !notes.isEmpty else {
+        guard !documents.isEmpty else {
             return 0
         }
 
-        return CGFloat(notes.count) * rowHeight + CGFloat(notes.count - 1) * rowSpacing
+        return CGFloat(documents.count) * rowHeight + CGFloat(documents.count - 1) * rowSpacing
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(notes) { note in
+            ForEach(documents) { document in
                 NavigationLink {
-                    EditorView(article: note.article)
+                    EditorView(document: document)
                 } label: {
-                    NoteRow(note: note)
+                    NoteRow(document: document)
                 }
                 .buttonStyle(.plain)
             }
@@ -169,17 +205,19 @@ private struct NotesTree: View {
 }
 
 private struct HomeActionBar: View {
+    let documents: [Document]
+
     var body: some View {
         HStack(spacing: 14) {
             NavigationLink {
-                SearchView(notes: MockLibraryData.privateFolder.notes)
+                SearchView(documents: documents)
             } label: {
                 HomeSearchField()
             }
             .buttonStyle(.plain)
 
             NavigationLink {
-                EditorView(article: nil)
+                EditorView(document: nil)
             } label: {
                 FloatingActionButton(systemImage: "square.and.pencil")
             }
@@ -246,28 +284,29 @@ private struct FloatingActionButton: View {
 }
 
 private struct SearchView: View {
-    let notes: [MockNote]
+    let documents: [Document]
     @State private var keyword = ""
 
-    private var searchResults: [MockNote] {
+    private var searchResults: [Document] {
         let trimmedKeyword = keyword.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedKeyword.isEmpty else {
-            return notes
+            return documents
         }
 
-        return notes.filter { note in
-            note.title.localizedCaseInsensitiveContains(trimmedKeyword) ||
-            note.preview.localizedCaseInsensitiveContains(trimmedKeyword)
+        return documents.filter { document in
+            document.title.localizedCaseInsensitiveContains(trimmedKeyword) ||
+            document.excerpt.localizedCaseInsensitiveContains(trimmedKeyword) ||
+            document.plainText.localizedCaseInsensitiveContains(trimmedKeyword)
         }
     }
 
     var body: some View {
         List {
-            ForEach(searchResults) { note in
+            ForEach(searchResults) { document in
                 NavigationLink {
-                    EditorView(article: note.article)
+                    EditorView(document: document)
                 } label: {
-                    SearchResultRow(note: note)
+                    SearchResultRow(document: document)
                 }
             }
         }
@@ -283,7 +322,7 @@ private struct SearchView: View {
 }
 
 private struct NoteRow: View {
-    let note: MockNote
+    let document: Document
 
     var body: some View {
         HStack(spacing: 14) {
@@ -293,13 +332,13 @@ private struct NoteRow: View {
                 .frame(width: 34, height: 44)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(note.title)
+                Text(document.title.isEmpty ? "未命名文档" : document.title)
                     .font(.system(size: 20, weight: .regular))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                if !note.preview.isEmpty {
-                    Text(note.preview)
+                if !document.excerpt.isEmpty {
+                    Text(document.excerpt)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -313,7 +352,7 @@ private struct NoteRow: View {
 }
 
 private struct SearchResultRow: View {
-    let note: MockNote
+    let document: Document
 
     var body: some View {
         HStack(spacing: 12) {
@@ -323,12 +362,12 @@ private struct SearchResultRow: View {
                 .frame(width: 28)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text(note.title)
+                Text(document.title.isEmpty ? "未命名文档" : document.title)
                     .font(.body)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                Text(note.preview)
+                Text(document.excerpt)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -336,59 +375,6 @@ private struct SearchResultRow: View {
         }
         .padding(.vertical, 6)
     }
-}
-
-private struct MockFolder: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let summary: String
-    let notes: [MockNote]
-
-    static func == (lhs: MockFolder, rhs: MockFolder) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
-private struct MockNote: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let preview: String
-    let updatedAt: Date
-
-    var article: Article {
-        Article(title: title, markdownText: preview, createDate: updatedAt, updateDate: updatedAt)
-    }
-}
-
-private enum MockLibraryData {
-    static let privateFolder = MockFolder(
-        name: "默认文档库",
-        summary: "默认文档库，所有新文档都会先放在这里",
-        notes: [
-            MockNote(title: "欢迎使用一页", preview: "默认文档库，文档在首页展开查看。", updatedAt: .now.addingTimeInterval(-1800)),
-            MockNote(title: "2026-05-19 产品记录", preview: "首页参考 Notion，底部悬浮搜索和新建。", updatedAt: .now.addingTimeInterval(-3600)),
-            MockNote(title: "2026-05-18 设计回顾", preview: "文件夹展开、文档列表、浅色键盘工具条。", updatedAt: .now.addingTimeInterval(-7200)),
-            MockNote(title: "Todo", preview: "把假数据替换成 SwiftData 查询。", updatedAt: .now.addingTimeInterval(-86400)),
-            MockNote(title: "新页面", preview: "空文档创建后默认属于默认文档库。", updatedAt: .now.addingTimeInterval(-86400 * 2)),
-            MockNote(title: "搜索体验", preview: "支持标题和正文摘要搜索。", updatedAt: .now.addingTimeInterval(-86400 * 3)),
-            MockNote(title: "编辑器工具栏优化", preview: "键盘上方工具条采用 iOS 浅色模式样式。", updatedAt: .now.addingTimeInterval(-86400 * 4)),
-            MockNote(title: "CloudKit 状态处理", preview: "未登录 iCloud 时本地可编辑。", updatedAt: .now.addingTimeInterval(-86400 * 5)),
-            MockNote(title: "2026-05-12", preview: "记录一个完整的产品迭代节奏。", updatedAt: .now.addingTimeInterval(-86400 * 6)),
-            MockNote(title: "2026-05-10", preview: "首页列表需要更像工作台，而不是设置页。", updatedAt: .now.addingTimeInterval(-86400 * 8)),
-            MockNote(title: "2026-05-08", preview: "文档行保持轻量，少用边框和卡片。", updatedAt: .now.addingTimeInterval(-86400 * 10)),
-            MockNote(title: "读书摘录", preview: "把值得回看的句子收在一个页面里。", updatedAt: .now.addingTimeInterval(-86400 * 12)),
-            MockNote(title: "会议纪要模板", preview: "背景、结论、行动项。", updatedAt: .now.addingTimeInterval(-86400 * 14)),
-            MockNote(title: "旅行清单", preview: "证件、充电器、耳机、备用衣物。", updatedAt: .now.addingTimeInterval(-86400 * 16)),
-            MockNote(title: "灵感池", preview: "不急着分类，先把东西写下来。", updatedAt: .now.addingTimeInterval(-86400 * 18)),
-            MockNote(title: "年度计划", preview: "产品、学习、健康、财务。", updatedAt: .now.addingTimeInterval(-86400 * 21)),
-            MockNote(title: "App 发布检查表", preview: "图标、权限、隐私、首屏、崩溃日志。", updatedAt: .now.addingTimeInterval(-86400 * 24)),
-            MockNote(title: "长期想法", preview: "有些想法先放着，隔一段时间再判断。", updatedAt: .now.addingTimeInterval(-86400 * 30))
-        ]
-    )
 }
 
 #Preview {

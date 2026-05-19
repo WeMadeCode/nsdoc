@@ -6,21 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EditorView: View {
     
-    let article: Article?
     let showsCloseButton: Bool
     
     @StateObject var viewModel = EditorViewModel()
     @Environment(\.modelContext) private var modelContext
+    @State private var workingDocument: Document?
     @State private var isKeyboardShow: Bool = false
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
-    init(article: Article?, showsCloseButton: Bool = true) {
-        self.article = article
+    init(document: Document?, showsCloseButton: Bool = true) {
         self.showsCloseButton = showsCloseButton
+        _workingDocument = State(initialValue: document)
     }
     
     var body: some View {
@@ -61,7 +62,7 @@ struct EditorView: View {
                     Task {
                         try await Task.sleep(nanoseconds: 300_000_000)
                         await MainActor.run {
-                            guard let content = article?.markdownText else {
+                            guard let content = loadContentJSON() else {
                                 return
                             }
                             javaScriptCommand = JavaScriptCommand(
@@ -94,57 +95,154 @@ struct EditorView: View {
     
     private func saveInfo() {
         DispatchQueue.global().async {
-            var titleResult: String?
-            var markdownTextResult: String?
-            let group = DispatchGroup()
-            group.enter()
-            javaScriptCommand = JavaScriptCommand(methodName: "getDocTitle", arguments: nil) { result in
-                if let title = result as? String {
-                    titleResult = title
-                }
-                group.leave()
-            }
-            group.wait()
-            
-            group.enter()
-            javaScriptCommand = JavaScriptCommand(methodName: "getContent", arguments: nil) { result in
-                if let dictionary = result as? [String: Any] {
-                    // 1. 将字典转换为 Data
-                    let jsonData = try? JSONSerialization.data(
-                        withJSONObject: dictionary
-                    )
-                    // 2. 将 Data 转换为 String
-                    if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
-                        markdownTextResult = jsonString
-                    }
-                }
-                group.leave()
-            }
-            group.wait()
+            let titleResult = requestJavaScriptResult(methodName: "getDocTitle") as? String
+            let contentJSONResult = contentJSONString(
+                from: requestJavaScriptResult(methodName: "getContent")
+            )
+
             DispatchQueue.main.async {
-                let saveResult = article ?? Article()
-                if let titleResult {
-                    saveResult.title = titleResult
-                }
-                if let markdownTextResult {
-                    saveResult.markdownText = markdownTextResult
-                }
-                if article == nil {
-                    modelContext.insert(saveResult)
-                    print("插入成功：\(saveResult.title)")
-                } else {
-                    do {
-                        try modelContext.save()
-                        print("保存成功：\(saveResult.title)")
-                    } catch {
-                        print("保存失败：\(error.localizedDescription)")
+                do {
+                    let saveResult: Document
+                    if let workingDocument {
+                        saveResult = workingDocument
+                    } else {
+                        saveResult = try makeNewDocument()
+                        workingDocument = saveResult
                     }
+
+                    if let titleResult {
+                        saveResult.title = titleResult
+                    }
+                    if let contentJSONResult {
+                        saveContentJSON(contentJSONResult, for: saveResult)
+                        let plainText = extractPlainText(from: contentJSONResult)
+                        saveResult.plainText = plainText
+                        saveResult.excerpt = String(plainText.prefix(120))
+                        saveResult.contentVersion += 1
+                    }
+                    saveResult.updatedAt = Date()
+                    saveResult.syncStatus = DocumentSyncStatus.pendingUpload
+
+                    try modelContext.save()
+                    print("保存成功：\(saveResult.title)")
+                } catch {
+                    print("保存失败：\(error.localizedDescription)")
                 }
             }
         }
     }
+
+    private func requestJavaScriptResult(methodName: String) -> Any? {
+        var resultValue: Any?
+        let group = DispatchGroup()
+
+        group.enter()
+        DispatchQueue.main.async {
+            javaScriptCommand = JavaScriptCommand(methodName: methodName, arguments: nil) { result in
+                resultValue = result
+                group.leave()
+            }
+        }
+        group.wait()
+
+        return resultValue
+    }
+
+    private func contentJSONString(from result: Any?) -> String? {
+        guard let dictionary = result as? [String: Any] else {
+            return nil
+        }
+
+        guard
+            let jsonData = try? JSONSerialization.data(withJSONObject: dictionary),
+            let jsonString = String(data: jsonData, encoding: .utf8)
+        else {
+            return nil
+        }
+
+        return jsonString
+    }
+
+    private func loadContentJSON() -> String? {
+        guard let document = workingDocument else {
+            return nil
+        }
+
+        do {
+            return try fetchContent(for: document)?.contentJSON
+        } catch {
+            print("读取文档内容失败：\(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    private func makeNewDocument() throws -> Document {
+        let folder = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
+        let document = Document(folderId: folder.id)
+        modelContext.insert(document)
+        return document
+    }
+
+    private func saveContentJSON(_ contentJSON: String, for document: Document) {
+        do {
+            if let content = try fetchContent(for: document) {
+                content.contentJSON = contentJSON
+                return
+            }
+        } catch {
+            print("读取已有内容失败，准备创建新内容：\(error.localizedDescription)")
+        }
+
+        let content = DocumentContent(
+            documentId: document.id,
+            contentFormat: DocumentContentFormat.tiptapJSON,
+            contentJSON: contentJSON
+        )
+        modelContext.insert(content)
+    }
+
+    private func fetchContent(for document: Document) throws -> DocumentContent? {
+        let documentId = document.id
+        var descriptor = FetchDescriptor<DocumentContent>(
+            predicate: #Predicate { content in
+                content.documentId == documentId
+            },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = 1
+        return try modelContext.fetch(descriptor).first
+    }
+
+    private func extractPlainText(from contentJSON: String) -> String {
+        guard
+            let data = contentJSON.data(using: .utf8),
+            let object = try? JSONSerialization.jsonObject(with: data)
+        else {
+            return ""
+        }
+
+        var textParts: [String] = []
+
+        func collectText(from value: Any) {
+            if let dictionary = value as? [String: Any] {
+                if let text = dictionary["text"] as? String {
+                    textParts.append(text)
+                }
+                dictionary.values.forEach { collectText(from: $0) }
+                return
+            }
+
+            if let array = value as? [Any] {
+                array.forEach { collectText(from: $0) }
+            }
+        }
+
+        collectText(from: object)
+        return textParts.joined(separator: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 #Preview {
-    // EditorView(article: Article())
+    // EditorView(document: nil)
 }

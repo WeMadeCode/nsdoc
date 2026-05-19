@@ -12,7 +12,10 @@ import SwiftData
 struct noteApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Article.self,
+            Folder.self,
+            Document.self,
+            DocumentContent.self,
+            Attachment.self,
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,

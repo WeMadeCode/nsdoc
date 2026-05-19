@@ -15,12 +15,16 @@ import { useEffect } from 'react'
 
 // --- Tiptap Node ---
 import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
-import content from '@/tiptap-editor/components/tiptap-templates/simple/data/content.json'
 // --- Lib ---
 import { setupBridge } from '@/bridge'
 import { extensions as baseExtensions } from '@/extensions'
 import { ensureDocumentTitle } from '@/tiptap-editor/lib/document-content'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
+
+const emptyContent = {
+  type: 'doc',
+  content: [],
+}
 
 export function SimpleEditor() {
   const editor = useEditor({
@@ -44,7 +48,7 @@ export function SimpleEditor() {
         onError: error => console.error('Upload failed:', error),
       }),
     ],
-    content: ensureDocumentTitle(content),
+    content: ensureDocumentTitle(emptyContent),
   })
 
   useEffect(() => {
