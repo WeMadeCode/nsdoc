@@ -13,41 +13,28 @@ struct ListView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
                     HomeHeader()
                         .padding(.horizontal, 22)
                         .padding(.top, 14)
-                        .padding(.bottom, 22)
-
-                    RecentRow()
-                        .padding(.horizontal, 22)
-                        .padding(.bottom, 42)
+                        .padding(.bottom, 34)
 
                     PrivateSectionHeader(
                         folder: MockLibraryData.privateFolder,
                         isExpanded: isPrivateFolderExpanded
                     ) {
-                        withAnimation(.snappy(duration: 0.22)) {
+                        withAnimation(.easeInOut(duration: 0.18)) {
                             isPrivateFolderExpanded.toggle()
                         }
                     }
                     .padding(.horizontal, 22)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, isPrivateFolderExpanded ? 12 : 0)
+                    .zIndex(1)
 
-                    if isPrivateFolderExpanded {
-                        LazyVStack(alignment: .leading, spacing: 2) {
-                            ForEach(MockLibraryData.privateFolder.notes) { note in
-                                NavigationLink {
-                                    EditorView(article: note.article)
-                                } label: {
-                                    NoteRow(note: note)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
+                    NotesTree(
+                        notes: MockLibraryData.privateFolder.notes,
+                        isExpanded: isPrivateFolderExpanded
+                    )
                 }
                 .padding(.bottom, 116)
             }
@@ -63,16 +50,13 @@ struct ListView: View {
 private struct HomeHeader: View {
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
-            HStack(spacing: 10) {
-                ZStack {
-                    Circle()
-                        .fill(Color(.secondarySystemBackground))
-
-                    Text("一")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.primary)
-                }
-                .frame(width: 34, height: 34)
+            HStack(spacing: 12) {
+                Image("yiyue-logo-mark")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 34, height: 34)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .accessibilityHidden(true)
 
                 Text("一页")
                     .font(.system(size: 20, weight: .semibold))
@@ -108,24 +92,6 @@ private struct HeaderIconButton: View {
     }
 }
 
-private struct RecentRow: View {
-    var body: some View {
-        Button {
-        } label: {
-            HStack(spacing: 8) {
-                Text("最近")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.secondary)
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 private struct PrivateSectionHeader: View {
     let folder: MockFolder
     let isExpanded: Bool
@@ -139,19 +105,23 @@ private struct PrivateSectionHeader: View {
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(.secondary)
 
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                    Image(systemName: "chevron.down")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(isExpanded ? 0 : -90))
+                        .animation(.easeInOut(duration: 0.18), value: isExpanded)
+
+                    Spacer()
+
+                    Text("\(folder.notes.count)")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
                 }
+                .frame(height: 44)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-
-            Spacer()
-
-            Text("\(folder.notes.count)")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
 
             Button {
             } label: {
@@ -161,17 +131,40 @@ private struct PrivateSectionHeader: View {
                     .frame(width: 34, height: 34)
             }
             .buttonStyle(.plain)
-
-            NavigationLink {
-                EditorView(article: nil)
-            } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 23, weight: .regular))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 34, height: 34)
-            }
-            .buttonStyle(.plain)
         }
+    }
+}
+
+private struct NotesTree: View {
+    let notes: [MockNote]
+    let isExpanded: Bool
+    private let rowHeight: CGFloat = 62
+    private let rowSpacing: CGFloat = 2
+
+    private var expandedHeight: CGFloat {
+        guard !notes.isEmpty else {
+            return 0
+        }
+
+        return CGFloat(notes.count) * rowHeight + CGFloat(notes.count - 1) * rowSpacing
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            ForEach(notes) { note in
+                NavigationLink {
+                    EditorView(article: note.article)
+                } label: {
+                    NoteRow(note: note)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 20)
+        .frame(height: expandedHeight, alignment: .top)
+        .frame(height: isExpanded ? expandedHeight : 0, alignment: .top)
+        .clipped()
+        .animation(.easeInOut(duration: 0.18), value: isExpanded)
     }
 }
 
@@ -294,15 +287,10 @@ private struct NoteRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: "chevron.right")
-                .font(.system(size: 19, weight: .medium))
-                .foregroundStyle(Color(.tertiaryLabel))
-                .frame(width: 20, height: 44)
-
             Image(systemName: "doc.text")
                 .font(.system(size: 29, weight: .regular))
                 .foregroundStyle(.secondary)
-                .frame(width: 30, height: 44)
+                .frame(width: 34, height: 44)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(note.title)
@@ -378,14 +366,14 @@ private struct MockNote: Identifiable, Hashable {
 
 private enum MockLibraryData {
     static let privateFolder = MockFolder(
-        name: "私人",
-        summary: "默认文件夹，所有新文档都会先放在这里",
+        name: "默认文档库",
+        summary: "默认文档库，所有新文档都会先放在这里",
         notes: [
-            MockNote(title: "欢迎使用一页", preview: "默认私人文件夹，文档在首页展开查看。", updatedAt: .now.addingTimeInterval(-1800)),
+            MockNote(title: "欢迎使用一页", preview: "默认文档库，文档在首页展开查看。", updatedAt: .now.addingTimeInterval(-1800)),
             MockNote(title: "2026-05-19 产品记录", preview: "首页参考 Notion，底部悬浮搜索和新建。", updatedAt: .now.addingTimeInterval(-3600)),
             MockNote(title: "2026-05-18 设计回顾", preview: "文件夹展开、文档列表、浅色键盘工具条。", updatedAt: .now.addingTimeInterval(-7200)),
             MockNote(title: "Todo", preview: "把假数据替换成 SwiftData 查询。", updatedAt: .now.addingTimeInterval(-86400)),
-            MockNote(title: "新页面", preview: "空文档创建后默认属于私人文件夹。", updatedAt: .now.addingTimeInterval(-86400 * 2)),
+            MockNote(title: "新页面", preview: "空文档创建后默认属于默认文档库。", updatedAt: .now.addingTimeInterval(-86400 * 2)),
             MockNote(title: "搜索体验", preview: "支持标题和正文摘要搜索。", updatedAt: .now.addingTimeInterval(-86400 * 3)),
             MockNote(title: "编辑器工具栏优化", preview: "键盘上方工具条采用 iOS 浅色模式样式。", updatedAt: .now.addingTimeInterval(-86400 * 4)),
             MockNote(title: "CloudKit 状态处理", preview: "未登录 iCloud 时本地可编辑。", updatedAt: .now.addingTimeInterval(-86400 * 5)),
