@@ -93,6 +93,7 @@ export const setupEditorBridge = (editor: Editor | null) => {
       }
 
       const nextContent = parseContent(params.content as EditorSetContentParams['content'])
+      console.log('nextContent = ', nextContent)
       const focus = params.focus === true
       const chain = focus ? editor.chain().focus() : editor.chain()
       return {

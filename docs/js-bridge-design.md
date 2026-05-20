@@ -404,12 +404,14 @@ iOS 侧建议拆成以下文件：
 
 ```text
 iOS/note/bridge/
+  JSBridgeChannel.swift
   NSBridgeMessage.swift
   NSBridgeError.swift
   NSBridgeNative.swift
   NSBridgeHandlerRegistry.swift
   NSBridgePermissionGuard.swift
   NSBridgeWebViewInstaller.swift
+  WebConsoleBridge.swift
   EditorBridgeHandlers.swift
 ```
 
@@ -422,6 +424,8 @@ iOS/note/bridge/
 | `NSBridgeHandlerRegistry` | 注册 Web 调 iOS 的 handler |
 | `NSBridgePermissionGuard` | 校验来源、方法白名单、参数大小 |
 | `NSBridgeWebViewInstaller` | 统一配置 `WKWebViewConfiguration` |
+| `JSBridgeChannel` | 统一维护 `WKScriptMessageHandler` 通道名 |
+| `WebConsoleBridge` | Debug 诊断通道，将 Web `console.*` 转发到 Xcode 控制台 |
 | `EditorBridgeHandlers` | 处理 editor 相关事件，转发给 `EditorViewModel` 和保存协调器 |
 
 iOS 侧调用示例：
@@ -491,6 +495,8 @@ bridge.register(namespace: "editor", method: "contentChanged") { message in
 - iOS 侧解析失败时返回 `INVALID_PARAMS`，不能崩溃。
 
 ### 13.4 日志脱敏
+
+`nsBridge` 是业务协议通道，`webConsoleLog` 仅用于 Debug 诊断。生产环境默认不注册 `webConsoleLog`，避免 Web 端日志误带正文、标题或用户输入。
 
 Bridge 日志只能记录：
 

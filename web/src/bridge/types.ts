@@ -94,6 +94,9 @@ declare global {
         nsBridge?: {
           postMessage(message: BridgeMessage): void
         }
+        webConsoleLog?: {
+          postMessage(message: { level: string; message: string }): void
+        }
       }
     }
   }
@@ -113,4 +116,3 @@ export type NSBridgePublicApi = {
     handler: BridgeHandler<TParams, TResult>
   ): () => void
 }
-

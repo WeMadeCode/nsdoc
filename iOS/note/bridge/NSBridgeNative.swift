@@ -66,7 +66,7 @@ final class NSBridgeNative: NSObject, WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController, didReceive scriptMessage: WKScriptMessage) {
         guard
-            scriptMessage.name == "nsBridge",
+            scriptMessage.name == JSBridgeChannel.nsBridge,
             let dictionary = scriptMessage.body as? [String: Any],
             let message = NSBridgeMessage(dictionary: dictionary)
         else {
@@ -165,4 +165,3 @@ final class NSBridgeNative: NSObject, WKScriptMessageHandler {
         }
     }
 }
-
