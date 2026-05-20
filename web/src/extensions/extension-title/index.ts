@@ -10,7 +10,6 @@ export const Title = Node.create({
   isolating: true,
   priority: 1000,
   content: 'text*',
-  group: 'block',
 
   addOptions() {
     return {

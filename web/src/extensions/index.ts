@@ -2,7 +2,6 @@ import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import BulletList from '@tiptap/extension-bullet-list'
 import Code from '@tiptap/extension-code'
-import CodeBlock from '@tiptap/extension-code-block'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import Image from '@tiptap/extension-image'
@@ -42,7 +41,6 @@ export const extensions = [
   Bold,
   BulletList,
   Code,
-  CodeBlock,
   HardBreak,
   Highlight,
   Typography,
@@ -62,7 +60,6 @@ export const extensions = [
   TextStyle,
   CodeBlockLowlight,
   History,
-  TaskItem,
   Color,
   BackgroundColor,
   TextAlign.configure({
@@ -74,5 +71,7 @@ export const extensions = [
   }),
   TableCell,
   HorizontalRule,
-  TrailingNode,
+  TrailingNode.configure({
+    node: 'paragraph',
+  }),
 ]
