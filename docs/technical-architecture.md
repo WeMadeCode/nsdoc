@@ -31,14 +31,13 @@
 - 编辑页面：SwiftUI `EditorView` 承载 WebView。
 - WebView：自定义 `WKWebView`，通过自研 JS Bridge 与 Web 编辑器通信。
 - Web 编辑器：React + Tiptap + Vite。
-- Web 资源承载：iOS 内置 `doc.bundle`，运行时通过 Swifter 本地 HTTP 服务访问 `http://localhost:8080/index.html`。
+- Web 资源承载：iOS 内置 `doc.bundle`，不再通过本地 HTTP 服务承载编辑器资源。
 - 编辑器内容：当前以 Tiptap JSON 序列化结果字符串保存到 `Article.markdownText`。
 
 当前关键路径：
 
 - iOS 启动时创建 SwiftData `ModelContainer`。
-- 应用进入 active 状态时启动本地 SwifterServer。
-- 编辑页加载 `http://localhost:8080/index.html`。
+- 编辑页承载 Web 编辑器，生产环境应直接加载内置 `doc.bundle` 资源。
 - iOS 调用 Web 方法获取标题和内容。
 - iOS 将内容保存到 SwiftData。
 
@@ -315,27 +314,24 @@ MVP 已确认采用完全免登录模式。App 不建设自有账号系统，也
 
 - Web 端通过 Vite 构建。
 - 构建产物复制到 iOS 的 `doc.bundle`。
-- iOS 启动本地 Swifter HTTP 服务。
-- WebView 加载 `http://localhost:8080/index.html`。
+- iOS 不再启动本地 HTTP 服务。
+- WebView 生产环境直接加载内置 `doc.bundle` 资源，开发环境可按需连接 Vite dev server。
 
 优点：
 
-- 与普通 Web 开发体验接近。
-- 静态资源路径和浏览器环境更稳定。
-- 便于调试 React/Tiptap。
+- 不占用本地端口，也不需要管理 HTTP 服务生命周期。
+- 编辑器资源版本和 iOS 包版本天然绑定。
+- 减少三方运行时依赖，降低启动链路复杂度。
 
 风险：
 
-- 固定端口可能被占用。
-- 本地 HTTP 服务生命周期需要管理。
-- App Store 审核时需要确保该服务只绑定本机访问。
-- 编辑器资源版本需要和 iOS 包版本绑定。
+- 需要确保静态资源路径适配 `WKWebView` 的本地文件加载方式。
+- 开发环境与生产资源加载方式不同，需要明确切换策略。
 
 建议改进：
 
-- SwifterServer 启动前检查是否已启动，避免重复注册和重复启动。
-- 仅监听 localhost。
-- 将端口配置集中管理，必要时支持动态端口。
+- 明确生产环境 `doc.bundle` 直读入口。
+- 明确开发环境 Vite dev server 入口与构建开关。
 - 生产包关闭 WebView inspectable。
 - 建立 Web 构建脚本，将 `web/dist` 稳定复制到 `iOS/note/doc.bundle`。
 
@@ -532,15 +528,14 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 2. 新增 `Article.id`、`plainText`、`excerpt`、`updatedAt` 更新逻辑。
 3. 将 `EditorView.saveInfo()` 中的保存流程抽到 `ArticleService` 或新的 `EditorSaveCoordinator`。
 4. 修正保存时未更新 `updateDate` 的问题。
-5. 为 SwifterServer 增加启动状态保护，避免重复启动。
-6. 按 `js-bridge-design.md` 重建 Bridge 方法命名，不继承旧实现中的拼写错误和散装调用。
-7. 为 `setContent` 增加 JSON 解析失败保护。
-8. 生产环境关闭 `wkWebView.isInspectable`。
-9. 增加 Web 构建到 `doc.bundle` 的自动脚本。
-10. 新增 `DiagnosticsService`，接入 MetricKit、OSLog 和 OSLog Signpost。
+5. 按 `js-bridge-design.md` 重建 Bridge 方法命名，不继承旧实现中的拼写错误和散装调用。
+6. 为 `setContent` 增加 JSON 解析失败保护。
+7. 生产环境关闭 `wkWebView.isInspectable`。
+8. 增加 Web 构建到 `doc.bundle` 的自动脚本。
+9. 新增 `DiagnosticsService`，接入 MetricKit、OSLog 和 OSLog Signpost。
 
 ## 17. 已确认技术决策
 
 - CloudKit 同步采用 SwiftData + CloudKit 作为 MVP 数据同步底座。
 - 是否要求端到端加密，或完全依赖 Apple CloudKit 安全能力？
-- Web 编辑器是否继续通过本地 HTTP 服务加载，还是改为直接加载本地 HTML 文件？
+- Web 编辑器生产环境改为直接加载本地 HTML 文件，不再通过本地 HTTP 服务加载。

@@ -172,6 +172,10 @@ private struct PrivateSectionHeader: View {
 private struct NotesTree: View {
     let documents: [Document]
     let isExpanded: Bool
+    @Environment(\.modelContext) private var modelContext
+    @State private var openDeleteDocumentID: UUID?
+    @State private var deleteCandidate: Document?
+    @State private var isConfirmingDelete = false
     private let rowHeight: CGFloat = 62
     private let rowSpacing: CGFloat = 2
 
@@ -186,12 +190,21 @@ private struct NotesTree: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             ForEach(documents) { document in
-                NavigationLink {
-                    EditorView(document: document)
-                } label: {
-                    NoteRow(document: document)
-                }
-                .buttonStyle(.plain)
+                SwipeToDeleteDocumentRow(
+                    document: document,
+                    isOpen: openDeleteDocumentID == document.id,
+                    open: {
+                        openDeleteDocumentID = document.id
+                    },
+                    close: {
+                        if openDeleteDocumentID == document.id {
+                            openDeleteDocumentID = nil
+                        }
+                    },
+                    delete: {
+                        requestDeleteDocument(document)
+                    }
+                )
             }
         }
         .padding(.horizontal, 20)
@@ -199,6 +212,153 @@ private struct NotesTree: View {
         .frame(height: isExpanded ? expandedHeight : 0, alignment: .top)
         .clipped()
         .animation(.easeInOut(duration: 0.18), value: isExpanded)
+        .confirmationDialog(
+            "确认删除文档？",
+            isPresented: $isConfirmingDelete,
+            titleVisibility: .visible,
+            presenting: deleteCandidate
+        ) { document in
+            Button("删除", role: .destructive) {
+                hardDeleteDocument(document)
+            }
+
+            Button("取消", role: .cancel) {
+                deleteCandidate = nil
+            }
+        } message: { _ in
+            Text("删除后无法恢复。")
+        }
+    }
+
+    @MainActor
+    private func requestDeleteDocument(_ document: Document) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            openDeleteDocumentID = nil
+        }
+
+        deleteCandidate = document
+        isConfirmingDelete = true
+    }
+
+    @MainActor
+    private func hardDeleteDocument(_ document: Document) {
+        do {
+            let documentID = document.id
+            let contentDescriptor = FetchDescriptor<DocumentContent>(
+                predicate: #Predicate { content in
+                    content.documentId == documentID
+                }
+            )
+            let attachmentDescriptor = FetchDescriptor<Attachment>(
+                predicate: #Predicate { attachment in
+                    attachment.documentId == documentID
+                }
+            )
+
+            try modelContext.fetch(contentDescriptor).forEach { content in
+                modelContext.delete(content)
+            }
+            try modelContext.fetch(attachmentDescriptor).forEach { attachment in
+                modelContext.delete(attachment)
+            }
+            modelContext.delete(document)
+            try modelContext.save()
+
+            withAnimation(.easeInOut(duration: 0.18)) {
+                deleteCandidate = nil
+            }
+        } catch {}
+    }
+}
+
+private struct SwipeToDeleteDocumentRow: View {
+    let document: Document
+    let isOpen: Bool
+    let open: () -> Void
+    let close: () -> Void
+    let delete: () -> Void
+
+    @GestureState private var dragTranslation: CGFloat = 0
+    private let deleteWidth: CGFloat = 86
+    private let rowHeight: CGFloat = 62
+
+    private var rowOffset: CGFloat {
+        let baseOffset = isOpen ? -deleteWidth : 0
+        return min(0, max(-deleteWidth, baseOffset + dragTranslation))
+    }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            Button(role: .destructive) {
+                withAnimation(.easeInOut(duration: 0.18)) {
+                    delete()
+                }
+            } label: {
+                VStack(spacing: 4) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 18, weight: .semibold))
+
+                    Text("删除")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundStyle(.white)
+                .frame(width: deleteWidth, height: rowHeight)
+                .background(Color(.systemRed), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink {
+                EditorView(document: document)
+            } label: {
+                NoteRow(document: document)
+                    .frame(height: rowHeight)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.systemBackground))
+            }
+            .buttonStyle(.plain)
+            .offset(x: rowOffset)
+
+            if isOpen {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .offset(x: rowOffset)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.24, dampingFraction: 0.86)) {
+                            close()
+                        }
+                    }
+            }
+        }
+        .frame(height: rowHeight)
+        .contentShape(Rectangle())
+        .simultaneousGesture(swipeGesture)
+    }
+
+    private var swipeGesture: some Gesture {
+        DragGesture(minimumDistance: 12, coordinateSpace: .local)
+            .updating($dragTranslation) { value, state, _ in
+                guard abs(value.translation.width) > abs(value.translation.height) else {
+                    return
+                }
+
+                state = value.translation.width
+            }
+            .onEnded { value in
+                guard abs(value.translation.width) > abs(value.translation.height) else {
+                    return
+                }
+
+                let projectedOffset = (isOpen ? -deleteWidth : 0) + value.predictedEndTranslation.width
+                let shouldOpen = projectedOffset < -deleteWidth * 0.45
+
+                withAnimation(.spring(response: 0.24, dampingFraction: 0.86)) {
+                    if shouldOpen {
+                        open()
+                    } else {
+                        close()
+                    }
+                }
+            }
     }
 }
 

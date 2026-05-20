@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		7720310E2E200167001548C8 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 7720310D2E200167001548C8 /* Swifter */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		770534612E2284220036CEF4 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -53,7 +49,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7720310E2E200167001548C8 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,7 +92,6 @@
 			);
 			name = note;
 			packageProductDependencies = (
-				7720310D2E200167001548C8 /* Swifter */,
 			);
 			productName = note;
 			productReference = 77F2F6962E056AB700163D66 /* note.app */;
@@ -129,7 +123,6 @@
 			mainGroup = 77F2F68D2E056AB700163D66;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				7720310C2E200167001548C8 /* XCRemoteSwiftPackageReference "swifter" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 77F2F6972E056AB700163D66 /* Products */;
@@ -394,24 +387,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		7720310C2E200167001548C8 /* XCRemoteSwiftPackageReference "swifter" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/httpswift/swifter.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		7720310D2E200167001548C8 /* Swifter */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 7720310C2E200167001548C8 /* XCRemoteSwiftPackageReference "swifter" */;
-			productName = Swifter;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 77F2F68E2E056AB700163D66 /* Project object */;
 }

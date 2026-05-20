@@ -64,11 +64,7 @@ class NSBridgeWeb implements NSBridgePublicApi {
     this.postToNative(this.makeMessage('ready', makeId('evt'), namespace, method, params))
   }
 
-  register<TParams = unknown, TResult = unknown>(
-    namespace: string,
-    method: string,
-    handler: BridgeHandler<TParams, TResult>
-  ) {
+  register<TParams = unknown, TResult = unknown>(namespace: string, method: string, handler: BridgeHandler<TParams, TResult>) {
     const key = handlerKey(namespace, method)
     this.handlers.set(key, handler as BridgeHandler)
 
@@ -161,11 +157,7 @@ class NSBridgeWeb implements NSBridgePublicApi {
         namespace: message.namespace,
         method: message.method,
         status: 'error',
-        error: new BridgeError(
-          'METHOD_NOT_FOUND',
-          `Handler ${message.namespace}.${message.method} is not registered`,
-          false
-        ).toPayload(),
+        error: new BridgeError('METHOD_NOT_FOUND', `Handler ${message.namespace}.${message.method} is not registered`, false).toPayload(),
         timestamp: Date.now(),
       })
       return
