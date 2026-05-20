@@ -11,7 +11,7 @@ export const Placeholder = PlaceholderTiptap.configure({
     if (name === TaskList.name || name === OrderedList.name || name === Table.name) {
       return ''
     } else if (name === Title.name) {
-      return '请输入标题'
+      return ''
     } else {
       return '请输入正文'
     }

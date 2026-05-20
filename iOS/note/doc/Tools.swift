@@ -168,5 +168,4 @@ extension UIApplication {
 }
 
 #Preview {
-//    Tools(javaScriptCommand: <#Binding<JavaScriptCommand?>#>, viewModel: EditorViewModel())
 }

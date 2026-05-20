@@ -12,4 +12,3 @@ enum NSBridgeWebViewInstaller {
         return configuration
     }
 }
-

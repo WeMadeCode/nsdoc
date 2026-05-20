@@ -76,9 +76,7 @@ struct ListView: View {
     private func ensureDefaultFolder() {
         do {
             _ = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
-        } catch {
-            print("默认文件夹初始化失败：\(error.localizedDescription)")
-        }
+        } catch {}
     }
 }
 
@@ -206,6 +204,8 @@ private struct NotesTree: View {
 
 private struct HomeActionBar: View {
     let documents: [Document]
+    @Environment(\.modelContext) private var modelContext
+    @State private var newDocument: Document?
 
     var body: some View {
         HStack(spacing: 14) {
@@ -216,12 +216,18 @@ private struct HomeActionBar: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink {
-                EditorView(document: nil)
+            Button {
+                createDocumentAndOpen()
             } label: {
                 FloatingActionButton(systemImage: "square.and.pencil")
             }
             .buttonStyle(.plain)
+        }
+        .navigationDestination(item: $newDocument) { document in
+            EditorView(
+                document: document,
+                initialContentJSON: DocumentContentDefaults.emptyTiptapJSON
+            )
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
@@ -238,6 +244,31 @@ private struct HomeActionBar: View {
             )
             .ignoresSafeArea()
         )
+    }
+
+    @MainActor
+    private func createDocumentAndOpen() {
+        do {
+            let folder = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
+            let now = Date()
+            let document = Document(
+                folderId: folder.id,
+                sortOrder: documents.count,
+                createdAt: now,
+                updatedAt: now
+            )
+            let content = DocumentContent(
+                documentId: document.id,
+                contentFormat: DocumentContentFormat.tiptapJSON,
+                contentJSON: DocumentContentDefaults.emptyTiptapJSON,
+                createdAt: now
+            )
+
+            modelContext.insert(document)
+            modelContext.insert(content)
+            try modelContext.save()
+            newDocument = document
+        } catch {}
     }
 }
 

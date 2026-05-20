@@ -18,13 +18,7 @@ import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-up
 // --- Lib ---
 import { setupBridge } from '@/bridge'
 import { extensions as baseExtensions } from '@/extensions'
-import { ensureDocumentTitle } from '@/tiptap-editor/lib/document-content'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
-
-const emptyContent = {
-  type: 'doc',
-  content: [],
-}
 
 export function SimpleEditor() {
   const editor = useEditor({
@@ -45,10 +39,8 @@ export function SimpleEditor() {
         maxSize: MAX_FILE_SIZE,
         limit: 3,
         upload: handleImageUpload,
-        onError: error => console.error('Upload failed:', error),
       }),
     ],
-    content: ensureDocumentTitle(emptyContent),
   })
 
   useEffect(() => {

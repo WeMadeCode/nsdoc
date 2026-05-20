@@ -76,6 +76,11 @@ struct SLWebView: UIViewRepresentable {
         context.coordinator.parent = self
 
         if let javaScriptCommand {
+            guard context.coordinator.lastExecutedCommandID != javaScriptCommand.id else {
+                return
+            }
+            context.coordinator.lastExecutedCommandID = javaScriptCommand.id
+
             context.coordinator.bridge.callWeb(
                 namespace: javaScriptCommand.namespace,
                 method: javaScriptCommand.methodName,
@@ -84,7 +89,12 @@ struct SLWebView: UIViewRepresentable {
             ) { result in
                 javaScriptCommand.completion?(result)
             }
-            self.javaScriptCommand = nil
+
+            DispatchQueue.main.async {
+                if self.javaScriptCommand?.id == javaScriptCommand.id {
+                    self.javaScriptCommand = nil
+                }
+            }
         }
     }
     
@@ -92,11 +102,11 @@ struct SLWebView: UIViewRepresentable {
         Coordinator(self)
     }
     
-    // Coordinator 处理委托事件
     class Coordinator: NSObject, WKNavigationDelegate {
         
         var parent: SLWebView
         let bridge = NSBridgeNative()
+        var lastExecutedCommandID: UUID?
         
         init(_ parent: SLWebView) {
             self.parent = parent
@@ -112,8 +122,7 @@ struct SLWebView: UIViewRepresentable {
                 onSelectionChanged: { [weak self] activeTools in
                     self?.parent.toolsUpdate?(activeTools)
                 },
-                onError: { errorMessage in
-                    print("编辑器 Bridge 错误：\(errorMessage)")
+                onError: { _ in
                 }
             )
         }
@@ -186,5 +195,4 @@ private final class NoInputAccessoryViewProvider: UIResponder {
 
 
 #Preview {
-    // WebView(url: URL(string: "https://www.baidu.com")!, isLoadDidFinish: true)
 }

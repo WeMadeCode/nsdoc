@@ -15,15 +15,20 @@ struct EditorView: View {
     @StateObject var viewModel = EditorViewModel()
     @Environment(\.modelContext) private var modelContext
     @State private var workingDocument: Document?
+    @State private var initialContentJSON: String?
     @State private var isKeyboardShow: Bool = false
     @State private var didApplyInitialContent = false
     @State private var isDirty = false
+    @State private var isSaving = false
+    @State private var editorChangeVersion = 0
+    @State private var autosaveTask: Task<Void, Never>?
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
-    init(document: Document?, showsCloseButton: Bool = true) {
+    init(document: Document?, initialContentJSON: String? = nil, showsCloseButton: Bool = true) {
         self.showsCloseButton = showsCloseButton
         _workingDocument = State(initialValue: document)
+        _initialContentJSON = State(initialValue: initialContentJSON)
     }
     
     var body: some View {
@@ -35,7 +40,7 @@ struct EditorView: View {
             if showsCloseButton {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        dismiss()
+                        closeEditor()
                     } label: {
                         Image(systemName: "arrow.left")
                     }
@@ -43,7 +48,7 @@ struct EditorView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    saveInfo()
+                    saveInfo(cancelPendingAutosave: true)
                 } label: {
                     Image(systemName: "square.and.arrow.down")
                 }
@@ -64,7 +69,7 @@ struct EditorView: View {
                 } bridgeReady: {
                     applyInitialContentIfNeeded()
                 } contentChanged: {
-                    isDirty = true
+                    scheduleAutosave()
                 } toolsUpdate: { activeTools in
                     viewModel.updateSelected(activeTools: activeTools)
                 }
@@ -91,11 +96,13 @@ struct EditorView: View {
         didApplyInitialContent = true
 
         guard
-            let content = loadContentJSON(),
+            let content = initialContentJSON ?? loadContentJSON(),
             let contentObject = jsonObject(from: content)
         else {
             return
         }
+
+        initialContentJSON = nil
 
         javaScriptCommand = JavaScriptCommand(
             methodName: "setContent",
@@ -107,14 +114,69 @@ struct EditorView: View {
         )
     }
 
-    private func saveInfo() {
+    private func scheduleAutosave() {
+        editorChangeVersion += 1
+        isDirty = true
+        restartAutosaveTimer()
+    }
+
+    private func restartAutosaveTimer() {
+        autosaveTask?.cancel()
+        autosaveTask = Task {
+            do {
+                try await Task.sleep(nanoseconds: 900_000_000)
+            } catch {
+                return
+            }
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            await saveInfoAsync()
+        }
+    }
+
+    private func saveInfo(cancelPendingAutosave: Bool = false) {
+        if cancelPendingAutosave {
+            autosaveTask?.cancel()
+            autosaveTask = nil
+        }
+
         Task {
             await saveInfoAsync()
         }
     }
 
+    private func closeEditor() {
+        autosaveTask?.cancel()
+        autosaveTask = nil
+
+        Task { @MainActor in
+            await waitForCurrentSave()
+            if isDirty {
+                await saveInfoAsync()
+            }
+            dismiss()
+        }
+    }
+
+    @MainActor
+    private func waitForCurrentSave() async {
+        while isSaving {
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+    }
+
     @MainActor
     private func saveInfoAsync() async {
+        guard !isSaving else {
+            return
+        }
+
+        let saveVersion = editorChangeVersion
+        isSaving = true
+
         do {
             let titleResult = try await requestJavaScriptResult(methodName: "getTitle", timeout: 3) as? [String: Any]
             let contentResult = try await requestJavaScriptResult(methodName: "getContent", timeout: 3) as? [String: Any]
@@ -143,11 +205,16 @@ struct EditorView: View {
             saveResult.syncStatus = DocumentSyncStatus.pendingUpload
 
             try modelContext.save()
-            isDirty = false
-            print("保存成功：\(saveResult.title)")
+            if editorChangeVersion == saveVersion {
+                isDirty = false
+            } else {
+                isDirty = true
+                restartAutosaveTimer()
+            }
         } catch {
-            print("保存失败：\(error.localizedDescription)")
         }
+
+        isSaving = false
     }
 
     @MainActor
@@ -196,14 +263,13 @@ struct EditorView: View {
 
     private func loadContentJSON() -> String? {
         guard let document = workingDocument else {
-            return nil
+            return DocumentContentDefaults.emptyTiptapJSON
         }
 
         do {
-            return try fetchContent(for: document)?.contentJSON
+            return try fetchContent(for: document)?.contentJSON ?? DocumentContentDefaults.emptyTiptapJSON
         } catch {
-            print("读取文档内容失败：\(error.localizedDescription)")
-            return nil
+            return DocumentContentDefaults.emptyTiptapJSON
         }
     }
 
@@ -220,9 +286,7 @@ struct EditorView: View {
                 content.contentJSON = contentJSON
                 return
             }
-        } catch {
-            print("读取已有内容失败，准备创建新内容：\(error.localizedDescription)")
-        }
+        } catch {}
 
         let content = DocumentContent(
             documentId: document.id,
@@ -275,5 +339,4 @@ struct EditorView: View {
 }
 
 #Preview {
-    // EditorView(document: nil)
 }

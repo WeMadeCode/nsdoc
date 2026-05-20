@@ -15,6 +15,12 @@ enum DocumentContentFormat {
     static let flowchartJSON = "flowchart-json"
 }
 
+enum DocumentContentDefaults {
+    static let emptyTiptapJSON = """
+    {"type":"doc","content":[{"type":"title"},{"type":"paragraph"}]}
+    """
+}
+
 @Model
 final class DocumentContent {
     var id: UUID = UUID()
@@ -40,4 +46,3 @@ final class DocumentContent {
         self.createdAt = createdAt
     }
 }
-

@@ -29,6 +29,8 @@ const capabilities = [
   'editor.insertTable',
 ]
 
+const readyEditors = new WeakSet<Editor>()
+
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
 
 const parseContent = (content: EditorSetContentParams['content']): JSONContent => {
@@ -39,8 +41,7 @@ const parseContent = (content: EditorSetContentParams['content']): JSONContent =
   return ensureDocumentTitle(content)
 }
 
-const isValidHeadingLevel = (level: unknown): level is Level =>
-  typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
+const isValidHeadingLevel = (level: unknown): level is Level => typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
 
 const getTextAlign = (editor: Editor): EditorActiveTools['textAlign'] => {
   const headingAlign = editor.getAttributes('heading').textAlign
@@ -94,9 +95,8 @@ export const setupEditorBridge = (editor: Editor | null) => {
       const nextContent = parseContent(params.content as EditorSetContentParams['content'])
       const focus = params.focus === true
       const chain = focus ? editor.chain().focus() : editor.chain()
-
       return {
-        applied: chain.setContent(nextContent).run(),
+        applied: chain.setContent(nextContent, { emitUpdate: false }).run(),
       }
     }),
     nsBridge.register<never, EditorContentResult>('editor', 'getContent', () => ({
@@ -173,23 +173,31 @@ export const setupEditorBridge = (editor: Editor | null) => {
         throw new BridgeError('INVALID_PARAMS', 'editor.setTextAlign requires a valid align value', false)
       }
 
-      editor.chain().focus().setTextAlign(align as EditorActiveTools['textAlign']).run()
+      editor
+        .chain()
+        .focus()
+        .setTextAlign(align as EditorActiveTools['textAlign'])
+        .run()
       return { align: String(align) }
     }),
     nsBridge.register<never, { inserted: boolean }>('editor', 'setHorizontalRule', () => ({
       inserted: editor.chain().focus().setHorizontalRule().run(),
     })),
-    nsBridge.register<{ rows?: number; cols?: number; withHeaderRow?: boolean }, { inserted: boolean }>('editor', 'insertTable', params => ({
-      inserted: editor
-        .chain()
-        .focus()
-        .insertTable({
-          rows: params?.rows ?? 3,
-          cols: params?.cols ?? 3,
-          withHeaderRow: params?.withHeaderRow ?? true,
-        })
-        .run(),
-    })),
+    nsBridge.register<{ rows?: number; cols?: number; withHeaderRow?: boolean }, { inserted: boolean }>(
+      'editor',
+      'insertTable',
+      params => ({
+        inserted: editor
+          .chain()
+          .focus()
+          .insertTable({
+            rows: params?.rows ?? 3,
+            cols: params?.cols ?? 3,
+            withHeaderRow: params?.withHeaderRow ?? true,
+          })
+          .run(),
+      })
+    ),
   ]
 
   const handleUpdate = () => {
@@ -205,11 +213,14 @@ export const setupEditorBridge = (editor: Editor | null) => {
   editor.on('selectionUpdate', handleSelectionUpdate)
   editor.on('transaction', handleSelectionUpdate)
 
-  nsBridge.ready('editor', 'ready', {
-    editorVersion: '1.0.0',
-    supportedBridgeVersion: BRIDGE_VERSION,
-    capabilities,
-  })
+  if (!readyEditors.has(editor)) {
+    readyEditors.add(editor)
+    nsBridge.ready('editor', 'ready', {
+      editorVersion: '1.0.0',
+      supportedBridgeVersion: BRIDGE_VERSION,
+      capabilities,
+    })
+  }
   emitSelectionChanged(editor)
 
   return () => {
