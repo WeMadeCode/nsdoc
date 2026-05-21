@@ -38,8 +38,12 @@ struct ListView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HomeHeader()
                         .padding(.horizontal, 22)
-                        .padding(.top, 14)
-                        .padding(.bottom, 34)
+                        .padding(.top, 12)
+                        .padding(.bottom, 24)
+
+                    QuickAccessRow()
+                        .padding(.horizontal, 22)
+                        .padding(.bottom, 30)
 
                     PrivateSectionHeader(
                         title: currentFolderName,
@@ -61,7 +65,7 @@ struct ListView: View {
                 }
                 .padding(.bottom, 116)
             }
-            .background(Color(.systemBackground))
+            .background(HomePalette.background.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 HomeActionBar(documents: currentFolderDocuments)
@@ -80,48 +84,124 @@ struct ListView: View {
     }
 }
 
+private enum HomePalette {
+    static let background = Color(red: 0.975, green: 0.980, blue: 0.992)
+    static let card = Color(.systemBackground)
+    static let primaryBlue = Color(red: 0.118, green: 0.365, blue: 0.976)
+    static let cyan = Color(red: 0.000, green: 0.706, blue: 0.902)
+    static let mint = Color(red: 0.122, green: 0.812, blue: 0.624)
+    static let yellow = Color(red: 1.000, green: 0.733, blue: 0.082)
+    static let violet = Color(red: 0.553, green: 0.392, blue: 0.941)
+}
+
 private struct HomeHeader: View {
     var body: some View {
-        HStack(alignment: .center, spacing: 14) {
+        HStack(alignment: .center, spacing: 12) {
             HStack(spacing: 12) {
                 Image("yiyue-logo-mark")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 34, height: 34)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .frame(width: 38, height: 38)
+                    .clipShape(Circle())
                     .accessibilityHidden(true)
 
-                Text("一页")
-                    .font(.system(size: 20, weight: .semibold))
+                Text("一页文档")
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
             }
-            .padding(.leading, 8)
-            .padding(.trailing, 18)
-            .frame(height: 56)
-            .background(Color(.secondarySystemBackground), in: Capsule())
 
             Spacer()
 
-            HeaderIconButton(systemImage: "tray")
+            HeaderIconButton(systemImage: "magnifyingglass", tint: .primary)
             HeaderIconButton(systemImage: "ellipsis")
         }
+        .frame(height: 58)
     }
 }
 
 private struct HeaderIconButton: View {
     let systemImage: String
+    var tint: Color = .primary
 
     var body: some View {
         Button {
         } label: {
             Image(systemName: systemImage)
-                .font(.system(size: 20, weight: systemImage == "ellipsis" ? .bold : .medium))
-                .foregroundStyle(.primary)
-                .frame(width: 56, height: 56)
-                .background(Color(.secondarySystemBackground), in: Circle())
+                .font(.system(size: systemImage == "magnifyingglass" ? 25 : 22, weight: systemImage == "ellipsis" ? .bold : .regular))
+                .foregroundStyle(tint)
+                .frame(width: 44, height: 44)
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+private struct QuickAccessRow: View {
+    private let items: [QuickAccessItem] = [
+        .init(title: "云文档", systemImage: "doc.on.doc.fill", foreground: HomePalette.primaryBlue, accent: HomePalette.cyan),
+        .init(title: "知识库", systemImage: "rectangle.stack.fill", foreground: Color(red: 0.173, green: 0.463, blue: 0.945), accent: HomePalette.mint),
+        .init(title: "收藏", systemImage: "star.fill", foreground: HomePalette.yellow, accent: Color(red: 1.000, green: 0.588, blue: 0.000)),
+        .init(title: "AI纪要", systemImage: "sparkles", foreground: Color(red: 0.216, green: 0.455, blue: 0.937), accent: HomePalette.violet)
+    ]
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(items) { item in
+                Button {
+                } label: {
+                    QuickAccessButton(item: item)
+                }
+                .buttonStyle(.plain)
+
+                if item.id != items.last?.id {
+                    Spacer(minLength: 18)
+                }
+            }
+        }
+    }
+}
+
+private struct QuickAccessItem: Identifiable {
+    let id = UUID()
+    let title: String
+    let systemImage: String
+    let foreground: Color
+    let accent: Color
+}
+
+private struct QuickAccessButton: View {
+    let item: QuickAccessItem
+
+    var body: some View {
+        VStack(spacing: 10) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(item.foreground.opacity(0.10))
+
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [item.foreground.opacity(0.13), item.accent.opacity(0.11)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Image(systemName: item.systemImage)
+                    .font(.system(size: 26, weight: .semibold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(item.foreground, item.accent)
+            }
+            .frame(width: 58, height: 58)
+
+            Text(item.title)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.86)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -136,8 +216,8 @@ private struct PrivateSectionHeader: View {
             Button(action: toggle) {
                 HStack(spacing: 8) {
                     Text(title)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.primary)
 
                     Image(systemName: "chevron.down")
                         .font(.system(size: 13, weight: .semibold))
@@ -149,7 +229,7 @@ private struct PrivateSectionHeader: View {
 
                     Text("\(documentCount)")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(HomePalette.primaryBlue)
                         .monospacedDigit()
                 }
                 .frame(height: 44)
@@ -163,6 +243,7 @@ private struct PrivateSectionHeader: View {
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(.secondary)
                     .frame(width: 34, height: 34)
+                    .background(HomePalette.card, in: Circle())
             }
             .buttonStyle(.plain)
         }
@@ -174,8 +255,8 @@ private struct NotesTree: View {
     let isExpanded: Bool
     @Environment(\.modelContext) private var modelContext
     @State private var deletingDocumentIDs: Set<UUID> = []
-    private let rowHeight: CGFloat = 62
-    private let rowSpacing: CGFloat = 2
+    private let rowHeight: CGFloat = 76
+    private let rowSpacing: CGFloat = 4
     private let rowDeleteAnimation = Animation.easeInOut(duration: 0.24)
 
     private var visibleDocuments: [Document] {
@@ -218,7 +299,7 @@ private struct NotesTree: View {
                 }
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                 .listRowSeparator(.hidden)
-                .listRowBackground(Color(.systemBackground))
+                .listRowBackground(HomePalette.background)
                 .transition(
                     .asymmetric(
                         insertion: .opacity,
@@ -230,7 +311,7 @@ private struct NotesTree: View {
         .listStyle(.plain)
         .scrollDisabled(true)
         .scrollContentBackground(.hidden)
-        .background(Color(.systemBackground))
+        .background(HomePalette.background)
         .frame(height: expandedHeight, alignment: .top)
         .frame(height: isExpanded ? expandedHeight : 0, alignment: .top)
         .clipped()
@@ -309,9 +390,9 @@ private struct HomeActionBar: View {
         .background(
             LinearGradient(
                 colors: [
-                    Color(.systemBackground).opacity(0),
-                    Color(.systemBackground).opacity(0.92),
-                    Color(.systemBackground)
+                    HomePalette.background.opacity(0),
+                    HomePalette.background.opacity(0.94),
+                    HomePalette.background
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -350,24 +431,24 @@ private struct HomeSearchField: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 22, weight: .regular))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 21, weight: .regular))
+                .foregroundStyle(HomePalette.primaryBlue.opacity(0.82))
 
             Text("搜索文档")
-                .font(.system(size: 18, weight: .regular))
+                .font(.system(size: 17, weight: .medium))
                 .foregroundStyle(.secondary)
 
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 22)
         .frame(maxWidth: .infinity)
-        .frame(height: 66)
-        .background(.ultraThinMaterial, in: Capsule())
+        .frame(height: 62)
+        .background(HomePalette.card, in: Capsule())
         .overlay {
             Capsule()
-                .stroke(Color(.separator).opacity(0.12), lineWidth: 1)
+                .stroke(HomePalette.primaryBlue.opacity(0.08), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.08), radius: 18, x: 0, y: 8)
+        .shadow(color: HomePalette.primaryBlue.opacity(0.10), radius: 18, x: 0, y: 8)
     }
 }
 
@@ -376,15 +457,15 @@ private struct FloatingActionButton: View {
 
     var body: some View {
         Image(systemName: systemImage)
-            .font(.system(size: 28, weight: .regular))
-            .foregroundStyle(.primary)
-            .frame(width: 66, height: 66)
-            .background(.ultraThinMaterial, in: Circle())
+            .font(.system(size: 27, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 62, height: 62)
+            .background(HomePalette.primaryBlue, in: Circle())
             .overlay {
                 Circle()
-                    .stroke(Color(.separator).opacity(0.12), lineWidth: 1)
+                    .stroke(.white.opacity(0.22), lineWidth: 1)
             }
-            .shadow(color: .black.opacity(0.08), radius: 18, x: 0, y: 8)
+            .shadow(color: HomePalette.primaryBlue.opacity(0.35), radius: 18, x: 0, y: 8)
     }
 }
 
@@ -429,30 +510,55 @@ private struct SearchView: View {
 private struct NoteRow: View {
     let document: Document
 
+    private var iconStyle: (Color, Color, String) {
+        switch document.documentType {
+        case DocumentType.mindMap:
+            return (HomePalette.violet, Color(red: 0.733, green: 0.439, blue: 0.961), "square.grid.2x2.fill")
+        case DocumentType.whiteboard:
+            return (Color(red: 0.067, green: 0.651, blue: 0.780), HomePalette.mint, "scribble.variable")
+        case DocumentType.flowchart:
+            return (Color(red: 0.984, green: 0.537, blue: 0.180), HomePalette.yellow, "flowchart.fill")
+        default:
+            return (HomePalette.primaryBlue, HomePalette.cyan, "doc.text.fill")
+        }
+    }
+
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 29, weight: .regular))
-                .foregroundStyle(.secondary)
-                .frame(width: 34, height: 44)
+            ZStack {
+                Circle()
+                    .fill(iconStyle.0.opacity(0.10))
 
-            VStack(alignment: .leading, spacing: 2) {
+                Image(systemName: iconStyle.2)
+                    .font(.system(size: 24, weight: .semibold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(iconStyle.0, iconStyle.1)
+            }
+            .frame(width: 48, height: 48)
+
+            VStack(alignment: .leading, spacing: 5) {
                 Text(document.title.isEmpty ? "未命名文档" : document.title)
-                    .font(.system(size: 20, weight: .regular))
+                    .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                if !document.excerpt.isEmpty {
-                    Text(document.excerpt)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
+                Text(secondaryText)
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
 
             Spacer(minLength: 0)
         }
-        .frame(minHeight: 62)
+        .frame(minHeight: 76)
+    }
+
+    private var secondaryText: String {
+        if !document.excerpt.isEmpty {
+            return document.excerpt
+        }
+
+        return "最近编辑于 \(document.updatedAt.formatted(.dateTime.month(.defaultDigits).day().hour().minute()))"
     }
 }
 

@@ -3,17 +3,40 @@ import TaskList from '@tiptap/extension-task-list'
 import { Title } from '../extension-title'
 import OrderedList from '@tiptap/extension-ordered-list'
 import { Table } from '@tiptap/extension-table'
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
+
+const suppressedPlaceholderNodes = new Set([TaskList.name, OrderedList.name, Table.name, Title.name])
+
+const firstBodyNodePos = (doc: ProseMirrorNode): number | null => {
+  let pos = 0
+
+  for (let index = 0; index < doc.childCount; index += 1) {
+    const node = doc.child(index)
+
+    if (node.type.name !== Title.name) {
+      return pos
+    }
+
+    pos += node.nodeSize
+  }
+
+  return null
+}
 
 export const Placeholder = PlaceholderTiptap.configure({
   placeholder(props) {
-    const { node } = props
+    const { editor, node, pos } = props
     const name = node.type.name
-    if (name === TaskList.name || name === OrderedList.name || name === Table.name) {
+
+    if (suppressedPlaceholderNodes.has(name)) {
       return ''
-    } else if (name === Title.name) {
-      return ''
-    } else {
-      return '请输入正文'
     }
+
+    const doc = editor.state.doc
+    if (pos !== firstBodyNodePos(doc)) {
+      return ''
+    }
+
+    return '请输入正文'
   },
 })
