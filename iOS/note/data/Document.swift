@@ -35,6 +35,7 @@ final class Document {
     var syncStatus: String = DocumentSyncStatus.localOnly
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
+    var accessedAt: Date = Date()
     var deletedAt: Date?
 
     init(
@@ -49,6 +50,7 @@ final class Document {
         syncStatus: String = DocumentSyncStatus.localOnly,
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
+        accessedAt: Date = Date(),
         deletedAt: Date? = nil
     ) {
         self.id = id
@@ -62,7 +64,7 @@ final class Document {
         self.syncStatus = syncStatus
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.accessedAt = accessedAt
         self.deletedAt = deletedAt
     }
 }
-

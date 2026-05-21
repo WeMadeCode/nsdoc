@@ -20,6 +20,7 @@ struct EditorView: View {
     @State private var didApplyInitialContent = false
     @State private var isDirty = false
     @State private var isSaving = false
+    @State private var didRecordAccess = false
     @State private var editorChangeVersion = 0
     @State private var autosaveTask: Task<Void, Never>?
     @State var javaScriptCommand: JavaScriptCommand? = nil
@@ -59,6 +60,9 @@ struct EditorView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { noti in
             isKeyboardShow = false
+        }
+        .task {
+            recordDocumentAccessIfNeeded()
         }
     }
     
@@ -159,6 +163,20 @@ struct EditorView: View {
             }
             dismiss()
         }
+    }
+
+    @MainActor
+    private func recordDocumentAccessIfNeeded() {
+        guard !didRecordAccess, let workingDocument else {
+            return
+        }
+
+        didRecordAccess = true
+        workingDocument.accessedAt = Date()
+
+        do {
+            try modelContext.save()
+        } catch {}
     }
 
     @MainActor
@@ -275,7 +293,13 @@ struct EditorView: View {
 
     private func makeNewDocument() throws -> Document {
         let folder = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
-        let document = Document(folderId: folder.id)
+        let now = Date()
+        let document = Document(
+            folderId: folder.id,
+            createdAt: now,
+            updatedAt: now,
+            accessedAt: now
+        )
         modelContext.insert(document)
         return document
     }

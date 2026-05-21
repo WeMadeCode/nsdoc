@@ -12,7 +12,7 @@ struct ListView: View {
     @State private var isPrivateFolderExpanded = true
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
-    @Query(sort: \Document.updatedAt, order: .reverse) private var documents: [Document]
+    @Query(sort: \Document.accessedAt, order: .reverse) private var documents: [Document]
 
     private var defaultFolder: Folder? {
         folders.first { $0.isDefault && $0.deletedAt == nil }
@@ -39,11 +39,7 @@ struct ListView: View {
                     HomeHeader()
                         .padding(.horizontal, 22)
                         .padding(.top, 12)
-                        .padding(.bottom, 24)
-
-                    QuickAccessRow()
-                        .padding(.horizontal, 22)
-                        .padding(.bottom, 30)
+                        .padding(.bottom, 18)
 
                     PrivateSectionHeader(
                         title: currentFolderName,
@@ -112,96 +108,8 @@ private struct HomeHeader: View {
             }
 
             Spacer()
-
-            HeaderIconButton(systemImage: "magnifyingglass", tint: .primary)
-            HeaderIconButton(systemImage: "ellipsis")
         }
         .frame(height: 58)
-    }
-}
-
-private struct HeaderIconButton: View {
-    let systemImage: String
-    var tint: Color = .primary
-
-    var body: some View {
-        Button {
-        } label: {
-            Image(systemName: systemImage)
-                .font(.system(size: systemImage == "magnifyingglass" ? 25 : 22, weight: systemImage == "ellipsis" ? .bold : .regular))
-                .foregroundStyle(tint)
-                .frame(width: 44, height: 44)
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-private struct QuickAccessRow: View {
-    private let items: [QuickAccessItem] = [
-        .init(title: "云文档", systemImage: "doc.on.doc.fill", foreground: HomePalette.primaryBlue, accent: HomePalette.cyan),
-        .init(title: "知识库", systemImage: "rectangle.stack.fill", foreground: Color(red: 0.173, green: 0.463, blue: 0.945), accent: HomePalette.mint),
-        .init(title: "收藏", systemImage: "star.fill", foreground: HomePalette.yellow, accent: Color(red: 1.000, green: 0.588, blue: 0.000)),
-        .init(title: "AI纪要", systemImage: "sparkles", foreground: Color(red: 0.216, green: 0.455, blue: 0.937), accent: HomePalette.violet)
-    ]
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(items) { item in
-                Button {
-                } label: {
-                    QuickAccessButton(item: item)
-                }
-                .buttonStyle(.plain)
-
-                if item.id != items.last?.id {
-                    Spacer(minLength: 18)
-                }
-            }
-        }
-    }
-}
-
-private struct QuickAccessItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let systemImage: String
-    let foreground: Color
-    let accent: Color
-}
-
-private struct QuickAccessButton: View {
-    let item: QuickAccessItem
-
-    var body: some View {
-        VStack(spacing: 10) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(item.foreground.opacity(0.10))
-
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [item.foreground.opacity(0.13), item.accent.opacity(0.11)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-
-                Image(systemName: item.systemImage)
-                    .font(.system(size: 26, weight: .semibold))
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(item.foreground, item.accent)
-            }
-            .frame(width: 58, height: 58)
-
-            Text(item.title)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.86)
-        }
-        .frame(maxWidth: .infinity)
     }
 }
 
@@ -410,7 +318,8 @@ private struct HomeActionBar: View {
                 folderId: folder.id,
                 sortOrder: documents.count,
                 createdAt: now,
-                updatedAt: now
+                updatedAt: now,
+                accessedAt: now
             )
             let content = DocumentContent(
                 documentId: document.id,
@@ -536,29 +445,48 @@ private struct NoteRow: View {
             }
             .frame(width: 48, height: 48)
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 7) {
                 Text(document.title.isEmpty ? "未命名文档" : document.title)
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
-                Text(secondaryText)
-                    .font(.system(size: 15, weight: .regular))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                HStack(spacing: 5) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 12, weight: .medium))
+                        .baselineOffset(0.5)
+
+                    Text("最近访问于 \(document.accessedAt.homeRecentAccessedText)")
+                        .font(.system(size: 14, weight: .regular))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(.secondary)
             }
 
             Spacer(minLength: 0)
         }
         .frame(minHeight: 76)
     }
+}
 
-    private var secondaryText: String {
-        if !document.excerpt.isEmpty {
-            return document.excerpt
+private extension Date {
+    var homeRecentAccessedText: String {
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_Hans_CN")
+
+        if calendar.isDateInToday(self) {
+            formatter.dateFormat = "HH:mm"
+            return formatter.string(from: self)
         }
 
-        return "最近编辑于 \(document.updatedAt.formatted(.dateTime.month(.defaultDigits).day().hour().minute()))"
+        if calendar.component(.year, from: self) == calendar.component(.year, from: Date()) {
+            formatter.dateFormat = "M月d日 HH:mm"
+            return formatter.string(from: self)
+        }
+
+        formatter.dateFormat = "yyyy年M月d日 HH:mm"
+        return formatter.string(from: self)
     }
 }
 

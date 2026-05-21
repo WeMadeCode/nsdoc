@@ -44,6 +44,7 @@ erDiagram
         string syncStatus
         date createdAt
         date updatedAt
+        date accessedAt
         date deletedAt
     }
 
@@ -124,6 +125,7 @@ erDiagram
 | `syncStatus` | String | `localOnly`、`pendingUpload`、`synced`、`failed` |
 | `createdAt` | Date | 创建时间 |
 | `updatedAt` | Date | 更新时间 |
+| `accessedAt` | Date | 最近访问时间，文档被打开时更新，首页按该字段倒序展示最近访问文档 |
 | `deletedAt` | Date? | 软删除时间 |
 
 `documentType` 建议值：
@@ -326,6 +328,7 @@ final class Document {
     var syncStatus: String
     var createdAt: Date
     var updatedAt: Date
+    var accessedAt: Date
     var deletedAt: Date?
 
     init(
@@ -340,6 +343,7 @@ final class Document {
         syncStatus: String = "localOnly",
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
+        accessedAt: Date = Date(),
         deletedAt: Date? = nil
     ) {
         self.id = id
@@ -353,6 +357,7 @@ final class Document {
         self.syncStatus = syncStatus
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.accessedAt = accessedAt
         self.deletedAt = deletedAt
     }
 }
@@ -442,12 +447,13 @@ final class Attachment {
 | `Article.markdownText` | `DocumentContent.contentJSON` |
 | `Article.createDate` | `Document.createdAt` |
 | `Article.updateDate` | `Document.updatedAt` |
+| `Article.updateDate` | `Document.accessedAt` |
 
 迁移流程：
 
 1. 创建默认文件夹。
 2. 遍历旧 `Article`。
-3. 为每条旧笔记创建一条 `Document`，`documentType = "page"`，`folderId` 指向默认文件夹。
+3. 为每条旧笔记创建一条 `Document`，`documentType = "page"`，`folderId` 指向默认文件夹，`accessedAt` 默认使用旧 `updateDate`。
 4. 为每条旧笔记创建一条 `DocumentContent`，`contentFormat = "tiptap-json"`，`contentJSON = markdownText`。
 5. 从 Tiptap JSON 派生 `plainText` 和 `excerpt`。
 6. 迁移完成后保留旧模型一个版本，确认稳定后再移除。
