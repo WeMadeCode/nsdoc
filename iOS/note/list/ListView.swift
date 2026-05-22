@@ -10,9 +10,12 @@ import SwiftData
 
 struct ListView: View {
     @State private var isPrivateFolderExpanded = true
+    @State private var deletingDocumentIDs: Set<UUID> = []
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
     @Query(sort: \Document.accessedAt, order: .reverse) private var documents: [Document]
+    private let rowHeight: CGFloat = 76
+    private let rowDeleteAnimation = Animation.easeInOut(duration: 0.24)
 
     private var defaultFolder: Folder? {
         folders.first { $0.isDefault && $0.deletedAt == nil }
@@ -32,15 +35,26 @@ struct ListView: View {
         }
     }
 
+    private var visibleDocuments: [Document] {
+        currentFolderDocuments.filter { document in
+            !deletingDocumentIDs.contains(document.id)
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
+            List {
+                Section {
                     HomeHeader()
                         .padding(.horizontal, 22)
                         .padding(.top, 12)
                         .padding(.bottom, 18)
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(HomePalette.background)
+                }
 
+                Section {
                     PrivateSectionHeader(
                         title: currentFolderName,
                         documentCount: currentFolderDocuments.count,
@@ -53,14 +67,48 @@ struct ListView: View {
                     .padding(.horizontal, 22)
                     .padding(.bottom, isPrivateFolderExpanded ? 12 : 0)
                     .zIndex(1)
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(HomePalette.background)
 
-                    NotesTree(
-                        documents: currentFolderDocuments,
-                        isExpanded: isPrivateFolderExpanded
-                    )
+                    if isPrivateFolderExpanded {
+                        ForEach(visibleDocuments) { document in
+                            NavigationLink {
+                                EditorView(document: document)
+                            } label: {
+                                NoteRow(document: document)
+                                    .frame(height: rowHeight)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.plain)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                } label: {
+                                    Label("取消", systemImage: "xmark")
+                                }
+                                .tint(Color(.systemGray3))
+
+                                Button(role: .destructive) {
+                                    hardDeleteDocument(document)
+                                } label: {
+                                    Label("删除", systemImage: "trash")
+                                }
+                            }
+                            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(HomePalette.background)
+                            .transition(
+                                .asymmetric(
+                                    insertion: .opacity,
+                                    removal: .move(edge: .trailing).combined(with: .opacity)
+                                )
+                            )
+                        }
+                    }
                 }
-                .padding(.bottom, 116)
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
             .background(HomePalette.background.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
@@ -69,6 +117,8 @@ struct ListView: View {
             .task {
                 ensureDefaultFolder()
             }
+            .animation(.easeInOut(duration: 0.18), value: isPrivateFolderExpanded)
+            .animation(rowDeleteAnimation, value: visibleDocuments.map(\.id))
         }
     }
 
@@ -77,6 +127,43 @@ struct ListView: View {
         do {
             _ = try DefaultFolderService.findOrCreateDefaultFolder(in: modelContext)
         } catch {}
+    }
+
+    @MainActor
+    private func hardDeleteDocument(_ document: Document) {
+        let documentID = document.id
+
+        withAnimation(rowDeleteAnimation) {
+            _ = deletingDocumentIDs.insert(documentID)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
+            do {
+                let contentDescriptor = FetchDescriptor<DocumentContent>(
+                    predicate: #Predicate { content in
+                        content.documentId == documentID
+                    }
+                )
+                let attachmentDescriptor = FetchDescriptor<Attachment>(
+                    predicate: #Predicate { attachment in
+                        attachment.documentId == documentID
+                    }
+                )
+
+                try modelContext.fetch(contentDescriptor).forEach { content in
+                    modelContext.delete(content)
+                }
+                try modelContext.fetch(attachmentDescriptor).forEach { attachment in
+                    modelContext.delete(attachment)
+                }
+                modelContext.delete(document)
+                try modelContext.save()
+            } catch {
+                withAnimation(rowDeleteAnimation) {
+                    _ = deletingDocumentIDs.remove(documentID)
+                }
+            }
+        }
     }
 }
 
@@ -154,113 +241,6 @@ private struct PrivateSectionHeader: View {
                     .background(HomePalette.card, in: Circle())
             }
             .buttonStyle(.plain)
-        }
-    }
-}
-
-private struct NotesTree: View {
-    let documents: [Document]
-    let isExpanded: Bool
-    @Environment(\.modelContext) private var modelContext
-    @State private var deletingDocumentIDs: Set<UUID> = []
-    private let rowHeight: CGFloat = 76
-    private let rowSpacing: CGFloat = 4
-    private let rowDeleteAnimation = Animation.easeInOut(duration: 0.24)
-
-    private var visibleDocuments: [Document] {
-        documents.filter { document in
-            !deletingDocumentIDs.contains(document.id)
-        }
-    }
-
-    private var expandedHeight: CGFloat {
-        guard !visibleDocuments.isEmpty else {
-            return 0
-        }
-
-        return CGFloat(visibleDocuments.count) * rowHeight + CGFloat(visibleDocuments.count - 1) * rowSpacing
-    }
-
-    var body: some View {
-        List {
-            ForEach(visibleDocuments) { document in
-                NavigationLink {
-                    EditorView(document: document)
-                } label: {
-                    NoteRow(document: document)
-                        .frame(height: rowHeight)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(.plain)
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button {
-                    } label: {
-                        Label("取消", systemImage: "xmark")
-                    }
-                    .tint(Color(.systemGray3))
-
-                    Button(role: .destructive) {
-                        hardDeleteDocument(document)
-                    } label: {
-                        Label("删除", systemImage: "trash")
-                    }
-                }
-                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                .listRowSeparator(.hidden)
-                .listRowBackground(HomePalette.background)
-                .transition(
-                    .asymmetric(
-                        insertion: .opacity,
-                        removal: .move(edge: .trailing).combined(with: .opacity)
-                    )
-                )
-            }
-        }
-        .listStyle(.plain)
-        .scrollDisabled(true)
-        .scrollContentBackground(.hidden)
-        .background(HomePalette.background)
-        .frame(height: expandedHeight, alignment: .top)
-        .frame(height: isExpanded ? expandedHeight : 0, alignment: .top)
-        .clipped()
-        .animation(.easeInOut(duration: 0.18), value: isExpanded)
-        .animation(rowDeleteAnimation, value: visibleDocuments.map(\.id))
-    }
-
-    @MainActor
-    private func hardDeleteDocument(_ document: Document) {
-        let documentID = document.id
-
-        withAnimation(rowDeleteAnimation) {
-            _ = deletingDocumentIDs.insert(documentID)
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
-            do {
-                let contentDescriptor = FetchDescriptor<DocumentContent>(
-                    predicate: #Predicate { content in
-                        content.documentId == documentID
-                    }
-                )
-                let attachmentDescriptor = FetchDescriptor<Attachment>(
-                    predicate: #Predicate { attachment in
-                        attachment.documentId == documentID
-                    }
-                )
-
-                try modelContext.fetch(contentDescriptor).forEach { content in
-                    modelContext.delete(content)
-                }
-                try modelContext.fetch(attachmentDescriptor).forEach { attachment in
-                    modelContext.delete(attachment)
-                }
-                modelContext.delete(document)
-                try modelContext.save()
-            } catch {
-                withAnimation(rowDeleteAnimation) {
-                    _ = deletingDocumentIDs.remove(documentID)
-                }
-            }
         }
     }
 }
