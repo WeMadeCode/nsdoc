@@ -9,7 +9,8 @@ export const Title = Node.create({
   defining: true,
   isolating: true,
   priority: 1000,
-  content: 'text*',
+  group: 'block',
+  content: 'inline*',
 
   addOptions() {
     return {
@@ -37,13 +38,13 @@ export const Title = Node.create({
             const { state, dispatch } = view
             const { selection } = state
             const { $from } = selection
-            const node = $from.parent
-            const isTitle = node.type.name === 'title'
-            if (isTitle) {
+            const titleDepth = $from.depth > 0 && $from.node($from.depth - 1).type.name === 'title' ? $from.depth - 1 : -1
+
+            if (titleDepth >= 0) {
+              const titleEnd = $from.after(titleDepth)
               const paragraph = state.schema.nodes.paragraph.create()
-              const to = node.nodeSize
-              const tr = state.tr.insert(to, paragraph)
-              tr.setSelection(Selection.near(tr.doc.resolve(to)))
+              const tr = state.tr.insert(titleEnd, paragraph)
+              tr.setSelection(Selection.near(tr.doc.resolve(titleEnd + 1)))
               dispatch(tr)
               return true
             }

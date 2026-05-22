@@ -289,7 +289,7 @@ private struct HomeActionBar: View {
         .navigationDestination(item: $newDocument) { document in
             EditorView(
                 document: document,
-                initialContentJSON: DocumentContentDefaults.emptyTiptapJSON
+                autoFocusOnLoad: true
             )
         }
         .padding(.horizontal, 24)
@@ -321,15 +321,8 @@ private struct HomeActionBar: View {
                 updatedAt: now,
                 accessedAt: now
             )
-            let content = DocumentContent(
-                documentId: document.id,
-                contentFormat: DocumentContentFormat.tiptapJSON,
-                contentJSON: DocumentContentDefaults.emptyTiptapJSON,
-                createdAt: now
-            )
 
             modelContext.insert(document)
-            modelContext.insert(content)
             try modelContext.save()
             newDocument = document
         } catch {}

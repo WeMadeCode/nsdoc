@@ -69,7 +69,7 @@ export type EditorContentResult = {
 }
 
 export type EditorSetContentParams = {
-  content: JSONContent | string
+  content?: JSONContent | null
   focus?: boolean
 }
 
@@ -110,9 +110,5 @@ export type NSBridgePublicApi = {
     options?: BridgeCallOptions
   ): Promise<TResult>
   emit<TParams = unknown>(namespace: string, method: string, params?: TParams): void
-  register<TParams = unknown, TResult = unknown>(
-    namespace: string,
-    method: string,
-    handler: BridgeHandler<TParams, TResult>
-  ): () => void
+  register<TParams = unknown, TResult = unknown>(namespace: string, method: string, handler: BridgeHandler<TParams, TResult>): () => void
 }

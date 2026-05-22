@@ -2,26 +2,30 @@
   "type": "doc",
   "content": [
     {
-      "type": "heading",
-      "attrs": {
-        "id": "8e84d1f3-8d16-4370-94e7-46252c8428d8",
-        "textAlign": null,
-        "backgroundColor": null,
-        "nodeTextAlign": null,
-        "nodeVerticalAlign": null,
-        "data-toc-id": "8e84d1f3-8d16-4370-94e7-46252c8428d8",
-        "level": 1
-      },
+      "type": "title",
       "content": [
         {
-          "type": "text",
-          "text": "Welcome to Notion-like template "
-        },
-        {
-          "type": "emoji",
+          "type": "paragraph",
           "attrs": {
-            "name": "sparkles"
-          }
+            "id": "8e84d1f3-8d16-4370-94e7-46252c8428d8",
+            "textAlign": null,
+            "backgroundColor": null,
+            "nodeTextAlign": null,
+            "nodeVerticalAlign": null,
+            "data-toc-id": "8e84d1f3-8d16-4370-94e7-46252c8428d8"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Welcome to Notion-like template "
+            },
+            {
+              "type": "emoji",
+              "attrs": {
+                "name": "sparkles"
+              }
+            }
+          ]
         }
       ]
     },

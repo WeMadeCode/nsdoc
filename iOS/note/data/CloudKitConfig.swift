@@ -6,5 +6,5 @@
 //
 
 enum CloudKitConfig {
-    static let containerIdentifier = "iCloud.com.slni.note"
+    static let containerIdentifier = "iCloud.com.one.page"
 }

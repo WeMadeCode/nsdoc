@@ -11,6 +11,7 @@ import SwiftData
 struct EditorView: View {
     
     let showsCloseButton: Bool
+    let autoFocusOnLoad: Bool
     
     @StateObject var viewModel = EditorViewModel()
     @Environment(\.modelContext) private var modelContext
@@ -26,8 +27,14 @@ struct EditorView: View {
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
-    init(document: Document?, initialContentJSON: String? = nil, showsCloseButton: Bool = true) {
+    init(
+        document: Document?,
+        initialContentJSON: String? = nil,
+        showsCloseButton: Bool = true,
+        autoFocusOnLoad: Bool = false
+    ) {
         self.showsCloseButton = showsCloseButton
+        self.autoFocusOnLoad = autoFocusOnLoad
         _workingDocument = State(initialValue: document)
         _initialContentJSON = State(initialValue: initialContentJSON)
     }
@@ -99,12 +106,7 @@ struct EditorView: View {
         }
         didApplyInitialContent = true
 
-        guard
-            let content = initialContentJSON ?? loadContentJSON(),
-            let contentObject = jsonObject(from: content)
-        else {
-            return
-        }
+        let contentObject = contentObject(from: initialContentJSON ?? loadContentJSON()) ?? NSNull()
 
         initialContentJSON = nil
 
@@ -112,7 +114,7 @@ struct EditorView: View {
             methodName: "setContent",
             params: [
                 "content": contentObject,
-                "focus": false
+                "focus": autoFocusOnLoad
             ],
             timeout: 3
         )
@@ -268,8 +270,9 @@ struct EditorView: View {
         return jsonString
     }
 
-    private func jsonObject(from jsonString: String) -> Any? {
+    private func contentObject(from jsonString: String?) -> Any? {
         guard
+            let jsonString,
             let data = jsonString.data(using: .utf8),
             let object = try? JSONSerialization.jsonObject(with: data)
         else {
@@ -281,13 +284,13 @@ struct EditorView: View {
 
     private func loadContentJSON() -> String? {
         guard let document = workingDocument else {
-            return DocumentContentDefaults.emptyTiptapJSON
+            return nil
         }
 
         do {
-            return try fetchContent(for: document)?.contentJSON ?? DocumentContentDefaults.emptyTiptapJSON
+            return try fetchContent(for: document)?.contentJSON
         } catch {
-            return DocumentContentDefaults.emptyTiptapJSON
+            return nil
         }
     }
 

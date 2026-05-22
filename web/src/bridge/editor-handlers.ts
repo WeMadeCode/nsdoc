@@ -1,10 +1,9 @@
-import type { Editor, JSONContent } from '@tiptap/core'
+import type { Editor } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
 import { BridgeError } from './errors'
 import { nsBridge } from './web-bridge'
 import type { EditorActiveTools, EditorContentResult, EditorSetContentParams } from './types'
 import { BRIDGE_VERSION } from './types'
-import { ensureDocumentTitle } from '@/tiptap-editor/lib/document-content'
 
 const capabilities = [
   'editor.setContent',
@@ -30,16 +29,7 @@ const capabilities = [
 ]
 
 const readyEditors = new WeakSet<Editor>()
-
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
-
-const parseContent = (content: EditorSetContentParams['content']): JSONContent => {
-  if (typeof content === 'string') {
-    return ensureDocumentTitle(JSON.parse(content) as JSONContent)
-  }
-
-  return ensureDocumentTitle(content)
-}
+const TITLE_FOCUS_POSITION = 2
 
 const isValidHeadingLevel = (level: unknown): level is Level => typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
 
@@ -80,6 +70,16 @@ const emitSelectionChanged = (editor: Editor) => {
   })
 }
 
+const focusEditor = (editor: Editor) => {
+  const focused = editor.commands.focus(TITLE_FOCUS_POSITION, { scrollIntoView: true })
+
+  requestAnimationFrame(() => {
+    editor.commands.focus(TITLE_FOCUS_POSITION, { scrollIntoView: true })
+  })
+
+  return focused
+}
+
 export const setupEditorBridge = (editor: Editor | null) => {
   if (!editor) {
     return () => {}
@@ -88,17 +88,16 @@ export const setupEditorBridge = (editor: Editor | null) => {
   let changeVersion = 0
   const cleanupHandlers = [
     nsBridge.register<EditorSetContentParams, { applied: boolean }>('editor', 'setContent', params => {
-      if (!isRecord(params) || !('content' in params)) {
-        throw new BridgeError('INVALID_PARAMS', 'editor.setContent requires content', false)
+      let applied = false
+      if (params.content) {
+        applied = editor.chain().setContent(params.content).run()
       }
 
-      const nextContent = parseContent(params.content as EditorSetContentParams['content'])
-      console.log('nextContent = ', nextContent)
-      const focus = params.focus === true
-      const chain = focus ? editor.chain().focus() : editor.chain()
-      return {
-        applied: chain.setContent(nextContent, { emitUpdate: false }).run(),
+      if (params.focus) {
+        applied = editor.chain().focus().run()
       }
+
+      return { applied }
     }),
     nsBridge.register<never, EditorContentResult>('editor', 'getContent', () => ({
       content: editor.getJSON(),
@@ -109,7 +108,7 @@ export const setupEditorBridge = (editor: Editor | null) => {
       title: editor.state.doc.firstChild?.textContent?.trim() ?? '',
     })),
     nsBridge.register<never, { focused: boolean }>('editor', 'focus', () => ({
-      focused: editor.chain().focus().run(),
+      focused: focusEditor(editor),
     })),
     nsBridge.register<never, { blurred: boolean }>('editor', 'blur', () => ({
       blurred: editor.chain().blur().run(),
@@ -216,6 +215,7 @@ export const setupEditorBridge = (editor: Editor | null) => {
 
   if (!readyEditors.has(editor)) {
     readyEditors.add(editor)
+    console.log('Editor is ready, emitting ready event to bridge')
     nsBridge.ready('editor', 'ready', {
       editorVersion: '1.0.0',
       supportedBridgeVersion: BRIDGE_VERSION,
