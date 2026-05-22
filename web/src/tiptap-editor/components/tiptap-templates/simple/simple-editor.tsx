@@ -19,17 +19,17 @@ import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-up
 import { setupBridge } from '@/bridge'
 import { extensions as baseExtensions } from '@/extensions'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
-import TextView from './text-view'
+// import TextView from './text-view'
 
 export function SimpleEditor() {
   const editor = useEditor({
     immediatelyRender: true,
     editorProps: {
       attributes: {
-        // autocomplete: 'off',
-        // autocorrect: 'off',
-        // autocapitalize: 'off',
-        // 'aria-label': 'Main content area, start typing to enter text.',
+        autocomplete: 'off',
+        autocorrect: 'off',
+        autocapitalize: 'off',
+        'aria-label': 'Main content area, start typing to enter text.',
         class: 'simple-editor',
       },
     },
@@ -53,7 +53,7 @@ export function SimpleEditor() {
       <EditorContext.Provider value={{ editor }}>
         <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
       </EditorContext.Provider>
-      <TextView editor={editor}></TextView>
+      {/* <TextView editor={editor}></TextView> */}
     </div>
   )
 }

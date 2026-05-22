@@ -1,8 +1,7 @@
 import { Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import TitleWrapper from './title-wrpper'
-import { Plugin } from '@tiptap/pm/state'
-import { Selection } from '@tiptap/pm/state'
+import { Plugin, TextSelection } from '@tiptap/pm/state'
 
 export const Title = Node.create({
   name: 'title',
@@ -31,6 +30,7 @@ export const Title = Node.create({
   },
 
   addProseMirrorPlugins() {
+    const titleNodeName = this.name
     const plugin = new Plugin({
       props: {
         handleKeyDown(view, event) {
@@ -38,13 +38,20 @@ export const Title = Node.create({
             const { state, dispatch } = view
             const { selection } = state
             const { $from } = selection
-            const titleDepth = $from.depth > 0 && $from.node($from.depth - 1).type.name === 'title' ? $from.depth - 1 : -1
+            let titleDepth = -1
+
+            for (let depth = $from.depth; depth > 0; depth -= 1) {
+              if ($from.node(depth).type.name === titleNodeName) {
+                titleDepth = depth
+                break
+              }
+            }
 
             if (titleDepth >= 0) {
               const titleEnd = $from.after(titleDepth)
               const paragraph = state.schema.nodes.paragraph.create()
               const tr = state.tr.insert(titleEnd, paragraph)
-              tr.setSelection(Selection.near(tr.doc.resolve(titleEnd + 1)))
+              tr.setSelection(TextSelection.create(tr.doc, titleEnd + 1))
               dispatch(tr)
               return true
             }
