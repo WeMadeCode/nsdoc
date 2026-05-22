@@ -38,7 +38,6 @@ erDiagram
         string documentType
         string title
         string excerpt
-        string plainText
         int sortOrder
         int contentVersion
         string syncStatus
@@ -118,8 +117,7 @@ erDiagram
 | `folderId` | UUID | 所属文件夹 ID |
 | `documentType` | String | 文档类型，见下方枚举 |
 | `title` | String | 标题，列表展示和搜索用 |
-| `excerpt` | String | 摘要，列表展示用 |
-| `plainText` | String | 纯文本，搜索索引用 |
+| `excerpt` | String | 可选摘要，列表展示用，可按需从 `DocumentContent.contentJSON` 派生 |
 | `sortOrder` | Int | 文件夹内手动排序预留 |
 | `contentVersion` | Int | 内容版本号，每次正文变更递增 |
 | `syncStatus` | String | `localOnly`、`pendingUpload`、`synced`、`failed` |
@@ -140,7 +138,7 @@ erDiagram
 设计要点：
 
 - 列表页只查 `Document`，不需要加载完整正文。
-- `title`、`excerpt`、`plainText` 都是从正文派生的冗余字段，用于列表和搜索。
+- `title` 由编辑器快照直接提供；`excerpt` 如需展示可从正文派生，但不保存 `plainText` 副本。
 - 删除建议先软删除，CloudKit 同步确认后再考虑清理附件。
 - `contentVersion` 用于保存防抖、冲突检测和后续版本历史。
 
@@ -322,7 +320,6 @@ final class Document {
     var documentType: String
     var title: String
     var excerpt: String
-    var plainText: String
     var sortOrder: Int
     var contentVersion: Int
     var syncStatus: String
@@ -337,7 +334,6 @@ final class Document {
         documentType: String = "page",
         title: String = "",
         excerpt: String = "",
-        plainText: String = "",
         sortOrder: Int = 0,
         contentVersion: Int = 1,
         syncStatus: String = "localOnly",
@@ -351,7 +347,6 @@ final class Document {
         self.documentType = documentType
         self.title = title
         self.excerpt = excerpt
-        self.plainText = plainText
         self.sortOrder = sortOrder
         self.contentVersion = contentVersion
         self.syncStatus = syncStatus
@@ -455,7 +450,7 @@ final class Attachment {
 2. 遍历旧 `Article`。
 3. 为每条旧笔记创建一条 `Document`，`documentType = "page"`，`folderId` 指向默认文件夹，`accessedAt` 默认使用旧 `updateDate`。
 4. 为每条旧笔记创建一条 `DocumentContent`，`contentFormat = "tiptap-json"`，`contentJSON = markdownText`。
-5. 从 Tiptap JSON 派生 `plainText` 和 `excerpt`。
+5. 如列表需要摘要，从 Tiptap JSON 派生 `excerpt`；不迁移或维护 `plainText` 副本。
 6. 迁移完成后保留旧模型一个版本，确认稳定后再移除。
 
 ## 11. MVP 落地顺序

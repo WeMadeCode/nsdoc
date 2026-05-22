@@ -100,8 +100,7 @@ flowchart TB
 适合 iOS 主动驱动编辑器：
 
 - 初始化内容：`editor.setContent`
-- 获取内容：`editor.getContent`
-- 获取标题：`editor.getTitle`
+- 立即刷出当前内容快照：`editor.flushContent`
 - 工具栏命令：`editor.toggleBold`、`editor.toggleHeading`
 - 插入内容：`editor.insertImage`、`editor.insertHorizontalRule`
 
@@ -158,7 +157,7 @@ sequenceDiagram
   "id": "req_20260519_000001",
   "type": "request",
   "namespace": "editor",
-  "method": "getContent",
+  "method": "flushContent",
   "params": {},
   "timestamp": 1779177600000
 }
@@ -187,7 +186,7 @@ sequenceDiagram
   "type": "response",
   "status": "success",
   "data": {
-    "content": {}
+    "flushed": true
   },
   "timestamp": 1779177600123
 }
@@ -203,7 +202,7 @@ sequenceDiagram
   "status": "error",
   "error": {
     "code": "METHOD_NOT_FOUND",
-    "message": "Handler editor.getContent is not registered",
+    "message": "Handler editor.unknownCommand is not registered",
     "recoverable": true
   },
   "timestamp": 1779177600123
@@ -222,8 +221,13 @@ sequenceDiagram
   "namespace": "editor",
   "method": "contentChanged",
   "params": {
-    "documentId": "local-document-id",
     "changeVersion": 12,
+    "title": "旅行计划",
+    "content": {
+      "type": "doc",
+      "content": []
+    },
+    "reason": "debounced",
     "isEmpty": false
   },
   "timestamp": 1779177600456
@@ -237,12 +241,12 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
 代码内部可以拆成：
 
 - `namespace`: `editor`
-- `method`: `getContent`
-- 完整名：`editor.getContent`
+- `method`: `flushContent`
+- 完整名：`editor.flushContent`
 
 命名原则：
 
-- 使用动词开头：`getContent`、`setContent`、`toggleBold`。
+- 使用动词开头：`flushContent`、`setContent`、`toggleBold`。
 - 事件使用过去式或状态变化语义：`ready`、`contentChanged`、`selectionChanged`。
 - 不暴露技术实现名，例如 `tiptap.toggleNode`。
 - 不使用拼写错误作为协议名，例如旧实现中的 `toggleCodeBlcok` 不进入新协议。
@@ -273,8 +277,7 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
     "supportedBridgeVersion": "1.0",
     "capabilities": [
       "editor.setContent",
-      "editor.getContent",
-      "editor.getTitle",
+      "editor.flushContent",
       "editor.toggleBold"
     ]
   },
@@ -303,8 +306,7 @@ Web 侧规则：
 | 完整方法 | 参数 | 返回 | 说明 |
 | --- | --- | --- | --- |
 | `editor.setContent` | `{ content: object, focus?: boolean }` | `{ applied: boolean }` | 设置 Tiptap JSON 内容 |
-| `editor.getContent` | `{}` | `{ content: object, plainText: string, isEmpty: boolean }` | 获取完整编辑内容 |
-| `editor.getTitle` | `{}` | `{ title: string }` | 获取文档标题 |
+| `editor.flushContent` | `{}` | `{ flushed: boolean }` | 立即通过 `editor.contentChanged` 推送当前内容快照 |
 | `editor.focus` | `{}` | `{ focused: boolean }` | 聚焦编辑器 |
 | `editor.blur` | `{}` | `{ blurred: boolean }` | 取消聚焦 |
 | `editor.toggleBold` | `{}` | `{ active: boolean }` | 切换加粗 |
@@ -328,7 +330,7 @@ Web 侧规则：
 | 完整方法 | 参数 | 说明 |
 | --- | --- | --- |
 | `editor.ready` | `{ editorVersion, supportedBridgeVersion, capabilities }` | 编辑器和 Bridge 已可用 |
-| `editor.contentChanged` | `{ changeVersion, isEmpty }` | 内容发生变化，用于触发自动保存防抖 |
+| `editor.contentChanged` | `{ changeVersion, title, content, isEmpty, reason? }` | Web 防抖或 flush 后推送完整保存快照，iOS 收到后直接落库 |
 | `editor.selectionChanged` | `{ activeTools }` | 选区和工具激活状态变化 |
 | `editor.focusChanged` | `{ focused }` | 编辑器聚焦状态变化 |
 | `editor.error` | `{ code, message, detail? }` | 编辑器异常 |
@@ -428,12 +430,12 @@ iOS/note/bridge/
 | `WebConsoleBridge` | Debug 诊断通道，将 Web `console.*` 转发到 Xcode 控制台 |
 | `EditorBridgeHandlers` | 处理 editor 相关事件，转发给 `EditorViewModel` 和保存协调器 |
 
-iOS 侧调用示例：
+iOS 侧请求 Web 立即刷出当前快照示例：
 
 ```swift
-let result: EditorContentResult = try await bridge.callWeb(
+let result: FlushContentResult = try await bridge.callWeb(
     namespace: "editor",
-    method: "getContent",
+    method: "flushContent",
     params: EmptyParams(),
     timeout: .seconds(3)
 )
@@ -443,7 +445,10 @@ Web 调 iOS 注册示例：
 
 ```swift
 bridge.register(namespace: "editor", method: "contentChanged") { message in
-    saveCoordinator.markDirty(changeVersion: message.params.changeVersion)
+    saveCoordinator.save(
+        title: message.params.title,
+        content: message.params.content
+    )
     return EmptyResult()
 }
 ```
@@ -467,7 +472,7 @@ bridge.register(namespace: "editor", method: "contentChanged") { message in
 默认超时：
 
 - 普通编辑命令：2 秒。
-- 获取内容：3 秒。
+- 立即刷出内容快照：3 秒。
 - 图片选择、文件选择：30 秒。
 - ready 等生命周期事件：不使用普通请求超时，由 WebView 加载超时控制。
 
@@ -517,7 +522,7 @@ Bridge 日志只能记录：
 
 ## 14. 自动保存协作
 
-Bridge 不直接保存数据，但它提供自动保存所需的状态事件。
+Bridge 不直接保存数据，但 `editor.contentChanged` 会携带自动保存所需的完整内容快照。
 
 推荐流程：
 
@@ -529,19 +534,18 @@ sequenceDiagram
     participant Save as EditorSaveCoordinator
     participant Store as SwiftData
 
-    Web->>Bridge: editor.contentChanged
+    Web->>Web: debounce content changes
+    Web->>Bridge: editor.contentChanged(title, content)
     Bridge->>IOS: contentChanged event
-    IOS->>Save: markDirty
-    Save->>Save: debounce
-    Save->>Bridge: editor.getTitle / editor.getContent
-    Bridge-->>Save: title and content
+    IOS->>Save: save snapshot
     Save->>Store: save local document
 ```
 
 约束：
 
-- 内容变化事件不携带完整正文，只携带版本号和空状态。
-- 保存时由 iOS 主动拉取完整内容。
+- 内容变化由 Web 侧防抖，防抖后再发送完整 Tiptap JSON。
+- iOS 不再通过 `getTitle` / `getContent` 主动拉取内容，只接收 `contentChanged` 快照并保存。
+- 手动保存、返回列表、编辑器销毁等场景通过 `editor.flushContent` 或 Web cleanup 触发一次立即快照。
 - 同一篇文档同一时间只允许一个保存任务执行。
 - Bridge 超时时不能关闭编辑页，也不能丢弃 Web 当前内容。
 
@@ -569,7 +573,7 @@ sequenceDiagram
 - 超时后清理 pending 请求。
 - 未注册 handler 返回 `METHOD_NOT_FOUND`。
 - handler throw 时返回 `HANDLER_ERROR`。
-- `editor.setContent` / `editor.getContent` 往返一致。
+- `editor.setContent` 后触发 `editor.flushContent` 能推送一致的 Tiptap JSON。
 
 ### 16.2 iOS 单元测试
 
@@ -583,8 +587,8 @@ sequenceDiagram
 
 - 新建笔记进入编辑器后收到 `editor.ready`。
 - iOS 调 `editor.setContent` 后 Web 正确渲染。
-- 用户输入后 Web 发送 `editor.contentChanged`。
-- iOS 调 `editor.getContent` 能保存并重新打开。
+- 用户输入后 Web 防抖发送带标题和完整 JSON 的 `editor.contentChanged`。
+- iOS 收到 `editor.contentChanged` 后能保存并重新打开。
 - 工具栏点击 bold / heading 后 Web 状态变化并回传 `selectionChanged`。
 - WebView 重新加载后 Bridge 能重新握手。
 
@@ -597,7 +601,7 @@ sequenceDiagram
 3. `SLWebView` 或新的 `EditorWebViewHost` 接入 `WKScriptMessageHandler`。
 4. Web 注册第一批 `editor.*` handler。
 5. iOS 接收 `editor.ready`、`editor.contentChanged`、`editor.selectionChanged`。
-6. 编辑页保存流程改成 async Bridge 调用。
+6. 编辑页保存流程改成接收 `editor.contentChanged` 快照并落库。
 
 ### 17.2 第二批交付
 

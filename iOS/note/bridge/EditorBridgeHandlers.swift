@@ -5,11 +5,34 @@
 
 import Foundation
 
+struct EditorContentSnapshot {
+    let changeVersion: Int
+    let title: String
+    let content: Any
+    let isEmpty: Bool
+    let reason: String?
+
+    init?(params: [String: Any]?) {
+        guard
+            let params,
+            let content = params["content"]
+        else {
+            return nil
+        }
+
+        self.changeVersion = params["changeVersion"] as? Int ?? 0
+        self.title = params["title"] as? String ?? ""
+        self.content = content
+        self.isEmpty = params["isEmpty"] as? Bool ?? false
+        self.reason = params["reason"] as? String
+    }
+}
+
 struct EditorBridgeHandlers {
     static func register(
         on bridge: NSBridgeNative,
         onReady: @escaping () -> Void,
-        onContentChanged: @escaping () -> Void,
+        onContentChanged: @escaping (EditorContentSnapshot) -> Void,
         onSelectionChanged: @escaping ([ToolType: Bool]) -> Void,
         onError: @escaping (String) -> Void
     ) {
@@ -20,9 +43,14 @@ struct EditorBridgeHandlers {
             completion(.success(["ack": true]))
         }
 
-        bridge.registry.register(namespace: "editor", method: "contentChanged") { _, completion in
+        bridge.registry.register(namespace: "editor", method: "contentChanged") { message, completion in
+            guard let snapshot = EditorContentSnapshot(params: message.params) else {
+                completion(.failure(NSBridgeRuntimeError(code: .invalidParams, message: "editor.contentChanged requires content")))
+                return
+            }
+
             DispatchQueue.main.async {
-                onContentChanged()
+                onContentChanged(snapshot)
             }
             completion(.success(["ack": true]))
         }
@@ -80,4 +108,3 @@ struct EditorBridgeHandlers {
         return result
     }
 }
-

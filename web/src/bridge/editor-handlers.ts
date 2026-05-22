@@ -1,14 +1,14 @@
 import type { Editor } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
+import debounce from 'lodash.debounce'
 import { BridgeError } from './errors'
 import { nsBridge } from './web-bridge'
-import type { EditorActiveTools, EditorContentResult, EditorSetContentParams } from './types'
+import type { EditorActiveTools, EditorContentSnapshot, EditorSetContentParams } from './types'
 import { BRIDGE_VERSION } from './types'
 
 const capabilities = [
   'editor.setContent',
-  'editor.getContent',
-  'editor.getTitle',
+  'editor.flushContent',
   'editor.focus',
   'editor.blur',
   'editor.toggleBold',
@@ -30,6 +30,7 @@ const capabilities = [
 
 const readyEditors = new WeakSet<Editor>()
 const TITLE_FOCUS_POSITION = 2
+const CONTENT_CHANGED_DEBOUNCE_MS = 900
 
 const isValidHeadingLevel = (level: unknown): level is Level => typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
 
@@ -64,6 +65,18 @@ export const getEditorActiveTools = (editor: Editor): EditorActiveTools => {
   }
 }
 
+const createContentSnapshot = (editor: Editor, changeVersion: number, reason: EditorContentSnapshot['reason']): EditorContentSnapshot => ({
+  changeVersion,
+  title: editor.state.doc.firstChild?.textContent?.trim() ?? '',
+  content: editor.getJSON(),
+  isEmpty: editor.isEmpty,
+  reason,
+})
+
+const emitContentChanged = (editor: Editor, changeVersion: number, reason: EditorContentSnapshot['reason']) => {
+  nsBridge.emit('editor', 'contentChanged', createContentSnapshot(editor, changeVersion, reason))
+}
+
 const emitSelectionChanged = (editor: Editor) => {
   nsBridge.emit('editor', 'selectionChanged', {
     activeTools: getEditorActiveTools(editor),
@@ -86,11 +99,41 @@ export const setupEditorBridge = (editor: Editor | null) => {
   }
 
   let changeVersion = 0
+  let hasContentChanged = false
+  let isApplyingContent = false
+  let lastEmittedChangeVersion = -1
+  const emitLatestContentSnapshot = (reason: EditorContentSnapshot['reason']) => {
+    if (changeVersion === lastEmittedChangeVersion) {
+      return
+    }
+
+    lastEmittedChangeVersion = changeVersion
+    emitContentChanged(editor, changeVersion, reason)
+  }
+
+  const debouncedEmitContentChanged = debounce(() => {
+    emitLatestContentSnapshot('debounced')
+  }, CONTENT_CHANGED_DEBOUNCE_MS)
+
+  const flushContentChanged = (reason: EditorContentSnapshot['reason'] = 'flush') => {
+    debouncedEmitContentChanged.cancel()
+    if (!hasContentChanged && reason === 'destroy') {
+      return
+    }
+
+    emitLatestContentSnapshot(reason)
+  }
+
   const cleanupHandlers = [
     nsBridge.register<EditorSetContentParams, { applied: boolean }>('editor', 'setContent', params => {
       let applied = false
       if (params.content) {
-        applied = editor.chain().setContent(params.content).run()
+        isApplyingContent = true
+        try {
+          applied = editor.chain().setContent(params.content).run()
+        } finally {
+          isApplyingContent = false
+        }
       }
 
       if (params.focus) {
@@ -99,14 +142,10 @@ export const setupEditorBridge = (editor: Editor | null) => {
 
       return { applied }
     }),
-    nsBridge.register<never, EditorContentResult>('editor', 'getContent', () => ({
-      content: editor.getJSON(),
-      plainText: editor.getText().trim(),
-      isEmpty: editor.isEmpty,
-    })),
-    nsBridge.register<never, { title: string }>('editor', 'getTitle', () => ({
-      title: editor.state.doc.firstChild?.textContent?.trim() ?? '',
-    })),
+    nsBridge.register<never, { flushed: boolean }>('editor', 'flushContent', () => {
+      flushContentChanged('flush')
+      return { flushed: true }
+    }),
     nsBridge.register<never, { focused: boolean }>('editor', 'focus', () => ({
       focused: focusEditor(editor),
     })),
@@ -201,11 +240,13 @@ export const setupEditorBridge = (editor: Editor | null) => {
   ]
 
   const handleUpdate = () => {
+    if (isApplyingContent) {
+      return
+    }
+
     changeVersion += 1
-    nsBridge.emit('editor', 'contentChanged', {
-      changeVersion,
-      isEmpty: editor.isEmpty,
-    })
+    hasContentChanged = true
+    debouncedEmitContentChanged()
   }
   const handleSelectionUpdate = () => emitSelectionChanged(editor)
 
@@ -225,6 +266,8 @@ export const setupEditorBridge = (editor: Editor | null) => {
   emitSelectionChanged(editor)
 
   return () => {
+    flushContentChanged('destroy')
+    debouncedEmitContentChanged.cancel()
     cleanupHandlers.forEach(cleanup => cleanup())
     editor.off('update', handleUpdate)
     editor.off('selectionUpdate', handleSelectionUpdate)

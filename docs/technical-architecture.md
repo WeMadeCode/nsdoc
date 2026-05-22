@@ -158,8 +158,7 @@ MVP 可以先保留轻量服务层，但新增能力应尽量进入服务，而�
 | `id` | `UUID` | 笔记唯一 ID |
 | `title` | `String` | 笔记标题 |
 | `contentJSON` | `String` | Tiptap JSON 主内容 |
-| `plainText` | `String` | 搜索和摘要用纯文本 |
-| `excerpt` | `String` | 列表摘要 |
+| `excerpt` | `String` | 可选列表摘要，可按需从 `contentJSON` 派生 |
 | `attachmentRefs` | `[String]` | 正文引用到的附件 ID 列表，可由 `contentJSON` 派生 |
 | `createdAt` | `Date` | 创建时间 |
 | `updatedAt` | `Date` | 更新时间 |
@@ -224,9 +223,8 @@ sequenceDiagram
     Editor->>Web: 加载编辑器
     Web-->>Editor: editorReady
     User->>Web: 输入内容
-    User->>Editor: 输入后停顿、返回或进入后台
-    Editor->>Web: getDocTitle / getContent
-    Web-->>Editor: title / contentJSON
+    Web->>Web: 防抖内容变化
+    Web-->>Editor: contentChanged(title, contentJSON)
     Editor->>Data: createArticle
     Data->>Store: 写入本地
     Store-->>Data: 保存成功
@@ -252,8 +250,8 @@ sequenceDiagram
     Editor->>Web: setContent(contentJSON)
     Web-->>Editor: 内容渲染完成
     User->>Web: 编辑内容
-    Editor->>Web: getContent
-    Web-->>Editor: 新 contentJSON
+    Web->>Web: 防抖内容变化
+    Web-->>Editor: contentChanged(title, contentJSON)
     Editor->>Data: updateArticle
     Data->>Store: 更新 title/content/updatedAt
 ```
@@ -348,18 +346,17 @@ MVP 已确认采用完全免登录模式。App 不建设自有账号系统，也
 
 建议流程：
 
-1. Web 编辑器发送 `contentChanged` 事件。
-2. iOS 标记当前文档为 dirty。
-3. `EditorSaveCoordinator` 做防抖。
-4. 到达保存时机后调用 `getDocTitle` 和 `getContent`。
-5. `ArticleService` 更新本地数据。
-6. `SyncService` 处理 CloudKit 同步状态。
+1. Web 编辑器监听内容变化并在 Web 侧防抖。
+2. 防抖到期后 Web 通过 `contentChanged` 推送标题和完整 Tiptap JSON。
+3. iOS 收到快照后直接交给 `ArticleService` 更新本地数据。
+4. 手动保存、返回列表、编辑器销毁时触发 `flushContent` 或 Web cleanup，立即推送一次快照。
+5. `SyncService` 处理 CloudKit 同步状态。
 
 需要避免：
 
-- 每次输入都全量序列化并写库。
+- 每次按键都立即写库。
 - 保存逻辑阻塞主线程。
-- Bridge 未返回时重复并发保存同一篇笔记。
+- 重复并发保存同一篇笔记。
 - 只依赖用户点击保存按钮。
 
 ## 10. 崩溃与性能诊断架构
@@ -462,7 +459,7 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 
 - Tiptap 扩展初始化测试。
 - Bridge 方法注册测试。
-- `setContent` / `getContent` 往返测试。
+- `setContent` / `flushContent` 快照一致性测试。
 - 内容 JSON 兼容测试。
 
 ### 13.3 集成测试
@@ -499,7 +496,7 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 ### 15.2 阶段二：本地优先体验
 
 - 保存状态展示。
-- 标题、摘要、纯文本派生。
+- 标题、摘要派生。
 - 搜索。
 - 删除强确认。
 - 编辑器加载失败恢复。
@@ -525,8 +522,8 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 优先级从高到低：
 
 1. 将 `Article.markdownText` 迁移为 `contentJSON`，明确正文唯一持久化格式是 Tiptap JSON。
-2. 新增 `Article.id`、`plainText`、`excerpt`、`updatedAt` 更新逻辑。
-3. 将 `EditorView.saveInfo()` 中的保存流程抽到 `ArticleService` 或新的 `EditorSaveCoordinator`。
+2. 新增 `Article.id`、`excerpt`、`updatedAt` 更新逻辑。
+3. 将 `EditorView` 中的保存流程抽到 `ArticleService` 或新的 `EditorSaveCoordinator`。
 4. 修正保存时未更新 `updateDate` 的问题。
 5. 按 `js-bridge-design.md` 重建 Bridge 方法命名，不继承旧实现中的拼写错误和散装调用。
 6. 为 `setContent` 增加 JSON 解析失败保护。

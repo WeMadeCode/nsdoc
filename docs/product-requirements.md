@@ -293,8 +293,7 @@ MVP 设置页建议包含：
 | --- | --- | --- |
 | id | UUID | 全局唯一标识，便于 CloudKit 同步和冲突处理 |
 | contentJSON | String | Tiptap JSON 正文，唯一正文持久化格式 |
-| plainText | String | 纯文本摘要和搜索索引 |
-| excerpt | String | 列表摘要 |
+| excerpt | String | 可选列表摘要，可按需从 `contentJSON` 派生 |
 | attachmentRefs | [String] | 正文引用到的图片、附件等文件 ID 列表，可由 contentJSON 派生 |
 | syncStatus | String | 同步状态 |
 | contentVersion | Int | 内容结构版本 |
@@ -313,7 +312,7 @@ MVP 设置页建议包含：
 
 - 不保存 Markdown 副本。
 - 不做 Tiptap JSON + Markdown 双格式存储。
-- `plainText` 只能作为搜索、摘要、分享预览的派生字段，不作为正文持久化格式。
+- 不保存 `plainText` 副本；搜索、摘要、分享预览如有需要，从 Tiptap JSON 派生。
 - 图片、附件等二进制文件不内嵌到 Tiptap JSON。
 - Tiptap JSON 中只保存图片、附件等文件的引用 ID、相对路径或元数据。
 - 如后续需要 Markdown 导出，应在导出时从 Tiptap JSON 临时转换，不写回正文数据模型。
@@ -358,7 +357,7 @@ MVP 设置页建议包含：
 2. 应用进入编辑页面。
 3. 用户输入标题和正文。
 4. 应用触发自动保存，或用户手动点击保存。
-5. iOS 通过 JSBridge 获取编辑器标题和内容。
+5. Web 通过 JSBridge 的 `contentChanged` 推送标题和完整 Tiptap JSON。
 6. 应用保存 Article 数据。
 7. CloudKit 在后台同步数据。
 8. 用户返回列表后看到新笔记。
@@ -391,8 +390,7 @@ iOS 与 Web 编辑器之间需要稳定的桥接协议。
 | 方法 | 说明 |
 | --- | --- |
 | setContent | 设置编辑器内容 |
-| getContent | 获取编辑器完整内容 |
-| getDocTitle | 获取文档标题 |
+| flushContent | 立即通过 `contentChanged` 推送当前标题和完整 Tiptap JSON |
 | toggleBold | 切换加粗 |
 | toggleItalic | 切换斜体 |
 | toggleHeading | 切换标题级别 |
@@ -408,7 +406,7 @@ iOS 与 Web 编辑器之间需要稳定的桥接协议。
 | 事件 | 说明 |
 | --- | --- |
 | activeToolsChanged | 当前选区激活的工具状态变化 |
-| contentChanged | 内容发生变化 |
+| contentChanged | Web 防抖后推送标题和完整 Tiptap JSON，iOS 收到后直接保存 |
 | editorReady | 编辑器初始化完成 |
 | editorError | 编辑器异常 |
 

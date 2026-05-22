@@ -62,10 +62,12 @@ export type EditorActiveTools = {
   textAlign: 'left' | 'center' | 'right' | 'justify'
 }
 
-export type EditorContentResult = {
+export type EditorContentSnapshot = {
+  changeVersion: number
+  title: string
   content: JSONContent
-  plainText: string
   isEmpty: boolean
+  reason?: 'debounced' | 'flush' | 'destroy'
 }
 
 export type EditorSetContentParams = {

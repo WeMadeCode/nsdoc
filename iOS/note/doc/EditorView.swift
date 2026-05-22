@@ -19,11 +19,8 @@ struct EditorView: View {
     @State private var initialContentJSON: String?
     @State private var isKeyboardShow: Bool = false
     @State private var didApplyInitialContent = false
-    @State private var isDirty = false
     @State private var isSaving = false
     @State private var didRecordAccess = false
-    @State private var editorChangeVersion = 0
-    @State private var autosaveTask: Task<Void, Never>?
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
@@ -56,7 +53,7 @@ struct EditorView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    saveInfo(cancelPendingAutosave: true)
+                    flushEditorContent()
                 } label: {
                     Image(systemName: "square.and.arrow.down")
                 }
@@ -79,8 +76,8 @@ struct EditorView: View {
                 SLWebView(url: editorURL, javaScriptCommand: $javaScriptCommand) {
                 } bridgeReady: {
                     applyInitialContentIfNeeded()
-                } contentChanged: {
-                    scheduleAutosave()
+                } contentChanged: { snapshot in
+                    saveContentSnapshot(snapshot)
                 } toolsUpdate: { activeTools in
                     viewModel.updateSelected(activeTools: activeTools)
                 }
@@ -120,49 +117,16 @@ struct EditorView: View {
         )
     }
 
-    private func scheduleAutosave() {
-        editorChangeVersion += 1
-        isDirty = true
-        restartAutosaveTimer()
-    }
-
-    private func restartAutosaveTimer() {
-        autosaveTask?.cancel()
-        autosaveTask = Task {
-            do {
-                try await Task.sleep(nanoseconds: 900_000_000)
-            } catch {
-                return
-            }
-
-            guard !Task.isCancelled else {
-                return
-            }
-
-            await saveInfoAsync()
-        }
-    }
-
-    private func saveInfo(cancelPendingAutosave: Bool = false) {
-        if cancelPendingAutosave {
-            autosaveTask?.cancel()
-            autosaveTask = nil
-        }
-
+    private func flushEditorContent() {
         Task {
-            await saveInfoAsync()
+            await flushEditorContentAsync()
         }
     }
 
     private func closeEditor() {
-        autosaveTask?.cancel()
-        autosaveTask = nil
-
         Task { @MainActor in
+            await flushEditorContentAsync()
             await waitForCurrentSave()
-            if isDirty {
-                await saveInfoAsync()
-            }
             dismiss()
         }
     }
@@ -189,19 +153,28 @@ struct EditorView: View {
     }
 
     @MainActor
-    private func saveInfoAsync() async {
+    private func flushEditorContentAsync() async {
+        do {
+            _ = try await requestJavaScriptResult(methodName: "flushContent", timeout: 3)
+        } catch {
+        }
+    }
+
+    @MainActor
+    private func saveContentSnapshot(_ snapshot: EditorContentSnapshot) {
         guard !isSaving else {
             return
         }
 
-        let saveVersion = editorChangeVersion
         isSaving = true
+        defer {
+            isSaving = false
+        }
 
         do {
-            let titleResult = try await requestJavaScriptResult(methodName: "getTitle", timeout: 3) as? [String: Any]
-            let contentResult = try await requestJavaScriptResult(methodName: "getContent", timeout: 3) as? [String: Any]
-            let contentJSONResult = contentJSONString(from: contentResult?["content"])
-            let plainTextResult = contentResult?["plainText"] as? String
+            guard let contentJSONResult = contentJSONString(from: snapshot.content) else {
+                return
+            }
 
             let saveResult: Document
             if let workingDocument {
@@ -211,30 +184,15 @@ struct EditorView: View {
                 workingDocument = saveResult
             }
 
-            if let title = titleResult?["title"] as? String {
-                saveResult.title = title
-            }
-            if let contentJSONResult {
-                saveContentJSON(contentJSONResult, for: saveResult)
-                let plainText = plainTextResult ?? extractPlainText(from: contentJSONResult)
-                saveResult.plainText = plainText
-                saveResult.excerpt = String(plainText.prefix(120))
-                saveResult.contentVersion += 1
-            }
+            saveResult.title = snapshot.title
+            saveContentJSON(contentJSONResult, for: saveResult)
+            saveResult.contentVersion += 1
             saveResult.updatedAt = Date()
             saveResult.syncStatus = DocumentSyncStatus.pendingUpload
 
             try modelContext.save()
-            if editorChangeVersion == saveVersion {
-                isDirty = false
-            } else {
-                isDirty = true
-                restartAutosaveTimer()
-            }
         } catch {
         }
-
-        isSaving = false
     }
 
     @MainActor
@@ -335,34 +293,6 @@ struct EditorView: View {
         return try modelContext.fetch(descriptor).first
     }
 
-    private func extractPlainText(from contentJSON: String) -> String {
-        guard
-            let data = contentJSON.data(using: .utf8),
-            let object = try? JSONSerialization.jsonObject(with: data)
-        else {
-            return ""
-        }
-
-        var textParts: [String] = []
-
-        func collectText(from value: Any) {
-            if let dictionary = value as? [String: Any] {
-                if let text = dictionary["text"] as? String {
-                    textParts.append(text)
-                }
-                dictionary.values.forEach { collectText(from: $0) }
-                return
-            }
-
-            if let array = value as? [Any] {
-                array.forEach { collectText(from: $0) }
-            }
-        }
-
-        collectText(from: object)
-        return textParts.joined(separator: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 }
 
 #Preview {

@@ -29,7 +29,6 @@ final class Document {
     var documentType: String = DocumentType.page
     var title: String = ""
     var excerpt: String = ""
-    var plainText: String = ""
     var sortOrder: Int = 0
     var contentVersion: Int = 1
     var syncStatus: String = DocumentSyncStatus.localOnly
@@ -44,7 +43,6 @@ final class Document {
         documentType: String = DocumentType.page,
         title: String = "",
         excerpt: String = "",
-        plainText: String = "",
         sortOrder: Int = 0,
         contentVersion: Int = 1,
         syncStatus: String = DocumentSyncStatus.localOnly,
@@ -58,7 +56,6 @@ final class Document {
         self.documentType = documentType
         self.title = title
         self.excerpt = excerpt
-        self.plainText = plainText
         self.sortOrder = sortOrder
         self.contentVersion = contentVersion
         self.syncStatus = syncStatus

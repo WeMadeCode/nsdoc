@@ -383,8 +383,7 @@ private struct SearchView: View {
 
         return documents.filter { document in
             document.title.localizedCaseInsensitiveContains(trimmedKeyword) ||
-            document.excerpt.localizedCaseInsensitiveContains(trimmedKeyword) ||
-            document.plainText.localizedCaseInsensitiveContains(trimmedKeyword)
+            document.excerpt.localizedCaseInsensitiveContains(trimmedKeyword)
         }
     }
 
