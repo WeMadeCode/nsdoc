@@ -32,37 +32,34 @@ class EditorViewModel: ObservableObject {
 
     @Published var subFontTools: [ToolItem]
     @Published var subAlignTools: [ToolItem]
+
+    var isCustomKeyboardVisible: Bool {
+        mainTools.first { $0.toolType == .insert }?.isSelected == true
+    }
     
     init() {
         self.mainTools = [
+            ToolItem(toolType: .insert, isRealTool: false),
             ToolItem(toolType: .text, isRealTool: false),
+            ToolItem(toolType: .style),
             ToolItem(toolType: .left, isRealTool: false),
-            ToolItem(toolType: .bold),
-            ToolItem(toolType: .italic),
-            ToolItem(toolType: .strikethrough),
-            ToolItem(toolType: .reference),
-            ToolItem(toolType: .colors),
-            ToolItem(toolType: .camera),
             ToolItem(toolType: .picture),
+            ToolItem(toolType: .check),
+            ToolItem(toolType: .mention),
         ]
         self.subFontTools = [
             ToolItem(toolType: .text),
             ToolItem(toolType: .h1),
             ToolItem(toolType: .h2),
             ToolItem(toolType: .h3),
-            ToolItem(toolType: .h4),
-            ToolItem(toolType: .h5),
+            ToolItem(toolType: .check),
             ToolItem(toolType: .order),
             ToolItem(toolType: .unOrder),
-            ToolItem(toolType: .check),
-            ToolItem(toolType: .code),
         ]
         self.subAlignTools = [
             ToolItem(toolType: .left),
-            ToolItem(toolType: .right),
             ToolItem(toolType: .center),
-            ToolItem(toolType: .goLeft),
-            ToolItem(toolType: .goRight),
+            ToolItem(toolType: .right),
         ]
     }
     
@@ -89,6 +86,22 @@ class EditorViewModel: ObservableObject {
                 item.isSelected = activeTools[item.toolType] ?? false
             }
             return item
+        }
+    }
+
+    func closeCustomKeyboard() {
+        setPanel(.insert, isOpen: false)
+    }
+
+    func closeAllPanels() {
+        for index in mainTools.indices where mainTools[index].isRealTool == false {
+            mainTools[index].isSelected = false
+        }
+    }
+
+    func setPanel(_ toolType: ToolType, isOpen: Bool) {
+        for index in mainTools.indices where mainTools[index].isRealTool == false {
+            mainTools[index].isSelected = mainTools[index].toolType == toolType ? isOpen : false
         }
     }
     

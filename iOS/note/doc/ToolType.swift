@@ -9,7 +9,9 @@ import SwiftUI
 
 enum ToolType {
     
+    case insert
     case text
+    case style
     case h1
     case h2
     case h3
@@ -19,6 +21,8 @@ enum ToolType {
     case unOrder
     case check
     case code
+    case foldList
+    case page
     
     case left
     case right
@@ -34,9 +38,12 @@ enum ToolType {
     case colors
     case camera
     case picture
+    case mention
     
     var image: Image {
         switch self {
+        case .insert:
+            Image(systemName: "plus.circle")
         case .h1:
             Image(.fontH1)
         case .h2:
@@ -49,6 +56,8 @@ enum ToolType {
             Image(.fontH5)
         case .text:
             Image(.fontT)
+        case .style:
+            Image(systemName: "textformat")
         case .order:
             Image(.fontOrder)
         case .unOrder:
@@ -57,6 +66,10 @@ enum ToolType {
             Image(.fontCheck)
         case .code:
             Image(.fontCode)
+        case .foldList:
+            Image(systemName: "list.triangle")
+        case .page:
+            Image(systemName: "doc.text")
         case .left:
             Image(.alignLeft)
         case .right:
@@ -83,6 +96,8 @@ enum ToolType {
             Image(.otherI)
         case .strikethrough:
             Image(.otherS)
+        case .mention:
+            Image(systemName: "at")
         }
     }
     
@@ -100,6 +115,10 @@ enum ToolType {
             "toggleTaskList"
         case .code:
             "toggleCodeBlock"
+        case .foldList:
+            ""
+        case .page:
+            ""
             
         case .bold:
             "toggleBold"
@@ -117,6 +136,12 @@ enum ToolType {
         case .camera:
             ""
         case .picture:
+            ""
+        case .insert:
+            ""
+        case .style:
+            ""
+        case .mention:
             ""
         case .left, .center, .right:
             "setTextAlign"

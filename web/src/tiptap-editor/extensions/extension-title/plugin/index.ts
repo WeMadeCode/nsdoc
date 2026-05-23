@@ -17,8 +17,36 @@ const getTitleDepth = (selection: TextSelection, titleNodeName: string) => {
 
 export const createTitlePlugin = (titleNodeName: string) => {
   let isComposing = false
+  let suppressNextParagraphBeforeInput = false
+  let suppressNextParagraphBeforeInputTimer: ReturnType<typeof setTimeout> | undefined
 
-  const moveSelectionToBody = (view: EditorView) => {
+  const suppressNextParagraphBeforeInputOnce = () => {
+    suppressNextParagraphBeforeInput = true
+    if (suppressNextParagraphBeforeInputTimer) {
+      clearTimeout(suppressNextParagraphBeforeInputTimer)
+    }
+
+    suppressNextParagraphBeforeInputTimer = setTimeout(() => {
+      suppressNextParagraphBeforeInput = false
+      suppressNextParagraphBeforeInputTimer = undefined
+    }, 0)
+  }
+
+  const consumeParagraphBeforeInputSuppression = () => {
+    if (!suppressNextParagraphBeforeInput) {
+      return false
+    }
+
+    suppressNextParagraphBeforeInput = false
+    if (suppressNextParagraphBeforeInputTimer) {
+      clearTimeout(suppressNextParagraphBeforeInputTimer)
+      suppressNextParagraphBeforeInputTimer = undefined
+    }
+
+    return true
+  }
+
+  const insertParagraphAtDocumentStart = (view: EditorView) => {
     const { state, dispatch } = view
     const selection = state.selection
 
@@ -32,16 +60,10 @@ export const createTitlePlugin = (titleNodeName: string) => {
     }
 
     const titleEnd = selection.$from.after(titleDepth)
-    const nodeAfterTitle = state.doc.nodeAt(titleEnd)
-    let tr = state.tr
-    const paragraphStart = titleEnd + 1
+    const paragraph = state.schema.nodes.paragraph.create()
+    let tr = state.tr.insert(titleEnd, paragraph)
 
-    if (nodeAfterTitle?.type.name !== 'paragraph' || nodeAfterTitle.content.size > 0) {
-      const paragraph = state.schema.nodes.paragraph.create()
-      tr = tr.insert(titleEnd, paragraph)
-    }
-
-    tr.setSelection(TextSelection.create(tr.doc, paragraphStart))
+    tr = tr.setSelection(TextSelection.create(tr.doc, titleEnd + 1))
     dispatch(tr.scrollIntoView())
     return true
   }
@@ -53,7 +75,12 @@ export const createTitlePlugin = (titleNodeName: string) => {
           return false
         }
 
-        return moveSelectionToBody(view)
+        const handled = insertParagraphAtDocumentStart(view)
+        if (handled) {
+          suppressNextParagraphBeforeInputOnce()
+        }
+
+        return handled
       },
       handleDOMEvents: {
         beforeinput(view, event) {
@@ -62,7 +89,12 @@ export const createTitlePlugin = (titleNodeName: string) => {
             return false
           }
 
-          const handled = moveSelectionToBody(view)
+          if (consumeParagraphBeforeInputSuppression()) {
+            event.preventDefault()
+            return true
+          }
+
+          const handled = insertParagraphAtDocumentStart(view)
           if (handled) {
             event.preventDefault()
           }

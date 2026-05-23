@@ -18,6 +18,7 @@ struct EditorView: View {
     @State private var workingDocument: Document?
     @State private var initialContentJSON: String?
     @State private var isKeyboardShow: Bool = false
+    @State private var keyboardHeight: CGFloat = 336
     @State private var didApplyInitialContent = false
     @State private var isSaving = false
     @State private var didRecordAccess = false
@@ -60,6 +61,12 @@ struct EditorView: View {
             }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { noti in
+            if
+                let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+                frame.height > 0
+            {
+                keyboardHeight = frame.height
+            }
             isKeyboardShow = true
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { noti in
@@ -73,7 +80,12 @@ struct EditorView: View {
     private var mainView: some View {
         VStack {
             if let editorURL = Self.editorURL {
-                SLWebView(url: editorURL, javaScriptCommand: $javaScriptCommand) {
+                SLWebView(
+                    url: editorURL,
+                    javaScriptCommand: $javaScriptCommand,
+                    viewModel: viewModel,
+                    customKeyboardHeight: keyboardHeight
+                ) {
                 } bridgeReady: {
                     applyInitialContentIfNeeded()
                 } contentChanged: { snapshot in
@@ -87,8 +99,13 @@ struct EditorView: View {
             }
 
             Spacer()
-            if isKeyboardShow {
-                Tools(javaScriptCommand: $javaScriptCommand, viewModel: viewModel)
+            if isKeyboardShow || viewModel.isCustomKeyboardVisible {
+                Tools(
+                    javaScriptCommand: $javaScriptCommand,
+                    viewModel: viewModel,
+                    isSystemKeyboardVisible: isKeyboardShow,
+                    keyboardHeight: keyboardHeight
+                )
             }
         }
     }
