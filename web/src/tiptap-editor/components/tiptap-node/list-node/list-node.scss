@@ -101,6 +101,11 @@
   // Unordered lists
   ul:not([data-type="taskList"]) {
     list-style: disc;
+    padding-left: 1.25em;
+
+    > li {
+      padding-left: 0.1em;
+    }
 
     ul {
       list-style: circle;
