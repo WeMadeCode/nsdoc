@@ -45,6 +45,7 @@ export type BridgeCallOptions = {
 export type BridgeHandler<TParams = unknown, TResult = unknown> = (params: TParams) => TResult | Promise<TResult>
 
 export type EditorActiveTools = {
+  paragraph: boolean
   bold: boolean
   italic: boolean
   underline: boolean

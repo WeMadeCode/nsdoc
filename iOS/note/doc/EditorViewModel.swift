@@ -33,6 +33,7 @@ class EditorViewModel: ObservableObject {
     @Published var subFontTools: [ToolItem]
     @Published var subAlignTools: [ToolItem]
     @Published var isInsertToolEnabled = false
+    @Published var activeTools: [ToolType: Bool] = [:]
 
     var isCustomKeyboardVisible: Bool {
         mainTools.first { $0.toolType == .insert }?.isSelected == true
@@ -65,6 +66,8 @@ class EditorViewModel: ObservableObject {
     }
     
     func updateSelected(activeTools: [ToolType: Bool], selectionContext: EditorSelectionContext? = nil) {
+        self.activeTools = activeTools
+
         if let selectionContext {
             isInsertToolEnabled = !selectionContext.isInTitle
             if selectionContext.isInTitle {

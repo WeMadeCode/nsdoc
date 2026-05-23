@@ -30,7 +30,6 @@ const capabilities = [
 ]
 
 const readyEditors = new WeakSet<Editor>()
-const TITLE_FOCUS_POSITION = 2
 const CONTENT_CHANGED_DEBOUNCE_MS = 900
 
 const isValidHeadingLevel = (level: unknown): level is Level => typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
@@ -66,6 +65,7 @@ export const getEditorActiveTools = (editor: Editor): EditorActiveTools => {
   const headingLevel = typeof headingAttrs.level === 'number' ? headingAttrs.level : undefined
 
   return {
+    paragraph: editor.isActive('paragraph'),
     bold: editor.isActive('bold'),
     italic: editor.isActive('italic'),
     underline: editor.isActive('underline'),
@@ -104,10 +104,10 @@ const emitSelectionChanged = (editor: Editor) => {
 }
 
 const focusEditor = (editor: Editor) => {
-  const focused = editor.commands.focus(TITLE_FOCUS_POSITION, { scrollIntoView: true })
+  const focused = editor.commands.focus(undefined, { scrollIntoView: true })
 
   requestAnimationFrame(() => {
-    editor.commands.focus(TITLE_FOCUS_POSITION, { scrollIntoView: true })
+    editor.commands.focus(undefined, { scrollIntoView: true })
   })
 
   return focused
@@ -192,9 +192,13 @@ export const setupEditorBridge = (editor: Editor | null) => {
       editor.chain().focus().toggleCode().run()
       return { active: editor.isActive('code') }
     }),
-    nsBridge.register<never, { applied: boolean }>('editor', 'setParagraph', () => ({
-      applied: editor.chain().focus().setParagraph().run(),
-    })),
+    nsBridge.register<never, { active: boolean; applied: boolean }>('editor', 'setParagraph', () => {
+      const applied = editor.chain().focus().setParagraph().run()
+      return {
+        active: editor.isActive('paragraph'),
+        applied,
+      }
+    }),
     nsBridge.register<{ level: unknown }, { active: boolean; level: number }>('editor', 'toggleHeading', params => {
       if (!isValidHeadingLevel(params?.level)) {
         throw new BridgeError('INVALID_PARAMS', 'editor.toggleHeading requires level 1-5', false)

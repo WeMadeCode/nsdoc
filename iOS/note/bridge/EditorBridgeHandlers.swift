@@ -89,6 +89,7 @@ struct EditorBridgeHandlers {
     private static func mapActiveTools(from params: [String: Any]?) -> [ToolType: Bool] {
         let activeTools = params?["activeTools"] as? [String: Any] ?? [:]
         var result: [ToolType: Bool] = [
+            .text: activeTools["paragraph"] as? Bool ?? false,
             .bold: activeTools["bold"] as? Bool ?? false,
             .italic: activeTools["italic"] as? Bool ?? false,
             .strikethrough: activeTools["strike"] as? Bool ?? false,

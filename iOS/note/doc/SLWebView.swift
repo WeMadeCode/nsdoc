@@ -71,6 +71,7 @@ struct SLWebView: UIViewRepresentable {
             isEnabled: viewModel.isCustomKeyboardVisible,
             bridge: context.coordinator.bridge,
             height: customKeyboardHeight,
+            activeTools: viewModel.activeTools,
             animated: false
         )
         wkWebView.navigationDelegate = context.coordinator
@@ -79,6 +80,8 @@ struct SLWebView: UIViewRepresentable {
         wkWebView.isInspectable = true
         wkWebView.scrollView.isScrollEnabled = false
         wkWebView.scrollView.bounces = false
+        wkWebView.scrollView.showsVerticalScrollIndicator = false
+        wkWebView.scrollView.showsHorizontalScrollIndicator = false
         let request = URLRequest(url: url)
         wkWebView.load(request)
         return wkWebView
@@ -90,6 +93,7 @@ struct SLWebView: UIViewRepresentable {
             isEnabled: viewModel.isCustomKeyboardVisible,
             bridge: context.coordinator.bridge,
             height: customKeyboardHeight,
+            activeTools: viewModel.activeTools,
             animated: true
         )
 
@@ -155,6 +159,7 @@ struct SLWebView: UIViewRepresentable {
                 isEnabled: parent.viewModel.isCustomKeyboardVisible,
                 bridge: bridge,
                 height: parent.customKeyboardHeight,
+                activeTools: parent.viewModel.activeTools,
                 animated: false
             )
             parent.isLoadFinsh?()
@@ -181,7 +186,7 @@ private extension WKWebView {
         }
     }
 
-    func setCustomKeyboard(isEnabled: Bool, bridge: NSBridgeNative, height: CGFloat, animated: Bool) {
+    func setCustomKeyboard(isEnabled: Bool, bridge: NSBridgeNative, height: CGFloat, activeTools: [ToolType: Bool], animated: Bool) {
         inputAssistantItem.leadingBarButtonGroups = []
         inputAssistantItem.trailingBarButtonGroups = []
 
@@ -197,12 +202,14 @@ private extension WKWebView {
             let didChange = oldMode != newMode || abs(oldHeight - normalizedHeight) > 0.5
 
             guard didChange else {
+                (subview.customEditorInputView as? EditorInsertKeyboardView)?.updateActiveTools(activeTools)
                 return
             }
 
             subview.currentInputViewMode = newMode
             subview.currentCustomInputViewHeight = normalizedHeight
             subview.setCustomInputView(isEnabled ? EditorInsertKeyboardView(bridge: bridge, height: normalizedHeight, animated: animated) : nil)
+            (subview.customEditorInputView as? EditorInsertKeyboardView)?.updateActiveTools(activeTools)
 
             let reload = {
                 subview.reloadInputViews()
@@ -219,6 +226,8 @@ private extension WKWebView {
             } else {
                 reload()
             }
+
+            (subview.customEditorInputView as? EditorInsertKeyboardView)?.updateActiveTools(activeTools)
         }
     }
 }
@@ -270,6 +279,10 @@ private extension UIView {
         )
     }
 
+    var customEditorInputView: UIView? {
+        objc_getAssociatedObject(self, &AssociatedInputViewKey.customInputView) as? UIView
+    }
+
     var currentInputViewMode: String? {
         get {
             objc_getAssociatedObject(self, &AssociatedInputViewKey.currentMode) as? String
@@ -319,6 +332,7 @@ private final class EditorInsertKeyboardView: UIView {
     private let keyboardCornerRadius: CGFloat = 28
 
     private struct Block {
+        let toolType: ToolType?
         let title: String
         let iconTitle: String?
         let systemImage: String?
@@ -330,28 +344,36 @@ private final class EditorInsertKeyboardView: UIView {
         let blocks: [Block]
     }
 
+    private let bridge: NSBridgeNative
     private let shouldAnimateIn: Bool
+    private var buttonsByToolType: [ToolType: UIButton] = [:]
+    private var blocksByToolType: [ToolType: Block] = [:]
+    private let mutuallyExclusiveBlockTools: Set<ToolType> = [
+        .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .code
+    ]
     private let sections: [Section] = [
         Section(title: "基础部分", blocks: [
-            Block(title: "标题 H1", iconTitle: "H1", systemImage: nil, iconColor: .tertiaryLabel),
-            Block(title: "标题 H2", iconTitle: "H2", systemImage: nil, iconColor: .tertiaryLabel),
-            Block(title: "标题 H3", iconTitle: "H3", systemImage: nil, iconColor: .tertiaryLabel),
-            Block(title: "标题 H4", iconTitle: "H4", systemImage: nil, iconColor: .tertiaryLabel),
-            Block(title: "标题 H5", iconTitle: "H5", systemImage: nil, iconColor: .tertiaryLabel),
-            Block(title: "有序列表", iconTitle: nil, systemImage: "list.number", iconColor: .tertiaryLabel),
-            Block(title: "无序列表", iconTitle: nil, systemImage: "list.bullet", iconColor: .tertiaryLabel),
-            Block(title: "任务列表", iconTitle: nil, systemImage: "checklist", iconColor: .tertiaryLabel),
-            Block(title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel),
-            Block(title: "删除线", iconTitle: nil, systemImage: "strikethrough", iconColor: .tertiaryLabel)
+            Block(toolType: .text, title: "文本", iconTitle: "T", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .h1, title: "标题 H1", iconTitle: "H1", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .h2, title: "标题 H2", iconTitle: "H2", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .h3, title: "标题 H3", iconTitle: "H3", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .h4, title: "标题 H4", iconTitle: "H4", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .h5, title: "标题 H5", iconTitle: "H5", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(toolType: .order, title: "有序列表", iconTitle: nil, systemImage: "list.number", iconColor: .tertiaryLabel),
+            Block(toolType: .unOrder, title: "无序列表", iconTitle: nil, systemImage: "list.bullet", iconColor: .tertiaryLabel),
+            Block(toolType: .check, title: "任务列表", iconTitle: nil, systemImage: "checklist", iconColor: .tertiaryLabel),
+            Block(toolType: .reference, title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel),
+            Block(toolType: .strikethrough, title: "删除线", iconTitle: nil, systemImage: "strikethrough", iconColor: .tertiaryLabel)
         ]),
         Section(title: "高级部分", blocks: [
-            Block(title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
-            Block(title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
-            Block(title: "代码块", iconTitle: nil, systemImage: "chevron.left.forwardslash.chevron.right", iconColor: .systemIndigo)
+            Block(toolType: nil, title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
+            Block(toolType: nil, title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
+            Block(toolType: .code, title: "代码块", iconTitle: nil, systemImage: "chevron.left.forwardslash.chevron.right", iconColor: .systemIndigo)
         ])
     ]
 
-    init(bridge _: NSBridgeNative, height: CGFloat, animated: Bool) {
+    init(bridge: NSBridgeNative, height: CGFloat, animated: Bool) {
+        self.bridge = bridge
         self.shouldAnimateIn = animated
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: max(300, height)))
         setupView()
@@ -473,16 +495,91 @@ private final class EditorInsertKeyboardView: UIView {
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
         button.contentHorizontalAlignment = .leading
 
-        let icon: UIImage?
-        if let systemImage = block.systemImage {
-            icon = UIImage(systemName: systemImage)
-        } else {
-            icon = nil
+        if let toolType = block.toolType, !toolType.jsMethodName.isEmpty {
+            button.addAction(UIAction { [weak self] _ in
+                self?.runTool(toolType)
+            }, for: .touchUpInside)
+            buttonsByToolType[toolType] = button
+            blocksByToolType[toolType] = block
         }
 
-        if let icon {
-            button.setImage(icon, for: .normal)
-            button.tintColor = block.iconColor
+        applyStyle(to: button, for: block, isActive: false)
+        return button
+    }
+
+    func updateActiveTools(_ activeTools: [ToolType: Bool]) {
+        buttonsByToolType.forEach { toolType, button in
+            guard let block = blocksByToolType[toolType] else {
+                return
+            }
+
+            applyStyle(to: button, for: block, isActive: activeTools[toolType] ?? false)
+        }
+    }
+
+    private func runTool(_ toolType: ToolType) {
+        guard !toolType.jsMethodName.isEmpty else {
+            return
+        }
+
+        bridge.callWeb(
+            namespace: "editor",
+            method: toolType.jsMethodName,
+            params: toolType.jsParams,
+            timeout: 2
+        ) { [weak self] result in
+            guard case .success(let data) = result else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                self?.applyCommandResult(data, for: toolType)
+            }
+        }
+    }
+
+    private func applyCommandResult(_ data: Any?, for toolType: ToolType) {
+        guard
+            let result = data as? [String: Any],
+            let isActive = result["active"] as? Bool
+        else {
+            return
+        }
+
+        if isActive, mutuallyExclusiveBlockTools.contains(toolType) {
+            mutuallyExclusiveBlockTools.forEach { updateButton(for: $0, isActive: false) }
+        }
+
+        updateButton(for: toolType, isActive: isActive)
+    }
+
+    private func updateButton(for toolType: ToolType, isActive: Bool) {
+        guard
+            let button = buttonsByToolType[toolType],
+            let block = blocksByToolType[toolType]
+        else {
+            return
+        }
+
+        applyStyle(to: button, for: block, isActive: isActive)
+    }
+
+    private func applyStyle(to button: UIButton, for block: Block, isActive: Bool) {
+        button.isSelected = isActive
+        button.backgroundColor = isActive ? UIColor.systemBlue.withAlphaComponent(0.10) : .systemBackground
+        button.layer.borderColor = (isActive ? UIColor.systemBlue.withAlphaComponent(0.35) : UIColor.separator.withAlphaComponent(0.18)).cgColor
+        button.tintColor = isActive ? .systemBlue : block.iconColor
+
+        if let systemImage = block.systemImage {
+            button.setImage(UIImage(systemName: systemImage)?.withRenderingMode(.alwaysTemplate), for: .normal)
+        } else {
+            button.setImage(nil, for: .normal)
+        }
+
+        if isActive {
+            button.accessibilityTraits.insert(.selected)
+        } else {
+            button.accessibilityTraits.remove(.selected)
         }
 
         let attributedTitle = NSMutableAttributedString()
@@ -491,7 +588,7 @@ private final class EditorInsertKeyboardView: UIView {
                 string: "\(iconTitle)   ",
                 attributes: [
                     .font: UIFont.systemFont(ofSize: 24, weight: .semibold),
-                    .foregroundColor: block.iconColor
+                    .foregroundColor: isActive ? UIColor.systemBlue : block.iconColor
                 ]
             ))
         }
@@ -499,12 +596,10 @@ private final class EditorInsertKeyboardView: UIView {
             string: block.title,
             attributes: [
                 .font: UIFont.systemFont(ofSize: 18, weight: .semibold),
-                .foregroundColor: UIColor.label
+                .foregroundColor: isActive ? UIColor.systemBlue : UIColor.label
             ]
         ))
         button.setAttributedTitle(attributedTitle, for: .normal)
-
-        return button
     }
 }
 
