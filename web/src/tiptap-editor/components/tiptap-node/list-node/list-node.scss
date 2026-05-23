@@ -25,6 +25,7 @@
   ul {
     margin-top: 1.5em;
     margin-bottom: 1.5em;
+    list-style-position: outside;
     padding-left: 1.5em;
 
     &:first-child {
@@ -52,6 +53,17 @@
   // Ordered lists
   ol {
     list-style: decimal;
+    padding-left: 1.5em;
+
+    > li {
+      padding-left: 0;
+    }
+
+    > li::marker {
+      font-family: "Inter", "DM Sans", sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
 
     ol {
       list-style: lower-alpha;
