@@ -142,7 +142,7 @@
 
   // Task lists
   ul[data-type="taskList"] {
-    padding-left: 0.25em;
+    padding-left: 1.25em;
 
     li {
       display: flex;
@@ -166,8 +166,11 @@
 
       label {
         position: relative;
+        width: 1em;
+        flex: 0 0 1em;
         padding-top: 0.375rem;
-        padding-right: 0.5rem;
+        margin-left: -1.25em;
+        margin-right: 0.25em;
 
         input[type="checkbox"] {
           position: absolute;
@@ -219,6 +222,39 @@
       div {
         flex: 1 1 0%;
         min-width: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    ul[data-type="taskList"] {
+      margin-top: 0.75em;
+      margin-bottom: 0.75em;
+      padding-left: 1.15em;
+
+      li {
+        min-height: 1.45em;
+      }
+
+      li + li {
+        margin-top: 0.125em;
+      }
+
+      li p {
+        line-height: 1.45;
+      }
+
+      label {
+        width: 0.95em;
+        flex-basis: 0.95em;
+        padding-top: 0.25em;
+        margin-left: -1.15em;
+        margin-right: 0.2em;
+
+        span {
+          width: 0.95em;
+          height: 0.95em;
+        }
       }
     }
   }

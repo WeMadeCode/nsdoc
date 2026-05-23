@@ -1,4 +1,3 @@
-import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import BulletList from '@tiptap/extension-bullet-list'
 import Code from '@tiptap/extension-code'
@@ -25,12 +24,14 @@ import TextAlign from '@tiptap/extension-text-align'
 import { TrailingNode } from '@tiptap/extensions'
 
 import { CodeBlockLowlight } from './extension-code-block'
+import { Blockquote } from './extension-blockquote'
 import { Title } from './extension-title'
 import { Document } from './extension-document'
 import { Placeholder } from './extension-placeholder'
 import { TableKit } from '@tiptap/extension-table'
 import { TableCell } from './extension-table-cell'
 import { HorizontalRule } from './extension-horizontal-rule'
+import { ListNormalizationExtension } from '@/tiptap-editor/components/tiptap-extension/list-normalization-extension'
 
 export const extensions = [
   Document,
@@ -71,6 +72,7 @@ export const extensions = [
   }),
   TableCell,
   HorizontalRule,
+  ListNormalizationExtension,
   TrailingNode.configure({
     node: 'paragraph',
   }),

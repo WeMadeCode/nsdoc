@@ -33,9 +33,40 @@ import { TextSelection } from '@tiptap/pm/state'
  */
 export const ListNormalizationExtension = Extension.create({
   name: 'listNormalization',
+  priority: 1000,
 
   addKeyboardShortcuts() {
     const listTypes = ['bulletList', 'orderedList', 'taskList']
+    const listItemTypes = ['listItem', 'taskItem']
+
+    const getActiveListItemName = (editor: Editor) => {
+      const { $from } = editor.state.selection
+
+      for (let depth = $from.depth; depth > 0; depth--) {
+        const nodeName = $from.node(depth).type.name
+
+        if (listItemTypes.includes(nodeName)) {
+          return nodeName
+        }
+      }
+
+      return null
+    }
+
+    const handleEnter = ({ editor }: { editor: Editor }) => {
+      const { selection } = editor.state
+
+      if (!selection.empty) return false
+
+      const listItemName = getActiveListItemName(editor)
+      if (!listItemName) return false
+
+      if (selection.$from.parent.type.name === 'paragraph' && selection.$from.parent.content.size === 0) {
+        return editor.commands.liftListItem(listItemName)
+      }
+
+      return editor.commands.splitListItem(listItemName)
+    }
 
     const handleBackspace = ({ editor }: { editor: Editor }) => {
       const { state, view } = editor
@@ -103,6 +134,7 @@ export const ListNormalizationExtension = Extension.create({
     }
 
     return {
+      Enter: handleEnter,
       Backspace: handleBackspace,
     }
   },
