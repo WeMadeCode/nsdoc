@@ -319,29 +319,39 @@ private final class EditorInsertKeyboardView: UIView {
     private let keyboardCornerRadius: CGFloat = 28
 
     private struct Block {
-        let toolType: ToolType
         let title: String
         let iconTitle: String?
         let systemImage: String?
+        let iconColor: UIColor
     }
 
-    private let bridge: NSBridgeNative
+    private struct Section {
+        let title: String
+        let blocks: [Block]
+    }
+
     private let shouldAnimateIn: Bool
-    private let blocks: [Block] = [
-        Block(toolType: .text, title: "文本", iconTitle: "T", systemImage: nil),
-        Block(toolType: .h1, title: "标题 1", iconTitle: "H1", systemImage: nil),
-        Block(toolType: .h2, title: "标题 2", iconTitle: "H2", systemImage: nil),
-        Block(toolType: .h3, title: "标题 3", iconTitle: "H3", systemImage: nil),
-        Block(toolType: .h4, title: "标题 4", iconTitle: "H4", systemImage: nil),
-        Block(toolType: .unOrder, title: "项目符号列表", iconTitle: nil, systemImage: "list.bullet"),
-        Block(toolType: .order, title: "有序列表", iconTitle: nil, systemImage: "list.number"),
-        Block(toolType: .check, title: "待办清单", iconTitle: nil, systemImage: "checklist"),
-        Block(toolType: .foldList, title: "折叠列表", iconTitle: nil, systemImage: "list.triangle"),
-        Block(toolType: .page, title: "页面", iconTitle: nil, systemImage: "doc.text")
+    private let sections: [Section] = [
+        Section(title: "基础部分", blocks: [
+            Block(title: "标题 H1", iconTitle: "H1", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(title: "标题 H2", iconTitle: "H2", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(title: "标题 H3", iconTitle: "H3", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(title: "标题 H4", iconTitle: "H4", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(title: "标题 H5", iconTitle: "H5", systemImage: nil, iconColor: .tertiaryLabel),
+            Block(title: "有序列表", iconTitle: nil, systemImage: "list.number", iconColor: .tertiaryLabel),
+            Block(title: "无序列表", iconTitle: nil, systemImage: "list.bullet", iconColor: .tertiaryLabel),
+            Block(title: "任务列表", iconTitle: nil, systemImage: "checklist", iconColor: .tertiaryLabel),
+            Block(title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel),
+            Block(title: "删除线", iconTitle: nil, systemImage: "strikethrough", iconColor: .tertiaryLabel)
+        ]),
+        Section(title: "高级部分", blocks: [
+            Block(title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
+            Block(title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
+            Block(title: "代码块", iconTitle: nil, systemImage: "chevron.left.forwardslash.chevron.right", iconColor: .systemIndigo)
+        ])
     ]
 
-    init(bridge: NSBridgeNative, height: CGFloat, animated: Bool) {
-        self.bridge = bridge
+    init(bridge _: NSBridgeNative, height: CGFloat, animated: Bool) {
         self.shouldAnimateIn = animated
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: max(300, height)))
         setupView()
@@ -368,34 +378,14 @@ private final class EditorInsertKeyboardView: UIView {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
 
-        let titleLabel = UILabel()
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.text = "基本区块"
-        titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        titleLabel.textColor = .secondaryLabel
-        contentView.addSubview(titleLabel)
+        let contentStack = UIStackView()
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+        contentStack.axis = .vertical
+        contentStack.spacing = 22
+        contentView.addSubview(contentStack)
 
-        let grid = UIStackView()
-        grid.translatesAutoresizingMaskIntoConstraints = false
-        grid.axis = .vertical
-        grid.spacing = 12
-        contentView.addSubview(grid)
-
-        for pairStart in stride(from: 0, to: blocks.count, by: 2) {
-            let row = UIStackView()
-            row.axis = .horizontal
-            row.spacing = 12
-            row.distribution = .fillEqually
-            grid.addArrangedSubview(row)
-
-            for offset in 0..<2 {
-                let index = pairStart + offset
-                if index < blocks.count {
-                    row.addArrangedSubview(makeButton(for: blocks[index]))
-                } else {
-                    row.addArrangedSubview(UIView())
-                }
-            }
+        sections.forEach { section in
+            contentStack.addArrangedSubview(makeSection(section))
         }
 
         NSLayoutConstraint.activate([
@@ -410,14 +400,10 @@ private final class EditorInsertKeyboardView: UIView {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 32),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -32),
-
-            grid.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
-            grid.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            grid.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            grid.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -28)
+            contentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),
+            contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+            contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -28)
         ])
 
         if shouldAnimateIn {
@@ -432,6 +418,42 @@ private final class EditorInsertKeyboardView: UIView {
                 self.transform = .identity
             }
         }
+    }
+
+    private func makeSection(_ section: Section) -> UIView {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 12
+
+        let titleLabel = UILabel()
+        titleLabel.text = section.title
+        titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        titleLabel.textColor = .secondaryLabel
+        stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(makeGrid(for: section.blocks))
+
+        return stack
+    }
+
+    private func makeGrid(for blocks: [Block]) -> UIStackView {
+        let grid = UIStackView()
+        grid.axis = .vertical
+        grid.spacing = 12
+
+        for pairStart in stride(from: 0, to: blocks.count, by: 2) {
+            let row = UIStackView()
+            row.axis = .horizontal
+            row.spacing = 12
+            row.distribution = .fillEqually
+            grid.addArrangedSubview(row)
+
+            for offset in 0..<2 {
+                let index = pairStart + offset
+                row.addArrangedSubview(index < blocks.count ? makeButton(for: blocks[index]) : UIView())
+            }
+        }
+
+        return grid
     }
 
     private func makeButton(for block: Block) -> UIButton {
@@ -460,7 +482,7 @@ private final class EditorInsertKeyboardView: UIView {
 
         if let icon {
             button.setImage(icon, for: .normal)
-            button.tintColor = .tertiaryLabel
+            button.tintColor = block.iconColor
         }
 
         let attributedTitle = NSMutableAttributedString()
@@ -469,7 +491,7 @@ private final class EditorInsertKeyboardView: UIView {
                 string: "\(iconTitle)   ",
                 attributes: [
                     .font: UIFont.systemFont(ofSize: 24, weight: .semibold),
-                    .foregroundColor: UIColor.tertiaryLabel
+                    .foregroundColor: block.iconColor
                 ]
             ))
         }
@@ -481,25 +503,8 @@ private final class EditorInsertKeyboardView: UIView {
             ]
         ))
         button.setAttributedTitle(attributedTitle, for: .normal)
-        button.addAction(UIAction { [weak self] _ in
-            self?.runTool(block.toolType)
-        }, for: .touchUpInside)
 
         return button
-    }
-
-    private func runTool(_ toolType: ToolType) {
-        guard !toolType.jsMethodName.isEmpty else {
-            return
-        }
-
-        bridge.callWeb(
-            namespace: "editor",
-            method: toolType.jsMethodName,
-            params: toolType.jsParams,
-            timeout: 2,
-            completion: { _ in }
-        )
     }
 }
 
