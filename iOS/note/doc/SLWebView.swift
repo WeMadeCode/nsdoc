@@ -72,6 +72,9 @@ struct SLWebView: UIViewRepresentable {
             bridge: context.coordinator.bridge,
             height: customKeyboardHeight,
             activeTools: viewModel.activeTools,
+            onToolExecuted: {
+                viewModel.closeCustomKeyboard()
+            },
             animated: false
         )
         wkWebView.navigationDelegate = context.coordinator
@@ -94,6 +97,9 @@ struct SLWebView: UIViewRepresentable {
             bridge: context.coordinator.bridge,
             height: customKeyboardHeight,
             activeTools: viewModel.activeTools,
+            onToolExecuted: {
+                viewModel.closeCustomKeyboard()
+            },
             animated: true
         )
 
@@ -160,6 +166,9 @@ struct SLWebView: UIViewRepresentable {
                 bridge: bridge,
                 height: parent.customKeyboardHeight,
                 activeTools: parent.viewModel.activeTools,
+                onToolExecuted: { [weak self] in
+                    self?.parent.viewModel.closeCustomKeyboard()
+                },
                 animated: false
             )
             parent.isLoadFinsh?()
@@ -186,7 +195,14 @@ private extension WKWebView {
         }
     }
 
-    func setCustomKeyboard(isEnabled: Bool, bridge: NSBridgeNative, height: CGFloat, activeTools: [ToolType: Bool], animated: Bool) {
+    func setCustomKeyboard(
+        isEnabled: Bool,
+        bridge: NSBridgeNative,
+        height: CGFloat,
+        activeTools: [ToolType: Bool],
+        onToolExecuted: @escaping () -> Void,
+        animated: Bool
+    ) {
         inputAssistantItem.leadingBarButtonGroups = []
         inputAssistantItem.trailingBarButtonGroups = []
 
@@ -208,7 +224,16 @@ private extension WKWebView {
 
             subview.currentInputViewMode = newMode
             subview.currentCustomInputViewHeight = normalizedHeight
-            subview.setCustomInputView(isEnabled ? EditorInsertKeyboardView(bridge: bridge, height: normalizedHeight, animated: animated) : nil)
+            subview.setCustomInputView(
+                isEnabled
+                    ? EditorInsertKeyboardView(
+                        bridge: bridge,
+                        height: normalizedHeight,
+                        animated: animated,
+                        onToolExecuted: onToolExecuted
+                    )
+                    : nil
+            )
             (subview.customEditorInputView as? EditorInsertKeyboardView)?.updateActiveTools(activeTools)
 
             let reload = {
@@ -346,6 +371,7 @@ private final class EditorInsertKeyboardView: UIView {
 
     private let bridge: NSBridgeNative
     private let shouldAnimateIn: Bool
+    private let onToolExecuted: () -> Void
     private var buttonsByToolType: [ToolType: UIButton] = [:]
     private var blocksByToolType: [ToolType: Block] = [:]
     private let mutuallyExclusiveBlockTools: Set<ToolType> = [
@@ -372,9 +398,10 @@ private final class EditorInsertKeyboardView: UIView {
         ])
     ]
 
-    init(bridge: NSBridgeNative, height: CGFloat, animated: Bool) {
+    init(bridge: NSBridgeNative, height: CGFloat, animated: Bool, onToolExecuted: @escaping () -> Void) {
         self.bridge = bridge
         self.shouldAnimateIn = animated
+        self.onToolExecuted = onToolExecuted
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: max(300, height)))
         setupView()
     }
@@ -534,6 +561,7 @@ private final class EditorInsertKeyboardView: UIView {
 
             DispatchQueue.main.async {
                 self?.applyCommandResult(data, for: toolType)
+                self?.onToolExecuted()
             }
         }
     }

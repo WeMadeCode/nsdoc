@@ -63,23 +63,37 @@ const getEditorSelectionContext = (editor: Editor): EditorSelectionContext => {
 export const getEditorActiveTools = (editor: Editor): EditorActiveTools => {
   const headingAttrs = editor.getAttributes('heading')
   const headingLevel = typeof headingAttrs.level === 'number' ? headingAttrs.level : undefined
+  const isBulletListActive = editor.isActive('bulletList')
+  const isOrderedListActive = editor.isActive('orderedList')
+  const isTaskListActive = editor.isActive('taskList')
+  const isBlockquoteActive = editor.isActive('blockquote')
+  const isCodeBlockActive = editor.isActive('codeBlock')
+  const isHeadingActive = editor.isActive('heading')
+  const isPlainParagraphActive =
+    editor.isActive('paragraph') &&
+    !isHeadingActive &&
+    !isBulletListActive &&
+    !isOrderedListActive &&
+    !isTaskListActive &&
+    !isBlockquoteActive &&
+    !isCodeBlockActive
 
   return {
-    paragraph: editor.isActive('paragraph'),
+    paragraph: isPlainParagraphActive,
     bold: editor.isActive('bold'),
     italic: editor.isActive('italic'),
     underline: editor.isActive('underline'),
     strike: editor.isActive('strike'),
     code: editor.isActive('code'),
     heading: {
-      active: editor.isActive('heading'),
+      active: isHeadingActive,
       level: headingLevel,
     },
-    bulletList: editor.isActive('bulletList'),
-    orderedList: editor.isActive('orderedList'),
-    taskList: editor.isActive('taskList'),
-    blockquote: editor.isActive('blockquote'),
-    codeBlock: editor.isActive('codeBlock'),
+    bulletList: isBulletListActive,
+    orderedList: isOrderedListActive,
+    taskList: isTaskListActive,
+    blockquote: isBlockquoteActive,
+    codeBlock: isCodeBlockActive,
     textAlign: getTextAlign(editor),
   }
 }
