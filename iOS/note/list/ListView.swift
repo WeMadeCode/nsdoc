@@ -45,10 +45,8 @@ struct ListView: View {
         NavigationStack {
             List {
                 Section {
-                    HomeHeader()
-                        .padding(.horizontal, 22)
-                        .padding(.top, 12)
-                        .padding(.bottom, 18)
+                    Color.clear
+                        .frame(height: 88)
                         .listRowInsets(EdgeInsets())
                         .listRowSeparator(.hidden)
                         .listRowBackground(HomePalette.background)
@@ -111,6 +109,9 @@ struct ListView: View {
             .scrollContentBackground(.hidden)
             .background(HomePalette.background.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .top) {
+                HomeFloatingHeader()
+            }
             .safeAreaInset(edge: .bottom) {
                 HomeActionBar(documents: currentFolderDocuments)
             }
@@ -164,6 +165,39 @@ struct ListView: View {
                 }
             }
         }
+    }
+}
+
+private struct HomeFloatingHeader: View {
+    var body: some View {
+        HomeHeader()
+            .padding(.horizontal, 22)
+            .padding(.top, 12)
+            .padding(.bottom, 18)
+            .frame(maxWidth: .infinity)
+            .background(alignment: .top) {
+                ZStack(alignment: .bottom) {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .ignoresSafeArea(edges: .top)
+
+                    LinearGradient(
+                        colors: [
+                            HomePalette.background.opacity(0),
+                            HomePalette.background.opacity(0.82)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 28)
+                }
+            }
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(.white.opacity(0.36))
+                    .frame(height: 0.5)
+            }
+            .allowsHitTesting(false)
     }
 }
 
