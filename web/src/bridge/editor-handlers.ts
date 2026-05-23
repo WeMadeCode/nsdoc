@@ -1,9 +1,10 @@
 import type { Editor } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
+import type { ResolvedPos } from '@tiptap/pm/model'
 import debounce from 'lodash.debounce'
 import { BridgeError } from './errors'
 import { nsBridge } from './web-bridge'
-import type { EditorActiveTools, EditorContentSnapshot, EditorSetContentParams } from './types'
+import type { EditorActiveTools, EditorContentSnapshot, EditorSelectionContext, EditorSetContentParams } from './types'
 import { BRIDGE_VERSION } from './types'
 
 const capabilities = [
@@ -40,6 +41,24 @@ const getTextAlign = (editor: Editor): EditorActiveTools['textAlign'] => {
   const align = headingAlign || paragraphAlign || 'left'
 
   return ['left', 'center', 'right', 'justify'].includes(String(align)) ? (align as EditorActiveTools['textAlign']) : 'left'
+}
+
+const isPositionInsideNode = ($pos: ResolvedPos, nodeName: string) => {
+  for (let depth = $pos.depth; depth > 0; depth -= 1) {
+    if ($pos.node(depth).type.name === nodeName) {
+      return true
+    }
+  }
+
+  return false
+}
+
+const getEditorSelectionContext = (editor: Editor): EditorSelectionContext => {
+  const { selection } = editor.state
+
+  return {
+    isInTitle: selection.ranges.some(range => isPositionInsideNode(range.$from, 'title') || isPositionInsideNode(range.$to, 'title')),
+  }
 }
 
 export const getEditorActiveTools = (editor: Editor): EditorActiveTools => {
@@ -80,6 +99,7 @@ const emitContentChanged = (editor: Editor, changeVersion: number, reason: Edito
 const emitSelectionChanged = (editor: Editor) => {
   nsBridge.emit('editor', 'selectionChanged', {
     activeTools: getEditorActiveTools(editor),
+    selectionContext: getEditorSelectionContext(editor),
   })
 }
 

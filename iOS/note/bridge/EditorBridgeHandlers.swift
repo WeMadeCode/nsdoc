@@ -28,12 +28,21 @@ struct EditorContentSnapshot {
     }
 }
 
+struct EditorSelectionContext {
+    let isInTitle: Bool
+
+    init(params: [String: Any]?) {
+        let selectionContext = params?["selectionContext"] as? [String: Any] ?? [:]
+        self.isInTitle = selectionContext["isInTitle"] as? Bool ?? false
+    }
+}
+
 struct EditorBridgeHandlers {
     static func register(
         on bridge: NSBridgeNative,
         onReady: @escaping () -> Void,
         onContentChanged: @escaping (EditorContentSnapshot) -> Void,
-        onSelectionChanged: @escaping ([ToolType: Bool]) -> Void,
+        onSelectionChanged: @escaping ([ToolType: Bool], EditorSelectionContext) -> Void,
         onError: @escaping (String) -> Void
     ) {
         bridge.registry.register(namespace: "editor", method: "ready") { _, completion in
@@ -57,8 +66,9 @@ struct EditorBridgeHandlers {
 
         bridge.registry.register(namespace: "editor", method: "selectionChanged") { message, completion in
             let activeTools = mapActiveTools(from: message.params)
+            let selectionContext = EditorSelectionContext(params: message.params)
             DispatchQueue.main.async {
-                onSelectionChanged(activeTools)
+                onSelectionChanged(activeTools, selectionContext)
             }
             completion(.success(["ack": true]))
         }

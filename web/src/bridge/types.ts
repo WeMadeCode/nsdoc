@@ -62,6 +62,10 @@ export type EditorActiveTools = {
   textAlign: 'left' | 'center' | 'right' | 'justify'
 }
 
+export type EditorSelectionContext = {
+  isInTitle: boolean
+}
+
 export type EditorContentSnapshot = {
   changeVersion: number
   title: string

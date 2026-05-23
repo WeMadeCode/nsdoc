@@ -42,8 +42,14 @@ struct Tools: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(items) { item in
-                        ToolBarButton(item: item) {
+                        let isEnabled = item.wrappedValue.toolType != .insert || viewModel.isInsertToolEnabled
+
+                        ToolBarButton(item: item, isEnabled: isEnabled) {
                             let itemValue = item.wrappedValue
+                            guard isEnabled else {
+                                return
+                            }
+
                             if itemValue.isRealTool == false {
                                 togglePanel(item)
                             } else {
@@ -161,6 +167,7 @@ struct Tools: View {
 
 private struct ToolBarButton: View {
     @Binding var item: ToolItem
+    var isEnabled = true
     let action: () -> Void
 
     var body: some View {
@@ -175,15 +182,24 @@ private struct ToolBarButton: View {
                 }
             }
             .frame(minWidth: minWidth, minHeight: 38)
-            .foregroundStyle(item.isSelected ? Color(.systemBlue) : Color(.label).opacity(0.82))
+            .foregroundStyle(foregroundColor)
             .padding(.horizontal, item.toolType == .style ? 2 : 0)
             .background(
                 Capsule()
-                    .fill(item.isSelected ? Color(.systemBlue).opacity(0.12) : Color.clear)
+                    .fill(item.isSelected && isEnabled ? Color(.systemBlue).opacity(0.12) : Color.clear)
             )
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
+    }
+
+    private var foregroundColor: Color {
+        if !isEnabled {
+            return Color(.tertiaryLabel)
+        }
+
+        return item.isSelected ? Color(.systemBlue) : Color(.label).opacity(0.82)
     }
 
     private var minWidth: CGFloat {

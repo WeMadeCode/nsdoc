@@ -32,6 +32,7 @@ class EditorViewModel: ObservableObject {
 
     @Published var subFontTools: [ToolItem]
     @Published var subAlignTools: [ToolItem]
+    @Published var isInsertToolEnabled = false
 
     var isCustomKeyboardVisible: Bool {
         mainTools.first { $0.toolType == .insert }?.isSelected == true
@@ -63,7 +64,14 @@ class EditorViewModel: ObservableObject {
         ]
     }
     
-    func updateSelected(activeTools: [ToolType: Bool]) {
+    func updateSelected(activeTools: [ToolType: Bool], selectionContext: EditorSelectionContext? = nil) {
+        if let selectionContext {
+            isInsertToolEnabled = !selectionContext.isInTitle
+            if selectionContext.isInTitle {
+                setPanel(.insert, isOpen: false)
+            }
+        }
+
         self.mainTools = self.mainTools.map { item in
             var item = item
             if item.isRealTool {

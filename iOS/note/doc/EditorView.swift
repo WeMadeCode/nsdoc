@@ -90,8 +90,8 @@ struct EditorView: View {
                     applyInitialContentIfNeeded()
                 } contentChanged: { snapshot in
                     saveContentSnapshot(snapshot)
-                } toolsUpdate: { activeTools in
-                    viewModel.updateSelected(activeTools: activeTools)
+                } toolsUpdate: { activeTools, selectionContext in
+                    viewModel.updateSelected(activeTools: activeTools, selectionContext: selectionContext)
                 }
             } else {
                 Text("文档编辑器资源未找到")

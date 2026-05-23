@@ -41,7 +41,7 @@ struct SLWebView: UIViewRepresentable {
     let isLoadFinsh: (() -> Void)?
     let bridgeReady: (() -> Void)?
     let contentChanged: ((EditorContentSnapshot) -> Void)?
-    let toolsUpdate: (([ToolType: Bool]) -> Void)?
+    let toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)?
     
     init(url: URL,
          javaScriptCommand: Binding<JavaScriptCommand?>,
@@ -50,7 +50,7 @@ struct SLWebView: UIViewRepresentable {
          isLoadFinsh: (() -> Void)? = nil,
          bridgeReady: (() -> Void)? = nil,
          contentChanged: ((EditorContentSnapshot) -> Void)? = nil,
-         toolsUpdate: (([ToolType: Bool]) -> Void)? = nil
+         toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)? = nil
     ) {
         self.url = url
         self._javaScriptCommand = javaScriptCommand
@@ -137,8 +137,8 @@ struct SLWebView: UIViewRepresentable {
                 onContentChanged: { [weak self] snapshot in
                     self?.parent.contentChanged?(snapshot)
                 },
-                onSelectionChanged: { [weak self] activeTools in
-                    self?.parent.toolsUpdate?(activeTools)
+                onSelectionChanged: { [weak self] activeTools, selectionContext in
+                    self?.parent.toolsUpdate?(activeTools, selectionContext)
                 },
                 onError: { _ in
                 }
