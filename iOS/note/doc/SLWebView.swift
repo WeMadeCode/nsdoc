@@ -74,6 +74,11 @@ struct SLWebView: UIViewRepresentable {
             activeTools: viewModel.activeTools,
             onToolExecuted: {
                 viewModel.closeCustomKeyboard()
+                wkWebView.switchToSystemKeyboard(
+                    bridge: context.coordinator.bridge,
+                    height: customKeyboardHeight,
+                    activeTools: viewModel.activeTools
+                )
             },
             animated: false
         )
@@ -99,6 +104,11 @@ struct SLWebView: UIViewRepresentable {
             activeTools: viewModel.activeTools,
             onToolExecuted: {
                 viewModel.closeCustomKeyboard()
+                uiView.switchToSystemKeyboard(
+                    bridge: context.coordinator.bridge,
+                    height: customKeyboardHeight,
+                    activeTools: viewModel.activeTools
+                )
             },
             animated: true
         )
@@ -179,6 +189,23 @@ struct SLWebView: UIViewRepresentable {
 }
 
 private extension WKWebView {
+    func switchToSystemKeyboard(
+        bridge: NSBridgeNative,
+        height: CGFloat,
+        activeTools: [ToolType: Bool]
+    ) {
+        setCustomKeyboard(
+            isEnabled: false,
+            bridge: bridge,
+            height: height,
+            activeTools: activeTools,
+            onToolExecuted: {},
+            animated: true
+        )
+
+        bridge.callWeb(namespace: "editor", method: "focus", timeout: 2) { _ in }
+    }
+
     func hideKeyboardAccessoryBar() {
         inputAssistantItem.leadingBarButtonGroups = []
         inputAssistantItem.trailingBarButtonGroups = []
@@ -549,6 +576,8 @@ private final class EditorInsertKeyboardView: UIView {
             return
         }
 
+        onToolExecuted()
+
         bridge.callWeb(
             namespace: "editor",
             method: toolType.jsMethodName,
@@ -561,7 +590,6 @@ private final class EditorInsertKeyboardView: UIView {
 
             DispatchQueue.main.async {
                 self?.applyCommandResult(data, for: toolType)
-                self?.onToolExecuted()
             }
         }
     }

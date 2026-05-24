@@ -1,13 +1,16 @@
 .titleWrapper {
+  --editor-title-font-size: 2.25rem;
+  --editor-title-line-height: 1.2;
+
   position: relative;
 }
 
 .titleContent {
   position: relative;
   min-height: 2.75rem;
-  font-size: 2rem;
+  font-size: var(--editor-title-font-size);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: var(--editor-title-line-height);
   color: var(--tt-theme-text);
   outline: none;
 }
@@ -19,22 +22,19 @@
   right: 0;
   pointer-events: none;
   color: var(--placeholder-color);
-  font-size: 2rem;
+  font-size: var(--editor-title-font-size);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: var(--editor-title-line-height);
 }
 
 @media screen and (max-width: 480px) {
   .titleWrapper {
+    --editor-title-font-size: 2rem;
+
     margin-bottom: 5px;
   }
 
   .titleContent {
     min-height: 2.5rem;
-    font-size: 1.75rem;
-  }
-
-  .placeholder {
-    font-size: 1.75rem;
   }
 }
