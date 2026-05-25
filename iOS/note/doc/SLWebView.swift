@@ -415,8 +415,7 @@ private final class EditorInsertKeyboardView: UIView {
             Block(toolType: .order, title: "有序列表", iconTitle: nil, systemImage: "list.number", iconColor: .tertiaryLabel),
             Block(toolType: .unOrder, title: "无序列表", iconTitle: nil, systemImage: "list.bullet", iconColor: .tertiaryLabel),
             Block(toolType: .check, title: "任务列表", iconTitle: nil, systemImage: "checklist", iconColor: .tertiaryLabel),
-            Block(toolType: .reference, title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel),
-            Block(toolType: .strikethrough, title: "删除线", iconTitle: nil, systemImage: "strikethrough", iconColor: .tertiaryLabel)
+            Block(toolType: .reference, title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel)
         ]),
         Section(title: "高级部分", blocks: [
             Block(toolType: nil, title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
@@ -514,17 +513,18 @@ private final class EditorInsertKeyboardView: UIView {
     private func makeGrid(for blocks: [Block]) -> UIStackView {
         let grid = UIStackView()
         grid.axis = .vertical
-        grid.spacing = 12
+        grid.spacing = 14
 
-        for pairStart in stride(from: 0, to: blocks.count, by: 2) {
+        let columnCount = 5
+        for rowStart in stride(from: 0, to: blocks.count, by: columnCount) {
             let row = UIStackView()
             row.axis = .horizontal
-            row.spacing = 12
+            row.spacing = 8
             row.distribution = .fillEqually
             grid.addArrangedSubview(row)
 
-            for offset in 0..<2 {
-                let index = pairStart + offset
+            for offset in 0..<columnCount {
+                let index = rowStart + offset
                 row.addArrangedSubview(index < blocks.count ? makeButton(for: blocks[index]) : UIView())
             }
         }
@@ -534,20 +534,18 @@ private final class EditorInsertKeyboardView: UIView {
 
     private func makeButton(for block: Block) -> UIButton {
         var configuration = UIButton.Configuration.plain()
-        configuration.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 12)
-        configuration.imagePadding = 12
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 6
+        configuration.titleAlignment = .center
 
         let button = UIButton(configuration: configuration)
-        button.heightAnchor.constraint(equalToConstant: 58).isActive = true
-        button.backgroundColor = .systemBackground
-        button.layer.cornerRadius = 8
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.separator.withAlphaComponent(0.18).cgColor
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.05
-        button.layer.shadowRadius = 6
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.contentHorizontalAlignment = .leading
+        button.heightAnchor.constraint(equalToConstant: 82).isActive = true
+        button.backgroundColor = .clear
+        button.contentHorizontalAlignment = .center
+        button.titleLabel?.numberOfLines = 1
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.78
 
         if let toolType = block.toolType, !toolType.jsMethodName.isEmpty {
             button.addAction(UIAction { [weak self] _ in
@@ -621,16 +619,12 @@ private final class EditorInsertKeyboardView: UIView {
     }
 
     private func applyStyle(to button: UIButton, for block: Block, isActive: Bool) {
-        button.isSelected = isActive
-        button.backgroundColor = isActive ? UIColor.systemBlue.withAlphaComponent(0.10) : .systemBackground
-        button.layer.borderColor = (isActive ? UIColor.systemBlue.withAlphaComponent(0.35) : UIColor.separator.withAlphaComponent(0.18)).cgColor
-        button.tintColor = isActive ? .systemBlue : block.iconColor
+        button.isSelected = false
+        button.tintColor = isActive ? .systemBlue : iconForegroundColor(for: block)
+        button.configuration?.baseForegroundColor = isActive ? .systemBlue : .secondaryLabel
+        button.configuration?.background.backgroundColor = .clear
 
-        if let systemImage = block.systemImage {
-            button.setImage(UIImage(systemName: systemImage)?.withRenderingMode(.alwaysTemplate), for: .normal)
-        } else {
-            button.setImage(nil, for: .normal)
-        }
+        button.setImage(makeBlockIconImage(for: block, isActive: isActive), for: .normal)
 
         if isActive {
             button.accessibilityTraits.insert(.selected)
@@ -638,24 +632,89 @@ private final class EditorInsertKeyboardView: UIView {
             button.accessibilityTraits.remove(.selected)
         }
 
-        let attributedTitle = NSMutableAttributedString()
-        if let iconTitle = block.iconTitle {
-            attributedTitle.append(NSAttributedString(
-                string: "\(iconTitle)   ",
-                attributes: [
-                    .font: UIFont.systemFont(ofSize: 24, weight: .semibold),
-                    .foregroundColor: isActive ? UIColor.systemBlue : block.iconColor
-                ]
-            ))
-        }
-        attributedTitle.append(NSAttributedString(
+        button.setAttributedTitle(NSAttributedString(
             string: block.title,
             attributes: [
-                .font: UIFont.systemFont(ofSize: 18, weight: .semibold),
-                .foregroundColor: isActive ? UIColor.systemBlue : UIColor.label
+                .font: UIFont.systemFont(ofSize: 12, weight: .medium),
+                .foregroundColor: isActive ? UIColor.systemBlue : UIColor.secondaryLabel
             ]
-        ))
-        button.setAttributedTitle(attributedTitle, for: .normal)
+        ), for: .normal)
+        button.titleLabel?.textAlignment = .center
+    }
+
+    private func makeBlockIconImage(for block: Block, isActive: Bool) -> UIImage? {
+        let size = CGSize(width: 52, height: 52)
+        let foregroundColor = isActive ? UIColor.systemBlue : iconForegroundColor(for: block)
+        let backgroundColor = isActive ? UIColor.systemBlue.withAlphaComponent(0.12) : iconBackgroundColor(for: block)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let rect = CGRect(origin: .zero, size: size)
+            let path = UIBezierPath(roundedRect: rect, cornerRadius: 10)
+            backgroundColor.setFill()
+            path.fill()
+
+            if isActive {
+                UIColor.systemBlue.withAlphaComponent(0.18).setStroke()
+                path.lineWidth = 1
+                path.stroke()
+            }
+
+            if let systemImage = block.systemImage {
+                let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
+                guard let image = UIImage(systemName: systemImage, withConfiguration: symbolConfig) else {
+                    return
+                }
+
+                let iconSize = image.size
+                let drawRect = CGRect(
+                    x: (size.width - iconSize.width) / 2,
+                    y: (size.height - iconSize.height) / 2,
+                    width: iconSize.width,
+                    height: iconSize.height
+                )
+                foregroundColor.setFill()
+                image.withTintColor(foregroundColor, renderingMode: .alwaysTemplate).draw(in: drawRect)
+                context.cgContext.setFillColor(foregroundColor.cgColor)
+            } else if let iconTitle = block.iconTitle {
+                drawIconTitle(iconTitle, in: rect, color: foregroundColor)
+            }
+        }.withRenderingMode(.alwaysOriginal)
+    }
+
+    private func drawIconTitle(_ text: String, in rect: CGRect, color: UIColor) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: text.count > 1 ? 23 : 27, weight: .regular),
+            .foregroundColor: color,
+            .paragraphStyle: paragraphStyle
+        ]
+        let textSize = text.size(withAttributes: attributes)
+        let textRect = CGRect(
+            x: 0,
+            y: (rect.height - textSize.height) / 2,
+            width: rect.width,
+            height: textSize.height
+        )
+        text.draw(in: textRect, withAttributes: attributes)
+    }
+
+    private func iconForegroundColor(for block: Block) -> UIColor {
+        switch block.toolType {
+        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough, .code:
+            return .label
+        default:
+            return block.iconColor
+        }
+    }
+
+    private func iconBackgroundColor(for block: Block) -> UIColor {
+        switch block.toolType {
+        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough, .code:
+            return UIColor.secondarySystemBackground.withAlphaComponent(0.78)
+        default:
+            return block.iconColor.withAlphaComponent(0.12)
+        }
     }
 }
 

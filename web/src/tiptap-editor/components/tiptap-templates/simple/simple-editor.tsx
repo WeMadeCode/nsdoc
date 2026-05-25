@@ -19,7 +19,7 @@ import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-up
 import { setupBridge } from '@/bridge'
 import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
-// import TextView from './text-view'
+import TextView from './text-view'
 
 export function SimpleEditor() {
   const editor = useEditor({

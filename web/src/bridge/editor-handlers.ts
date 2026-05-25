@@ -195,10 +195,12 @@ export const setupEditorBridge = (editor: Editor | null) => {
       return { active: editor.isActive('italic') }
     }),
     nsBridge.register<never, { active: boolean }>('editor', 'toggleUnderline', () => {
+      console.log('toggleUnderline')
       editor.chain().focus().toggleUnderline().run()
       return { active: editor.isActive('underline') }
     }),
     nsBridge.register<never, { active: boolean }>('editor', 'toggleStrike', () => {
+      console.log('toggleStrike')
       editor.chain().focus().toggleStrike().run()
       return { active: editor.isActive('strike') }
     }),
@@ -257,9 +259,12 @@ export const setupEditorBridge = (editor: Editor | null) => {
         .run()
       return { align: String(align) }
     }),
-    nsBridge.register<never, { inserted: boolean }>('editor', 'setHorizontalRule', () => ({
-      inserted: editor.chain().focus().setHorizontalRule().run(),
-    })),
+    nsBridge.register<never, { inserted: boolean }>('editor', 'setHorizontalRule', () => {
+      console.log('setHorizontalRule')
+      const value = editor.chain().focus().setHorizontalRule().run()
+
+      return { inserted: value }
+    }),
     nsBridge.register<{ rows?: number; cols?: number; withHeaderRow?: boolean }, { inserted: boolean }>(
       'editor',
       'insertTable',

@@ -142,6 +142,9 @@
 
   // Task lists
   ul[data-type="taskList"] {
+    --task-list-line-height: 1.6;
+    --task-list-checkbox-size: 1em;
+
     padding-left: 1.25em;
 
     li {
@@ -166,11 +169,11 @@
 
       label {
         position: relative;
-        width: 1em;
-        flex: 0 0 1em;
-        padding-top: 0.375rem;
+        width: var(--task-list-checkbox-size);
+        flex: 0 0 var(--task-list-checkbox-size);
+        padding-top: calc((var(--task-list-line-height) * 1em - var(--task-list-checkbox-size)) / 2);
         margin-left: -1.25em;
-        margin-right: 0.25em;
+        margin-right: 0.45em;
 
         input[type="checkbox"] {
           position: absolute;
@@ -181,8 +184,8 @@
 
         span {
           display: block;
-          width: 1em;
-          height: 1em;
+          width: var(--task-list-checkbox-size);
+          height: var(--task-list-checkbox-size);
           border: 1px solid var(--tt-checklist-border-color);
           border-radius: var(--tt-radius-xs, 0.25rem);
           position: relative;
@@ -228,6 +231,9 @@
 
   @media screen and (max-width: 480px) {
     ul[data-type="taskList"] {
+      --task-list-line-height: 1.45;
+      --task-list-checkbox-size: 0.95em;
+
       margin-top: 0.75em;
       margin-bottom: 0.75em;
       padding-left: 1.15em;
@@ -241,20 +247,12 @@
       }
 
       li p {
-        line-height: 1.45;
+        line-height: var(--task-list-line-height);
       }
 
       label {
-        width: 0.95em;
-        flex-basis: 0.95em;
-        padding-top: 0.25em;
         margin-left: -1.15em;
-        margin-right: 0.2em;
-
-        span {
-          width: 0.95em;
-          height: 0.95em;
-        }
+        margin-right: 0.4em;
       }
     }
   }
