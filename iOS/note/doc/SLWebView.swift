@@ -419,7 +419,7 @@ private final class EditorInsertKeyboardView: UIView {
         ]),
         Section(title: "高级部分", blocks: [
             Block(toolType: nil, title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
-            Block(toolType: nil, title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
+            Block(toolType: .table, title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
             Block(toolType: .code, title: "代码块", iconTitle: nil, systemImage: "chevron.left.forwardslash.chevron.right", iconColor: .systemIndigo)
         ])
     ]
@@ -701,7 +701,7 @@ private final class EditorInsertKeyboardView: UIView {
 
     private func iconForegroundColor(for block: Block) -> UIColor {
         switch block.toolType {
-        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough, .code:
+        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough:
             return .label
         default:
             return block.iconColor
@@ -710,7 +710,7 @@ private final class EditorInsertKeyboardView: UIView {
 
     private func iconBackgroundColor(for block: Block) -> UIColor {
         switch block.toolType {
-        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough, .code:
+        case .text, .h1, .h2, .h3, .h4, .h5, .order, .unOrder, .check, .reference, .strikethrough:
             return UIColor.secondarySystemBackground.withAlphaComponent(0.78)
         default:
             return block.iconColor.withAlphaComponent(0.12)

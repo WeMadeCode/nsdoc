@@ -75,6 +75,38 @@ body,
   padding: 3rem 3rem 30vh;
 }
 
+.simple-editor-content .tiptap.ProseMirror.simple-editor [data-content-type="table"] {
+  margin: 1rem 0;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor [data-content-type="table"] .tableWrapper {
+  width: calc(100% + 1rem);
+  margin: 0 0 0 -1rem;
+  padding-block-start: 1.5rem;
+  padding-inline-start: 1rem;
+  padding-inline-end: 0;
+  padding-block-end: 1.25rem;
+  overflow-x: auto;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor table {
+  width: 100% !important;
+  min-width: 100%;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor th,
+.simple-editor-content .tiptap.ProseMirror.simple-editor td {
+  height: 2.75rem;
+  min-width: 7.5rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor th p,
+.simple-editor-content .tiptap.ProseMirror.simple-editor td p {
+  min-height: 1.4em;
+  margin: 0;
+}
+
 @media screen and (max-width: 480px) {
   .simple-editor-content .tiptap.ProseMirror.simple-editor {
     padding: 1rem 1.5rem 30vh;

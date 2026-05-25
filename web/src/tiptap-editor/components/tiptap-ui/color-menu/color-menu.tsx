@@ -95,11 +95,11 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ editor: providedEditor, tr
   const { editor } = useTiptapEditor(providedEditor)
   const { recentColors, isInitialized } = useRecentColors()
 
+  const canToggleNodeBackgroundColor =
+    typeof editor?.can().toggleNodeBackgroundColor === 'function' && editor.can().toggleNodeBackgroundColor('yellow')
+
   const hasColorActions: boolean =
-    !!editor?.can().setMark('textStyle') ||
-    !!editor?.can().setMark('highlight') ||
-    !!editor?.can().toggleNodeBackgroundColor('yellow') ||
-    false
+    !!editor?.can().setMark('textStyle') || !!editor?.can().setMark('highlight') || canToggleNodeBackgroundColor || false
 
   if (!editor || !hasColorActions) {
     return null

@@ -38,6 +38,7 @@ enum ToolType {
     case colors
     case camera
     case picture
+    case table
     case mention
     
     var image: Image {
@@ -84,6 +85,8 @@ enum ToolType {
             Image(.otherCamera)
         case .picture:
             Image(.otherPicture)
+        case .table:
+            Image(systemName: "tablecells")
         case .line:
             Image(.otherLine)
         case .reference:
@@ -137,6 +140,8 @@ enum ToolType {
             ""
         case .picture:
             ""
+        case .table:
+            "insertTable"
         case .insert:
             ""
         case .style:
@@ -170,6 +175,8 @@ enum ToolType {
             ["align": "center"]
         case .left:
             ["align": "left"]
+        case .table:
+            ["rows": 3, "cols": 3, "withHeaderRow": true]
         default:
             nil
         }

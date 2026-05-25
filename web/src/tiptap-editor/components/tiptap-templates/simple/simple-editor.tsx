@@ -1,5 +1,7 @@
 'use client'
 
+import '@/tiptap-editor/components/tiptap-node/table-node/styles/prosemirror-table.scss'
+import '@/tiptap-editor/components/tiptap-node/table-node/styles/table-node.scss'
 import '@/tiptap-editor/components/tiptap-node/blockquote-node/blockquote-node.scss'
 import '@/tiptap-editor/components/tiptap-node/code-block-node/code-block-node.scss'
 import '@/tiptap-editor/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss'
@@ -17,8 +19,14 @@ import { useEffect } from 'react'
 import { setupBridge } from '@/bridge'
 // --- Tiptap Node ---
 import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
+import { TableCellHandleMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-cell-handle-menu'
+import { TableExtendRowColumnButtons } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button'
+import { TableHandle } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/table-handle'
+import { TableSelectionOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay'
 import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
+
+// import TextView from './text-view'
 
 export function SimpleEditor() {
   const editor = useEditor({
@@ -51,6 +59,12 @@ export function SimpleEditor() {
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
         <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
+        <TableExtendRowColumnButtons />
+        <TableHandle />
+        <TableSelectionOverlay
+          showResizeHandles={true}
+          cellMenu={props => <TableCellHandleMenu editor={props.editor} onMouseDown={event => props.onResizeStart?.('br')(event)} />}
+        />
       </EditorContext.Provider>
       {/* <TextView editor={editor}></TextView> */}
     </div>

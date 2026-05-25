@@ -291,6 +291,7 @@ private struct InsertBlock: Identifiable {
         InsertBlock(toolType: .order, title: "有序列表", iconTitle: nil, systemImage: "list.number"),
         InsertBlock(toolType: .check, title: "待办清单", iconTitle: nil, systemImage: "checklist"),
         InsertBlock(toolType: .foldList, title: "折叠列表", iconTitle: nil, systemImage: "list.triangle"),
+        InsertBlock(toolType: .table, title: "表格", iconTitle: nil, systemImage: "tablecells"),
         InsertBlock(toolType: .page, title: "页面", iconTitle: nil, systemImage: "doc.text"),
     ]
 }

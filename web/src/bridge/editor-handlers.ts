@@ -267,21 +267,19 @@ export const setupEditorBridge = (editor: Editor | null) => {
 
       return { inserted: value }
     }),
-    nsBridge.register<{ rows?: number; cols?: number; withHeaderRow?: boolean }, { inserted: boolean }>(
-      'editor',
-      'insertTable',
-      params => ({
-        inserted: editor
-          .chain()
-          .focus()
-          .insertTable({
-            rows: params?.rows ?? 3,
-            cols: params?.cols ?? 3,
-            withHeaderRow: params?.withHeaderRow ?? true,
-          })
-          .run(),
-      })
-    ),
+    nsBridge.register<{ rows?: number; cols?: number; withHeaderRow?: boolean }, { inserted: boolean }>('editor', 'insertTable', params => {
+      console.log('insertTable')
+      const inserted = editor
+        .chain()
+        .focus()
+        .insertTable({
+          rows: params?.rows ?? 3,
+          cols: params?.cols ?? 3,
+          withHeaderRow: params?.withHeaderRow ?? true,
+        })
+        .run()
+      return { inserted: inserted }
+    }),
   ]
 
   const handleUpdate = () => {
