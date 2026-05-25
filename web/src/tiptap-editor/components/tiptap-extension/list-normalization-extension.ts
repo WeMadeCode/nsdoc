@@ -1,7 +1,7 @@
 import type { Editor } from '@tiptap/core'
 import { Extension } from '@tiptap/core'
-import { canJoin } from '@tiptap/pm/transform'
 import { TextSelection } from '@tiptap/pm/state'
+import { canJoin } from '@tiptap/pm/transform'
 
 /**
  * ListNormalization Extension

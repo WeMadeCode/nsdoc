@@ -1,16 +1,33 @@
 'use client'
 
-import { Fragment, useCallback, useMemo } from 'react'
 import { type Editor } from '@tiptap/react'
 import type { TextOptions } from '@tiptap-pro/extension-ai'
 import { type Language } from '@tiptap-pro/extension-ai'
+import { Fragment, useCallback, useMemo } from 'react'
 
-// -- Hooks --
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
+import { CheckAiIcon } from '@/tiptap-editor/components/tiptap-icons/check-ai-icon'
+// -- Icons --
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+import { CompleteSentenceIcon } from '@/tiptap-editor/components/tiptap-icons/complete-sentence-icon'
+import { LanguagesIcon } from '@/tiptap-editor/components/tiptap-icons/languages-icon'
+import { MicAiIcon } from '@/tiptap-editor/components/tiptap-icons/mic-ai-icon'
+import { Simplify2Icon } from '@/tiptap-editor/components/tiptap-icons/simplify-2-icon'
+import { SmileAiIcon } from '@/tiptap-editor/components/tiptap-icons/smile-ai-icon'
+import { SummarizeTextIcon } from '@/tiptap-editor/components/tiptap-icons/summarize-text-icon'
+import { TextExtendIcon } from '@/tiptap-editor/components/tiptap-icons/text-extend-icon'
+import { TextReduceIcon } from '@/tiptap-editor/components/tiptap-icons/text-reduce-icon'
 // -- Tiptap UI --
 import { getContextAndInsertAt, useAiMenuState } from '@/tiptap-editor/components/tiptap-ui/ai-menu'
-
+import { SUPPORTED_LANGUAGES, SUPPORTED_TONES } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items-constants'
+import type {
+  EditorMenuAction,
+  ExecutableMenuAction,
+  MenuActionIdentifier,
+  MenuActionRendererProps,
+  NestedMenuAction,
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items-types'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
 // -- UI Primitives --
 import {
   type Action,
@@ -25,30 +42,9 @@ import {
   MenuItem,
   useComboboxValueState,
 } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-
-import { SUPPORTED_LANGUAGES, SUPPORTED_TONES } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items-constants'
-import type {
-  EditorMenuAction,
-  ExecutableMenuAction,
-  MenuActionIdentifier,
-  MenuActionRendererProps,
-  NestedMenuAction,
-} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items-types'
-
-// -- Icons --
-import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
-import { SummarizeTextIcon } from '@/tiptap-editor/components/tiptap-icons/summarize-text-icon'
-import { Simplify2Icon } from '@/tiptap-editor/components/tiptap-icons/simplify-2-icon'
-import { LanguagesIcon } from '@/tiptap-editor/components/tiptap-icons/languages-icon'
-import { MicAiIcon } from '@/tiptap-editor/components/tiptap-icons/mic-ai-icon'
-import { TextExtendIcon } from '@/tiptap-editor/components/tiptap-icons/text-extend-icon'
-import { TextReduceIcon } from '@/tiptap-editor/components/tiptap-icons/text-reduce-icon'
-import { CompleteSentenceIcon } from '@/tiptap-editor/components/tiptap-icons/complete-sentence-icon'
-import { SmileAiIcon } from '@/tiptap-editor/components/tiptap-icons/smile-ai-icon'
-import { CheckAiIcon } from '@/tiptap-editor/components/tiptap-icons/check-ai-icon'
+// -- Hooks --
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuAction> {
   return {

@@ -1,16 +1,15 @@
 'use client'
 
+import { NodeSelection } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import { NodeSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
 import { CopyIcon } from '@/tiptap-editor/components/tiptap-icons/copy-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export const DUPLICATE_SHORTCUT_KEY = 'mod+d'
 

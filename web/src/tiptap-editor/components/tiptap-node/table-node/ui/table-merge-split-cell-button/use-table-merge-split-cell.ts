@@ -1,18 +1,16 @@
 'use client'
 
-import { useCallback } from 'react'
-import type { Editor } from '@tiptap/react'
 import { mergeCells, splitCell } from '@tiptap/pm/tables'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import type { Editor } from '@tiptap/react'
+import { useCallback } from 'react'
 
 // --- Icons ---
 import { TableCellMergeIcon } from '@/tiptap-editor/components/tiptap-icons/table-cell-merge-icon'
 import { TableCellSplitIcon } from '@/tiptap-editor/components/tiptap-icons/table-cell-split-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type MergeSplitAction = 'merge' | 'split'
 

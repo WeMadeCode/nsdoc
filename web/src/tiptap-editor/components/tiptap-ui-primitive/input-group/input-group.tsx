@@ -1,15 +1,14 @@
 'use client'
 
-import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
-
-import { Input } from '@/tiptap-editor/components/tiptap-ui-primitive/input'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Textarea } from '@/tiptap-editor/components/tiptap-ui-primitive/textarea'
-
 import './input-group.scss'
+
+import { cva, type VariantProps } from 'class-variance-authority'
+import * as React from 'react'
+
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Input } from '@/tiptap-editor/components/tiptap-ui-primitive/input'
+import { Textarea } from '@/tiptap-editor/components/tiptap-ui-primitive/textarea'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return <div data-slot="tiptap-input-group" role="group" className={cn('tiptap-input-group', className)} {...props} />
@@ -94,4 +93,4 @@ function InputGroupTextarea({ className, ...props }: React.ComponentProps<'texta
   )
 }
 
-export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupInput, InputGroupTextarea }
+export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea }

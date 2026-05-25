@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
-import type { Editor } from '@tiptap/react'
-import { columnResizingPluginKey } from '@tiptap/pm/tables'
 import type { Transaction } from '@tiptap/pm/state'
+import { columnResizingPluginKey } from '@tiptap/pm/tables'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useEffect, useRef } from 'react'
 
 export function useResizeOverlay(editor: Editor | null, updateSelectionRect: () => void) {
   const rafId = useRef<number | null>(null)

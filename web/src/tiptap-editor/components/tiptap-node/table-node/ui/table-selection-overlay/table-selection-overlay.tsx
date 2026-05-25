@@ -1,19 +1,18 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
-import type { Editor } from '@tiptap/react'
-import { CellSelection, cellAround } from '@tiptap/pm/tables'
-import type { EditorState, Selection } from '@tiptap/pm/state'
-import type { Node } from '@tiptap/pm/model'
-import type { EditorView } from '@tiptap/pm/view'
 import { FloatingPortal, useFloating } from '@floating-ui/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useResizeOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay/use-resize-overlay'
+import type { Node } from '@tiptap/pm/model'
+import type { EditorState, Selection } from '@tiptap/pm/state'
+import { cellAround, CellSelection } from '@tiptap/pm/tables'
+import type { EditorView } from '@tiptap/pm/view'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // --- Lib ---
 import { domCellAround, getTable, rectEq } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { useResizeOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay/use-resize-overlay'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableSelectionOverlayProps {
   editor?: Editor | null

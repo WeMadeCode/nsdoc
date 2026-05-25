@@ -2,16 +2,14 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
 // --- Tiptap UI ---
 import type { UseTableMergeSplitCellConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button'
 import { useTableMergeSplitCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableMergeSplitCellButtonProps extends Omit<ButtonProps, 'type'>, UseTableMergeSplitCellConfig {
   /**

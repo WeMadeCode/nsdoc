@@ -1,5 +1,6 @@
-import { NodeViewContent, NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
+import { NodeViewContent, type NodeViewProps, NodeViewWrapper } from '@tiptap/react'
 import { memo } from 'react'
+
 import styles from './index.module.scss'
 
 const TitleWrapper = ({ node }: NodeViewProps) => {

@@ -1,12 +1,12 @@
 'use client'
 
-import { useCallback, useMemo, useEffect, useRef, useState } from 'react'
-
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
-import { useToc } from '@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context'
-import type { TableOfContentData, TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
-
 import './toc-sidebar.scss'
+
+import type { TableOfContentData, TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import { useToc } from '@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface TocSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   /**

@@ -1,24 +1,11 @@
 'use client'
 
-import { forwardRef, useMemo, useRef, useState } from 'react'
 import { type Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { forwardRef, useMemo, useRef, useState } from 'react'
 
 // --- Icons ---
 import { BanIcon } from '@/tiptap-editor/components/tiptap-icons/ban-icon'
 import { HighlighterIcon } from '@/tiptap-editor/components/tiptap-icons/highlighter-icon'
-
-// --- UI Primitives ---
-import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Popover, PopoverTrigger, PopoverContent } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
-
 // --- Tiptap UI ---
 import type { HighlightColor, UseColorHighlightConfig } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
 import {
@@ -26,7 +13,17 @@ import {
   pickHighlightColorsByValue,
   useColorHighlight,
 } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
+// --- UI Primitives ---
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
+import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
+import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface ColorHighlightPopoverContentProps {
   /**

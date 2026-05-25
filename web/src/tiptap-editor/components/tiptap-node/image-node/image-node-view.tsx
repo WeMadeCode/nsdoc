@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Editor, NodeViewProps } from '@tiptap/react'
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react'
+import './image-node-view.scss'
+
 import { NodeSelection } from '@tiptap/pm/state'
+import type { Editor, NodeViewProps } from '@tiptap/react'
+import { NodeViewContent, NodeViewWrapper } from '@tiptap/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
-
-import './image-node-view.scss'
 
 export interface ResizeParams {
   handleUsed: 'left' | 'right'

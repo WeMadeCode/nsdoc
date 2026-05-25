@@ -1,10 +1,11 @@
 'use client'
 
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
-import { CheckIcon } from '@/tiptap-editor/components/tiptap-icons/check-icon'
-
 import '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu/dropdown-menu.scss'
+
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
+
+import { CheckIcon } from '@/tiptap-editor/components/tiptap-icons/check-icon'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
   return <DropdownMenuPrimitive.Root data-slot="tiptap-dropdown-menu" {...props} />
@@ -191,18 +192,18 @@ function DropdownMenuSubContent({ className, ...props }: React.ComponentProps<ty
 
 export {
   DropdownMenu,
-  DropdownMenuPortal,
-  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuItem,
-  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
-  DropdownMenuSubTrigger,
   DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 }

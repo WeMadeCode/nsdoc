@@ -1,18 +1,16 @@
 'use client'
 
-import { forwardRef, useMemo, useCallback } from 'react'
+import './table-grid-selector.scss'
 
-// --- UI Primitives ---
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-
-// --- Lib ---
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
+import { forwardRef, useCallback, useMemo } from 'react'
 
 // --- Icons ---
 import { TableColumnIcon } from '@/tiptap-editor/components/tiptap-icons/table-column-icon'
 import { TableRowIcon } from '@/tiptap-editor/components/tiptap-icons/table-row-icon'
-
-import './table-grid-selector.scss'
+// --- UI Primitives ---
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+// --- Lib ---
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Types ---
 export interface CellCoordinates {

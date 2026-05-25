@@ -1,7 +1,7 @@
 import throttle from 'lodash.throttle'
+import { useMemo } from 'react'
 
 import { useUnmount } from '@/tiptap-editor/hooks/use-unmount'
-import { useMemo } from 'react'
 
 interface ThrottleSettings {
   leading?: boolean | undefined

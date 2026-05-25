@@ -1,5 +1,4 @@
 import { Divider } from '@douyinfe/semi-ui'
-
 import type { Editor } from '@tiptap/core'
 
 interface Props {

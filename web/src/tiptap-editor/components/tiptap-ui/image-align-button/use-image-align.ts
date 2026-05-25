@@ -1,21 +1,19 @@
 'use client'
 
+import { NodeSelection } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import { NodeSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
 import { AlignCenterVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/align-center-vertical-icon'
 import { AlignEndVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/align-end-vertical-icon'
 import { AlignStartVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/align-start-vertical-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type ImageAlign = 'left' | 'center' | 'right'
 

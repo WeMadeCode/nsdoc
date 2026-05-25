@@ -1,29 +1,26 @@
 'use client'
 
+import '@/tiptap-editor/components/tiptap-ui/slash-dropdown-menu/slash-dropdown-menu.scss'
+
 import { useEffect, useMemo, useRef } from 'react'
-
-// --- Lib ---
-import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
-
-// --- Tiptap UI ---
-import type {
-  SuggestionMenuProps,
-  SuggestionItem,
-  SuggestionMenuRenderProps,
-} from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
-import { filterSuggestionItems } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
-import { SuggestionMenu } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
 
 // --- Hooks ---
 import type { SlashMenuConfig } from '@/tiptap-editor/components/tiptap-ui/slash-dropdown-menu/use-slash-dropdown-menu'
 import { useSlashDropdownMenu } from '@/tiptap-editor/components/tiptap-ui/slash-dropdown-menu/use-slash-dropdown-menu'
-
 // --- UI Primitives ---
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 import { Card, CardBody, CardGroupLabel, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
-
-import '@/tiptap-editor/components/tiptap-ui/slash-dropdown-menu/slash-dropdown-menu.scss'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+// --- Tiptap UI ---
+import type {
+  SuggestionItem,
+  SuggestionMenuProps,
+  SuggestionMenuRenderProps,
+} from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { filterSuggestionItems } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { SuggestionMenu } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+// --- Lib ---
+import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 type SlashDropdownMenuProps = Omit<SuggestionMenuProps, 'items' | 'children'> & {
   config?: SlashMenuConfig

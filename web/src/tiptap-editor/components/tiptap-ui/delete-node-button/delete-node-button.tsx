@@ -2,20 +2,17 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Lib ---
-import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
 // --- Tiptap UI ---
 import type { UseDeleteNodeConfig } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
 import { DELETE_NODE_SHORTCUT_KEY, useDeleteNode } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
-
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface DeleteNodeButtonProps extends Omit<ButtonProps, 'type'>, UseDeleteNodeConfig {
   /**

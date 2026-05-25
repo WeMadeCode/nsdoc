@@ -1,16 +1,17 @@
 'use client'
 
-import { useCallback } from 'react'
+import '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-actions/ai-menu-actions.scss'
+
 import type { Editor } from '@tiptap/react'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import type { TextOptions } from '@tiptap-pro/extension-ai'
+import { useCallback } from 'react'
+
+import { CheckIcon } from '@/tiptap-editor/components/tiptap-icons/check-icon'
 import { RefreshAiIcon } from '@/tiptap-editor/components/tiptap-icons/refresh-ai-icon'
 import { XIcon } from '@/tiptap-editor/components/tiptap-icons/x-icon'
-import { CheckIcon } from '@/tiptap-editor/components/tiptap-icons/check-icon'
-import type { TextOptions } from '@tiptap-pro/extension-ai'
-import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
-
-import '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-actions/ai-menu-actions.scss'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
 
 export interface AiMenuActionsProps {
   editor: Editor | null

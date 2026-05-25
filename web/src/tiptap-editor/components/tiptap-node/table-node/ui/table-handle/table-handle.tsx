@@ -1,21 +1,19 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
-import type { Editor } from '@tiptap/react'
-import type { ComponentType } from 'react'
 import { FloatingPortal } from '@floating-ui/react'
 import type { Node } from '@tiptap/pm/model'
+import type { Editor } from '@tiptap/react'
+import type { ComponentType } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { colDragStart, rowDragStart } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useTableHandlePositioning } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/use-table-handle-positioning'
 import { useTableHandleState } from '@/tiptap-editor/components/tiptap-node/table-node/hooks/use-table-handle-state'
 import { type Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
+import { useTableHandlePositioning } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/use-table-handle-positioning'
 // --- Components ---
 import { TableHandleMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle-menu'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableHandleButtonProps {
   editor: Editor

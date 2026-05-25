@@ -2,14 +2,13 @@
 
 import { forwardRef, useCallback } from 'react'
 
+import type { UseTableFitToWidthConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width'
 // --- Hooks ---
 import { useTableFitToWidth } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width'
-import type { UseTableFitToWidthConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width'
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
 // --- Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableFitToWidthButtonProps extends Omit<ButtonProps, 'type'>, UseTableFitToWidthConfig {
   text?: string

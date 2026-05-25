@@ -1,21 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { TextColorSmallIcon } from '@/tiptap-editor/components/tiptap-icons/text-color-small-icon'
-
-// --- Lib ---
-import { isMarkInSchema } from '@/tiptap-editor/lib/tiptap-utils'
-import { getActiveMarkAttrs } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-
+import { canColorHighlight } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
 // --- Tiptap UI ---
 import { canColorText } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
-import { canColorHighlight } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { getActiveMarkAttrs } from '@/tiptap-editor/lib/tiptap-advanced-utils'
+// --- Lib ---
+import { isMarkInSchema } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type ColorType = 'text' | 'highlight'
 

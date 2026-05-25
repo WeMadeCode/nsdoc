@@ -1,34 +1,32 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { type Editor } from '@tiptap/react'
+import './table-extend-row-column-button.scss'
+
+import { FloatingPortal } from '@floating-ui/react'
 import type { Node } from '@tiptap/pm/model'
 import { TableMap } from '@tiptap/pm/tables'
-import { FloatingPortal } from '@floating-ui/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useTableHandleState } from '@/tiptap-editor/components/tiptap-node/table-node/hooks/use-table-handle-state'
-
-// --- Lib ---
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import {
-  EMPTY_CELL_HEIGHT,
-  EMPTY_CELL_WIDTH,
-  countEmptyRowsFromEnd,
-  countEmptyColumnsFromEnd,
-  marginRound,
-  selectLastCell,
-  runPreservingCursor,
-} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
+import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // --- Icons ---
 import { PlusSmallIcon } from '@/tiptap-editor/components/tiptap-icons/plus-small-icon'
-
+import { useTableHandleState } from '@/tiptap-editor/components/tiptap-node/table-node/hooks/use-table-handle-state'
+// --- Lib ---
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import {
+  countEmptyColumnsFromEnd,
+  countEmptyRowsFromEnd,
+  EMPTY_CELL_HEIGHT,
+  EMPTY_CELL_WIDTH,
+  marginRound,
+  runPreservingCursor,
+  selectLastCell,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 // --- Internal ---
 import { useTableExtendRowColumnButtonsPositioning } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button/use-table-extend-row-column'
-import './table-extend-row-column-button.scss'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 interface TableExtendRowColumnButtonProps {
   editor?: Editor | null

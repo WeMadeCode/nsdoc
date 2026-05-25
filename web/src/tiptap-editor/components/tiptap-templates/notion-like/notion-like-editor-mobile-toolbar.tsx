@@ -1,45 +1,40 @@
 'use client'
 
-import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { type Editor } from '@tiptap/react'
+import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 
-// --- Hooks ---
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-import { useWindowSize } from '@/tiptap-editor/hooks/use-window-size'
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
+import { ArrowLeftIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-left-icon'
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+import { HighlighterIcon } from '@/tiptap-editor/components/tiptap-icons/highlighter-icon'
+import { LinkIcon } from '@/tiptap-editor/components/tiptap-icons/link-icon'
+import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
+// --- Icons ---
+import { PaintBucketIcon } from '@/tiptap-editor/components/tiptap-icons/paint-bucket-icon'
+import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
+import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
+import { canColorHighlight, ColorHighlightButton, HIGHLIGHT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
 // --- Tiptap UI ---
 import {
   ColorHighlightPopover,
   ColorHighlightPopoverButton,
   ColorHighlightPopoverContent,
 } from '@/tiptap-editor/components/tiptap-ui/color-highlight-popover'
+import { ColorTextButton, TEXT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
+import { useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { CopyAnchorLinkButton } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
+import { CopyToClipboardButton } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
+import { DeleteNodeButton } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
+import { DuplicateButton } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
 import { ImageUploadButton } from '@/tiptap-editor/components/tiptap-ui/image-upload-button'
+import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
 import { canSetLink, LinkButton, LinkContent, LinkPopover } from '@/tiptap-editor/components/tiptap-ui/link-popover'
 import { MarkButton } from '@/tiptap-editor/components/tiptap-ui/mark-button'
-import { TextAlignButton } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
-import { SlashCommandTriggerButton } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
+import { MoveNodeButton } from '@/tiptap-editor/components/tiptap-ui/move-node-button'
 import { ResetAllFormattingButton } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
-import { DeleteNodeButton } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
-import { CopyAnchorLinkButton } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
+import { SlashCommandTriggerButton } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
+import { TextAlignButton } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
 import { TurnIntoDropdownContent } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
-import { useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
-import { ColorTextButton, TEXT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
-import { canColorHighlight, ColorHighlightButton, HIGHLIGHT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
-import { DuplicateButton } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
-import { CopyToClipboardButton } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
-import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
-
-// --- Utils ---
-import { getNodeDisplayName } from '@/tiptap-editor/lib/tiptap-collab-utils'
-
-// --- Icons ---
-import { PaintBucketIcon } from '@/tiptap-editor/components/tiptap-icons/paint-bucket-icon'
-import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
-
-// --- UI Primitives ---
-import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,16 +47,17 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
-import { ArrowLeftIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-left-icon'
-import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
-import { HighlighterIcon } from '@/tiptap-editor/components/tiptap-icons/highlighter-icon'
-import { LinkIcon } from '@/tiptap-editor/components/tiptap-icons/link-icon'
-import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+// --- UI Primitives ---
+import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/tiptap-editor/components/tiptap-ui-primitive/toolbar'
-import { MoveNodeButton } from '@/tiptap-editor/components/tiptap-ui/move-node-button'
 import { useCursorVisibility } from '@/tiptap-editor/hooks/use-cursor-visibility'
-import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
+// --- Hooks ---
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useWindowSize } from '@/tiptap-editor/hooks/use-window-size'
+// --- Utils ---
+import { getNodeDisplayName } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 // =============================================================================
 // Types & Constants

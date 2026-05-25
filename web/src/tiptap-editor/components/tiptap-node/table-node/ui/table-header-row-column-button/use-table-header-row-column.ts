@@ -1,15 +1,13 @@
 'use client'
 
-import { useCallback } from 'react'
-import type { Editor } from '@tiptap/react'
-import { CellSelection, toggleHeader } from '@tiptap/pm/tables'
 import type { Transaction } from '@tiptap/pm/state'
+import { CellSelection, toggleHeader } from '@tiptap/pm/tables'
+import type { Editor } from '@tiptap/react'
+import { useCallback } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
+import { TableHeaderColumnIcon } from '@/tiptap-editor/components/tiptap-icons/table-header-column-icon'
+// --- Icons ---
+import { TableHeaderRowIcon } from '@/tiptap-editor/components/tiptap-icons/table-header-row-icon'
 import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
   getIndexCoordinates,
@@ -17,10 +15,10 @@ import {
   getTableSelectionType,
   selectCellsByCoords,
 } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
-// --- Icons ---
-import { TableHeaderRowIcon } from '@/tiptap-editor/components/tiptap-icons/table-header-row-icon'
-import { TableHeaderColumnIcon } from '@/tiptap-editor/components/tiptap-icons/table-header-column-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseTableHeaderRowColumnConfig {
   /**

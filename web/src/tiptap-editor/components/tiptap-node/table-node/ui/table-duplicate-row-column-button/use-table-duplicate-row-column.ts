@@ -1,26 +1,24 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import type { Editor } from '@tiptap/react'
 import { addColumnAfter, addRowAfter, CellSelection } from '@tiptap/pm/tables'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import {
-  getTable,
-  getTableSelectionType,
-  getRowOrColumnCells,
-  updateSelectionAfterAction,
-  selectCellsByCoords,
-  getIndexCoordinates,
-} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
 // --- Icons ---
 import { CopyIcon } from '@/tiptap-editor/components/tiptap-icons/copy-icon'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import {
+  getIndexCoordinates,
+  getRowOrColumnCells,
+  getTable,
+  getTableSelectionType,
+  selectCellsByCoords,
+  updateSelectionAfterAction,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseTableDuplicateRowColumnConfig {
   /**

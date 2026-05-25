@@ -1,24 +1,22 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
 import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import { getTable, getRowOrColumnCells } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
+import { AlignBottomIcon } from '@/tiptap-editor/components/tiptap-icons/align-bottom-icon'
+import { AlignCenterIcon } from '@/tiptap-editor/components/tiptap-icons/align-center-icon'
+import { AlignJustifyIcon } from '@/tiptap-editor/components/tiptap-icons/align-justify-icon'
 // --- Icons ---
 import { AlignLeftIcon } from '@/tiptap-editor/components/tiptap-icons/align-left-icon'
-import { AlignCenterIcon } from '@/tiptap-editor/components/tiptap-icons/align-center-icon'
-import { AlignRightIcon } from '@/tiptap-editor/components/tiptap-icons/align-right-icon'
-import { AlignJustifyIcon } from '@/tiptap-editor/components/tiptap-icons/align-justify-icon'
-import { AlignBottomIcon } from '@/tiptap-editor/components/tiptap-icons/align-bottom-icon'
-import { AlignTopIcon } from '@/tiptap-editor/components/tiptap-icons/align-top-icon'
 import { AlignMiddleIcon } from '@/tiptap-editor/components/tiptap-icons/align-middle-icon'
+import { AlignRightIcon } from '@/tiptap-editor/components/tiptap-icons/align-right-icon'
+import { AlignTopIcon } from '@/tiptap-editor/components/tiptap-icons/align-top-icon'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { getRowOrColumnCells, getTable } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type TextAlignment = 'left' | 'center' | 'right' | 'justify'
 export type VerticalAlignment = 'top' | 'middle' | 'bottom'

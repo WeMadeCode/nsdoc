@@ -1,7 +1,7 @@
 'use client'
 
-import type * as React from 'react'
 import type * as Ariakit from '@ariakit/react'
+import type * as React from 'react'
 
 export interface Action {
   filterItems?: boolean

@@ -1,20 +1,18 @@
 'use client'
 
+import { TextSelection } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import { TextSelection } from '@tiptap/pm/state'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-
-// --- Utils ---
-import { getAnchorNodeAndPos } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-
+import { AlignBottomIcon } from '@/tiptap-editor/components/tiptap-icons/align-bottom-icon'
 // --- Icons ---
 import { AlignTopIcon } from '@/tiptap-editor/components/tiptap-icons/align-top-icon'
-import { AlignBottomIcon } from '@/tiptap-editor/components/tiptap-icons/align-bottom-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Utils ---
+import { getAnchorNodeAndPos } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 export const MOVE_UP_SHORTCUT_KEY = 'mod+shift+ArrowUp'
 export const MOVE_DOWN_SHORTCUT_KEY = 'mod+shift+ArrowDown'

@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import { type Editor } from '@tiptap/react'
-import { useHotkeys } from 'react-hotkeys-hook'
 import { NodeSelection, TextSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 // --- Icons ---
 import { TypeIcon } from '@/tiptap-editor/components/tiptap-icons/type-icon'
-
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- Lib ---
 import {
   findNodePosition,

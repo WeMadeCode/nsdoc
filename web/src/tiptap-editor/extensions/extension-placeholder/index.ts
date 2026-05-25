@@ -1,9 +1,10 @@
-import { Placeholder as PlaceholderTiptap } from '@tiptap/extension-placeholder'
-import TaskList from '@tiptap/extension-task-list'
-import { Title } from '../extension-title'
 import OrderedList from '@tiptap/extension-ordered-list'
+import { Placeholder as PlaceholderTiptap } from '@tiptap/extension-placeholder'
 import { Table } from '@tiptap/extension-table'
+import TaskList from '@tiptap/extension-task-list'
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
+
+import { Title } from '../extension-title'
 
 const suppressedPlaceholderNodes = new Set([TaskList.name, OrderedList.name, Table.name, Title.name])
 

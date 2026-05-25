@@ -1,7 +1,7 @@
 import { NodeSelection, type Selection } from '@tiptap/pm/state'
 import { CellSelection } from '@tiptap/pm/tables'
-import type { JSONContent, Editor } from '@tiptap/react'
-import { isTextSelection, isNodeSelection, posToDOMRect } from '@tiptap/react'
+import type { Editor, JSONContent } from '@tiptap/react'
+import { isNodeSelection, isTextSelection, posToDOMRect } from '@tiptap/react'
 
 // TipTap Collaboration
 export const TIPTAP_COLLAB_DOC_PREFIX = import.meta.env.VITE_TIPTAP_COLLAB_DOC_PREFIX || ''

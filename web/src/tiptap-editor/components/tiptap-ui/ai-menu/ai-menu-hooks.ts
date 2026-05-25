@@ -1,15 +1,16 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { type Editor } from '@tiptap/react'
 import type { Transaction } from '@tiptap/pm/state'
-import { getSelectedDOMElement } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-import {
-  findPrioritizedAIElement,
-  cleanupFallbackAnchors,
-  getSelectionRangeRect,
-  createVirtualAnchor,
-  createEditorWidthAnchorRect,
-} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
+import { type Editor } from '@tiptap/react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+
 import type { AiMenuState, AiMenuStateContextValue } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-types'
+import {
+  cleanupFallbackAnchors,
+  createEditorWidthAnchorRect,
+  createVirtualAnchor,
+  findPrioritizedAIElement,
+  getSelectionRangeRect,
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
+import { getSelectedDOMElement } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 /** Safely remove an element ref and nullify it. */
 function cleanupRef(ref: React.MutableRefObject<HTMLElement | null>) {

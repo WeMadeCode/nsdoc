@@ -1,19 +1,17 @@
 'use client'
 
+import type { Node } from '@tiptap/pm/model'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import type { Node } from '@tiptap/pm/model'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-
-// --- Utils ---
-import { getAnchorNodeAndPos, getEditorExtension } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 // --- Icons ---
 import { LinkIcon } from '@/tiptap-editor/components/tiptap-icons/link-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Utils ---
+import { getAnchorNodeAndPos, getEditorExtension } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 export const COPY_ANCHOR_LINK_SHORTCUT_KEY = 'mod+ctrl+l'
 

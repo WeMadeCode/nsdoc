@@ -1,39 +1,33 @@
-import { useEffect, useState } from 'react'
 import { type Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-import { useFloatingToolbarVisibility } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
-
-// --- Node ---
-import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
+import { useEffect, useState } from 'react'
 
 // --- Icons ---
 import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
-
+// --- Node ---
+import { ImageNodeFloating } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-floating'
 // --- UI ---
 import { ColorTextPopover } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
 import { LinkPopover } from '@/tiptap-editor/components/tiptap-ui/link-popover'
 import type { Mark } from '@/tiptap-editor/components/tiptap-ui/mark-button'
 import { canToggleMark, MarkButton } from '@/tiptap-editor/components/tiptap-ui/mark-button'
 import type { TextAlign } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
 import { canSetTextAlign, TextAlignButton } from '@/tiptap-editor/components/tiptap-ui/text-align-button'
 import { TurnIntoDropdown } from '@/tiptap-editor/components/tiptap-ui/turn-into-dropdown'
-import { IndentButton } from '@/tiptap-editor/components/tiptap-ui/indent-button'
-
-// --- Utils ---
-import { isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
-
 // --- Primitive UI Components ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/tiptap-editor/components/tiptap-ui-primitive/toolbar'
-
 // --- UI Utils ---
 import { FloatingElement } from '@/tiptap-editor/components/tiptap-ui-utils/floating-element'
+import { useFloatingToolbarVisibility } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
+// --- Utils ---
+import { isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 export function NotionToolbarFloating() {
   const { editor } = useTiptapEditor()

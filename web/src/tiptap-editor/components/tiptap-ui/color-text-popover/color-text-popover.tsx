@@ -1,33 +1,29 @@
 'use client'
 
-import { useCallback, useMemo, useRef, useState } from 'react'
-import type { Editor } from '@tiptap/react'
+// --- Styles ---
+import '@/tiptap-editor/components/tiptap-ui/color-text-popover/color-text-popover.scss'
 
-// --- Hooks ---
-import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 // --- Icons ---
 import { ChevronDownIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-down-icon'
-
+import { ColorHighlightButton, HIGHLIGHT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
+import { ColorTextButton, TEXT_COLORS } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
 // --- Tiptap UI ---
-import type { ColorType, ColorItem, RecentColor, UseColorTextPopoverConfig } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
-import { useColorTextPopover, useRecentColors, getColorByValue } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
-import { TEXT_COLORS, ColorTextButton } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
-import { HIGHLIGHT_COLORS, ColorHighlightButton } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
-
+import type { ColorItem, ColorType, RecentColor, UseColorTextPopoverConfig } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { getColorByValue, useColorTextPopover, useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Popover, PopoverTrigger, PopoverContent } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
+import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
 import { Card, CardBody, CardGroupLabel, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
-
+import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
+// --- Hooks ---
+import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- Utils ---
 import { chunkArray } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-
-// --- Styles ---
-import '@/tiptap-editor/components/tiptap-ui/color-text-popover/color-text-popover.scss'
-import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
 
 // ─── Shared types ────────────────────────────────────────────────────────────
 

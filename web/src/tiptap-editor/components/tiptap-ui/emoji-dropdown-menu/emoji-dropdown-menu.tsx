@@ -1,9 +1,11 @@
 'use client'
 
-import { useMemo } from 'react'
-import type { Editor, Range } from '@tiptap/react'
 import type { EmojiItem } from '@tiptap/extension-emoji'
+import type { Editor, Range } from '@tiptap/react'
+import { useMemo } from 'react'
 
+import { EmojiMenuItem, getFilteredEmojis } from '@/tiptap-editor/components/tiptap-ui/emoji-menu'
+import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
 // --- Tiptap UI ---
 import type {
   SuggestionItem,
@@ -11,8 +13,6 @@ import type {
   SuggestionMenuRenderProps,
 } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
 import { SuggestionMenu } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
-import { EmojiMenuItem, getFilteredEmojis } from '@/tiptap-editor/components/tiptap-ui/emoji-menu'
-import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
 
 export type EmojiDropdownMenuProps = Omit<SuggestionMenuProps, 'items' | 'children'>
 

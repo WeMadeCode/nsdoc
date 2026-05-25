@@ -1,15 +1,14 @@
 'use client'
 
+import '@/tiptap-editor/components/tiptap-ui-primitive/button/button-colors.scss'
+import '@/tiptap-editor/components/tiptap-ui-primitive/button/button.scss'
+
 import { forwardRef, Fragment, useMemo } from 'react'
 
 // --- Tiptap UI Primitive ---
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/tooltip'
-
 // --- Lib ---
 import { cn, parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
-
-import '@/tiptap-editor/components/tiptap-ui-primitive/button/button-colors.scss'
-import '@/tiptap-editor/components/tiptap-ui-primitive/button/button.scss'
 
 export type ButtonVariant = 'ghost' | 'primary'
 export type ButtonSize = 'small' | 'default' | 'large'

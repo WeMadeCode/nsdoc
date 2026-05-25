@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import type { Editor } from '@tiptap/react'
 import { NodeSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { ChevronDownIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-down-icon'
-
 // --- Tiptap UI ---
 import type { Level } from '@/tiptap-editor/components/tiptap-ui/heading-button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export const TURN_INTO_BLOCKS = ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock']
 

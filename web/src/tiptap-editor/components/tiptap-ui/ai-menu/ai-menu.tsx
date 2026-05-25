@@ -1,44 +1,38 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu.scss'
+
 import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect, useRef } from 'react'
 
-import { AiMenuItems } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items'
-
-// -- Hooks --
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
-
-// -- Utils --
-import { getSelectedDOMElement, selectionHasText } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-
-// -- Tiptap UI --
-import { AiMenuInputTextarea } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-input/ai-menu-input'
+// -- Icons --
+import { StopCircle2Icon } from '@/tiptap-editor/components/tiptap-icons/stop-circle-2-icon'
 import { AiMenuActions } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-actions/ai-menu-actions'
-
-// -- UI Primitives --
-import { Menu, MenuContent, useFloatingMenuStore } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { ComboboxList, ComboboxPopover } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
-import { Card } from '@/tiptap-editor/components/tiptap-ui-primitive/card/card'
-
-import {
-  getContextAndInsertAt,
-  getSelectionRangeRect,
-  createVirtualAnchor,
-  createEditorWidthAnchorRect,
-} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
 import {
   useAiContentTracker,
   useAiMenuState,
   useAiMenuStateProvider,
   useTextSelectionTracker,
 } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-hooks'
-
-// -- Icons --
-import { StopCircle2Icon } from '@/tiptap-editor/components/tiptap-icons/stop-circle-2-icon'
-
-import '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu.scss'
+// -- Tiptap UI --
+import { AiMenuInputTextarea } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-input/ai-menu-input'
+import { AiMenuItems } from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-items/ai-menu-items'
+import {
+  createEditorWidthAnchorRect,
+  createVirtualAnchor,
+  getContextAndInsertAt,
+  getSelectionRangeRect,
+} from '@/tiptap-editor/components/tiptap-ui/ai-menu/ai-menu-utils'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Card } from '@/tiptap-editor/components/tiptap-ui-primitive/card/card'
+import { ComboboxList, ComboboxPopover } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+// -- UI Primitives --
+import { Menu, MenuContent, useFloatingMenuStore } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+// -- Hooks --
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
+// -- Utils --
+import { getSelectedDOMElement, selectionHasText } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 export function AiMenuStateProvider({ children }: { children: React.ReactNode }) {
   const { value, AiMenuStateContext } = useAiMenuStateProvider()

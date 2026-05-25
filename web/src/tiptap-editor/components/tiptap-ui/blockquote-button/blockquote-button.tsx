@@ -5,17 +5,14 @@ import { forwardRef, useCallback } from 'react'
 // --- Tiptap UI ---
 import type { UseBlockquoteConfig } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
 import { BLOCKQUOTE_SHORTCUT_KEY, useBlockquote } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
-
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface BlockquoteButtonProps extends Omit<ButtonProps, 'type'>, UseBlockquoteConfig {
   /**

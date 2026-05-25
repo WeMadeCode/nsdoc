@@ -1,19 +1,17 @@
 'use client'
 
+import type { Node } from '@tiptap/pm/model'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import type { Node } from '@tiptap/pm/model'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-
-// --- Lib ---
-import { findNodePosition, isNodeTypeSelected, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 // --- Icons ---
 import { AtSignIcon } from '@/tiptap-editor/components/tiptap-icons/at-sign-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { findNodePosition, isNodeTypeSelected, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export const MENTION_TRIGGER_SHORTCUT_KEY = 'mod+shift+2'
 

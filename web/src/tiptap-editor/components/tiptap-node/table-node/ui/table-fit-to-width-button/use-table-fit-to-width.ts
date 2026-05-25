@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import { getTable, RESIZE_MIN_WIDTH } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { useCallback } from 'react'
 
 // --Icons ---
 import { MoveHorizontalIcon } from '@/tiptap-editor/components/tiptap-icons/move-horizontal-icon'
+import { getTable, RESIZE_MIN_WIDTH } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseTableFitToWidthConfig {
   /**

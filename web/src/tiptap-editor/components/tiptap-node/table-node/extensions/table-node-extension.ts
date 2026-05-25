@@ -1,11 +1,11 @@
-import type { ViewMutationRecord } from '@tiptap/pm/view'
-import { Table } from '@tiptap/extension-table/table'
+import { Extension } from '@tiptap/core'
 import type { TableCellOptions, TableHeaderOptions, TableOptions, TableRowOptions } from '@tiptap/extension-table'
 import { TableCell, TableHeader, TableRow } from '@tiptap/extension-table'
+import { Table } from '@tiptap/extension-table/table'
 import type { Node } from '@tiptap/pm/model'
-import { Extension } from '@tiptap/core'
-import { cellAround, columnResizing, tableEditing, TableView } from '@tiptap/pm/tables'
 import { TextSelection } from '@tiptap/pm/state'
+import { cellAround, columnResizing, tableEditing, TableView } from '@tiptap/pm/tables'
+import type { ViewMutationRecord } from '@tiptap/pm/view'
 
 import { EMPTY_CELL_WIDTH, RESIZE_MIN_WIDTH } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 

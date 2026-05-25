@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import type { TableOfContentData, TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
+import { createContext, type ReactNode, useCallback, useContext, useState } from 'react'
+
 import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 
 type TocState = {

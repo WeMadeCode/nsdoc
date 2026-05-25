@@ -1,26 +1,24 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import type { Editor } from '@tiptap/react'
 import type { Node } from '@tiptap/pm/model'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import {
-  type CellInfo,
-  getTable,
-  getTableSelectionType,
-  getRowOrColumnCells,
-  isCellEmpty,
-} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
 // --- Icons ---
 import { ArrowDownAZIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-down-a-z-icon'
 import { ArrowDownZAIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-down-z-a-icon'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import {
+  type CellInfo,
+  getRowOrColumnCells,
+  getTable,
+  getTableSelectionType,
+  isCellEmpty,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type SortDirection = 'asc' | 'desc'
 

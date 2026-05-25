@@ -1,25 +1,22 @@
 'use client'
 
+// -- Styles --
+import '@/tiptap-editor/components/tiptap-ui-primitive/menu/menu.scss'
+
 import * as Ariakit from '@ariakit/react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
-// -- Hooks --
-import { useOnClickOutside } from '@/tiptap-editor/hooks/use-on-click-outside'
-import { useComposedRef } from '@/tiptap-editor/hooks/use-composed-ref'
-
-// -- Utils --
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
-
 // -- UI Primitives --
 import { ComboboxItem, ComboboxProvider } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
-
 // -- Local imports --
-import type { MenuProps, MenuContentProps, MenuItemProps } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { SearchableContext, MenuContext, useSearchableContext, useMenuContext } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { useMenuPlacement, useMenuItemClick } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-
-// -- Styles --
-import '@/tiptap-editor/components/tiptap-ui-primitive/menu/menu.scss'
+import type { MenuContentProps, MenuItemProps, MenuProps } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { MenuContext, SearchableContext, useMenuContext, useSearchableContext } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { useMenuItemClick, useMenuPlacement } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { useComposedRef } from '@/tiptap-editor/hooks/use-composed-ref'
+// -- Hooks --
+import { useOnClickOutside } from '@/tiptap-editor/hooks/use-on-click-outside'
+// -- Utils --
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 export function MenuProvider({ ...props }: Ariakit.MenuProviderProps) {
   return <Ariakit.MenuProvider {...props} />

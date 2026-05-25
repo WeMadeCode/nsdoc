@@ -31,4 +31,3 @@ export const toBridgeError = (error: unknown): BridgeError => {
 
   return new BridgeError('HANDLER_ERROR', 'Bridge handler failed', true)
 }
-

@@ -1,7 +1,8 @@
 import { Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import TitleWrapper from './title-wrpper'
+
 import { createTitlePlugin } from './plugin'
+import TitleWrapper from './title-wrpper'
 
 export const Title = Node.create({
   name: 'title',

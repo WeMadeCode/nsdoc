@@ -2,8 +2,10 @@ import type { Editor } from '@tiptap/core'
 import type { Node as TiptapNode } from '@tiptap/pm/model'
 import type { PluginView, Transaction } from '@tiptap/pm/state'
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
-import { Decoration, DecorationSet, type EditorView } from '@tiptap/pm/view'
 import { CellSelection, moveTableColumn, moveTableRow, TableMap } from '@tiptap/pm/tables'
+import { Decoration, DecorationSet, type EditorView } from '@tiptap/pm/view'
+
+import { createTableDragImage } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle/helpers/create-image'
 import {
   clamp,
   domCellAround,
@@ -18,7 +20,6 @@ import {
   selectCellsByCoords,
 } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import { isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
-import { createTableDragImage } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle/helpers/create-image'
 
 export type TableHandlesState = {
   show: boolean

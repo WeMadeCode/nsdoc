@@ -1,16 +1,15 @@
 'use client'
 
+import type { Transaction } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { type Editor } from '@tiptap/react'
-import type { Transaction } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
 import { RotateCcwIcon } from '@/tiptap-editor/components/tiptap-icons/rotate-ccw-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export const RESET_ALL_FORMATTING_SHORTCUT_KEY = 'mod+r'
 

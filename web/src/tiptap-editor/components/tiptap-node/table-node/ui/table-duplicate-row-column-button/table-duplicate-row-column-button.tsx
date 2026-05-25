@@ -2,16 +2,14 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
 // --- Tiptap UI ---
 import type { UseTableDuplicateRowColumnConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
 import { useTableDuplicateRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableDuplicateRowColumnButtonProps extends Omit<ButtonProps, 'type'>, UseTableDuplicateRowColumnConfig {
   text?: string

@@ -1,16 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { NodeSelection } from '@tiptap/pm/state'
 import type { Editor } from '@tiptap/react'
 import type { Language, TextOptions, Tone } from '@tiptap-pro/extension-ai'
-import { NodeSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // --- Icons ---
 import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
-
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- Lib ---
 import { isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 

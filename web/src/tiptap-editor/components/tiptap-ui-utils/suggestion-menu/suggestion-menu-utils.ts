@@ -1,4 +1,5 @@
 import type { Node } from '@tiptap/pm/model'
+
 import type { SuggestionItem } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types'
 
 /**

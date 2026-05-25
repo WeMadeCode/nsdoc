@@ -1,11 +1,13 @@
 'use client'
 
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 import '@/tiptap-editor/components/tiptap-ui-primitive/toolbar/toolbar.scss'
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
-import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 import { useComposedRef } from '@/tiptap-editor/hooks/use-composed-ref'
+import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 
 type BaseProps = React.HTMLAttributes<HTMLDivElement>
 

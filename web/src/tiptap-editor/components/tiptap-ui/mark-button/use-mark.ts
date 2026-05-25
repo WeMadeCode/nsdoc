@@ -1,13 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isMarkInSchema, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
+import { useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { BoldIcon } from '@/tiptap-editor/components/tiptap-icons/bold-icon'
@@ -17,6 +11,10 @@ import { StrikeIcon } from '@/tiptap-editor/components/tiptap-icons/strike-icon'
 import { SubscriptIcon } from '@/tiptap-editor/components/tiptap-icons/subscript-icon'
 import { SuperscriptIcon } from '@/tiptap-editor/components/tiptap-icons/superscript-icon'
 import { UnderlineIcon } from '@/tiptap-editor/components/tiptap-icons/underline-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isMarkInSchema, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type Mark = 'bold' | 'italic' | 'strike' | 'code' | 'underline' | 'superscript' | 'subscript'
 

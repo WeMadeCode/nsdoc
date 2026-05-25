@@ -1,6 +1,5 @@
-import { memo } from 'react'
-
 import { NodeViewContent, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
+import { memo } from 'react'
 
 const CodeBlockWrapper = (params: ReactNodeViewProps) => {
   const { node } = params

@@ -2,18 +2,16 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Lib ---
-import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
-
 // --- Tiptap UI ---
 import type { Level, UseHeadingConfig } from '@/tiptap-editor/components/tiptap-ui/heading-button'
 import { HEADING_SHORTCUT_KEYS, useHeading } from '@/tiptap-editor/components/tiptap-ui/heading-button'
-
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface HeadingButtonProps extends Omit<ButtonProps, 'type'>, UseHeadingConfig {
   /**

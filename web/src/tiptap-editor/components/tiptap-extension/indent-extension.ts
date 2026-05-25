@@ -1,5 +1,6 @@
 import { Extension } from '@tiptap/core'
-import { Plugin, PluginKey, type EditorState, type Transaction } from '@tiptap/pm/state'
+import { type EditorState, Plugin, PluginKey, type Transaction } from '@tiptap/pm/state'
+
 import { clamp, getSelectedNodesOfType, updateNodesAttr } from '@/tiptap-editor/lib/tiptap-utils'
 
 declare module '@tiptap/core' {

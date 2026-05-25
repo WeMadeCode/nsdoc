@@ -1,7 +1,8 @@
 import type { Attrs, Node } from '@tiptap/pm/model'
-import { findNodePosition, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
-import { type Editor } from '@tiptap/react'
 import { AllSelection, NodeSelection, TextSelection } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
+
+import { findNodePosition, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 /**
  * Splits an array into chunks of specified size

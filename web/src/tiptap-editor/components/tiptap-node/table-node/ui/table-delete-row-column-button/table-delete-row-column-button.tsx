@@ -2,16 +2,14 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
 // --- Tiptap UI ---
 import type { UseTableDeleteRowColumnConfig } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button'
 import { useTableDeleteRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface TableDeleteRowColumnButtonProps extends Omit<ButtonProps, 'type'>, UseTableDeleteRowColumnConfig {
   /**

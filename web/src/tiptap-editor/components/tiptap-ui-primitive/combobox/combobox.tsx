@@ -1,8 +1,11 @@
 'use client'
 
-import * as Ariakit from '@ariakit/react'
-import { cn } from '@/tiptap-editor/lib/tiptap-utils'
 import '@/tiptap-editor/components/tiptap-ui-primitive/combobox/combobox.scss'
+
+import * as Ariakit from '@ariakit/react'
+
+import { cn } from '@/tiptap-editor/lib/tiptap-utils'
+
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../input-group'
 
 function ComboboxProvider({ ...props }: Ariakit.ComboboxProviderProps) {
@@ -101,19 +104,19 @@ function ComboboxItemValue({ className, ...props }: Ariakit.ComboboxItemValuePro
 }
 
 export {
-  ComboboxProvider,
-  ComboboxLabel,
   Combobox,
-  ComboboxInput,
   ComboboxCancel,
   ComboboxDisclosure,
-  ComboboxValue,
-  ComboboxList,
-  ComboboxPopover,
   ComboboxGroup,
   ComboboxGroupLabel,
-  ComboboxRow,
+  ComboboxInput,
   ComboboxItem,
   ComboboxItemCheck,
   ComboboxItemValue,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxPopover,
+  ComboboxProvider,
+  ComboboxRow,
+  ComboboxValue,
 }

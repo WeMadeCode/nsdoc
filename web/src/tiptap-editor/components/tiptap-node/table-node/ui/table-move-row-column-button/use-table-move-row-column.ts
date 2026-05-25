@@ -1,31 +1,29 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import type { Editor } from '@tiptap/react'
+import type { Node } from '@tiptap/pm/model'
+import type { Transaction } from '@tiptap/pm/state'
 import type { TableMap } from '@tiptap/pm/tables'
 import { CellSelection, columnIsHeader, moveTableColumn, moveTableRow, rowIsHeader, selectedRect } from '@tiptap/pm/tables'
-import type { Transaction } from '@tiptap/pm/state'
-import type { Node } from '@tiptap/pm/model'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import {
-  cellsOverlapRectangle,
-  getTable,
-  getTableSelectionType,
-  getIndexCoordinates,
-  selectCellsByCoords,
-} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
+import { ArrowDownIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-down-icon'
 // --- Icons ---
 import { ArrowLeftIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-left-icon'
 import { ArrowRightIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-right-icon'
 import { ArrowUpIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-up-icon'
-import { ArrowDownIcon } from '@/tiptap-editor/components/tiptap-icons/arrow-down-icon'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import {
+  cellsOverlapRectangle,
+  getIndexCoordinates,
+  getTable,
+  getTableSelectionType,
+  selectCellsByCoords,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type MoveDirection = 'up' | 'down' | 'left' | 'right'
 

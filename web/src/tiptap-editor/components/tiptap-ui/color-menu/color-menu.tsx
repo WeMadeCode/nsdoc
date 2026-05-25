@@ -2,23 +2,21 @@
 
 import type { Editor } from '@tiptap/react'
 
-// Primitive UI Components
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
-import { Menu, MenuContent, MenuItem, MenuGroup, MenuGroupLabel, MenuButton } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-
-// Tiptap UI
-import { TEXT_COLORS, useColorText } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
-import { HIGHLIGHT_COLORS, useColorHighlight } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
-import type { RecentColor } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
-import { getColorByValue, useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
-
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
 // Icons
 import { PaintBucketIcon } from '@/tiptap-editor/components/tiptap-icons/paint-bucket-icon'
-import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
 import { TextColorSmallIcon } from '@/tiptap-editor/components/tiptap-icons/text-color-small-icon'
+import { HIGHLIGHT_COLORS, useColorHighlight } from '@/tiptap-editor/components/tiptap-ui/color-highlight-button'
+// Tiptap UI
+import { TEXT_COLORS, useColorText } from '@/tiptap-editor/components/tiptap-ui/color-text-button'
+import type { RecentColor } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+import { getColorByValue, useRecentColors } from '@/tiptap-editor/components/tiptap-ui/color-text-popover'
+// Primitive UI Components
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+import { Menu, MenuButton, MenuContent, MenuGroup, MenuGroupLabel, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 interface ColorMenuItemProps {
@@ -162,4 +160,4 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({ editor: providedEditor, tr
   )
 }
 
-export { TextColorMenuItem, HighlightColorMenuItem, RecentColorMenuItem }
+export { HighlightColorMenuItem, RecentColorMenuItem, TextColorMenuItem }

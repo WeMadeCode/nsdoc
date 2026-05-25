@@ -1,16 +1,14 @@
 'use client'
 
-import { useCallback, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import { useCallback, useState } from 'react'
 
 // --- Icons ---
 import { TableIcon } from '@/tiptap-editor/components/tiptap-icons/table-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 const REQUIRED_EXTENSIONS = ['table']
 

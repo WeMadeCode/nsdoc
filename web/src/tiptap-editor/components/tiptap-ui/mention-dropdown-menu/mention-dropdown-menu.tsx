@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useRef } from 'react'
 import type { Editor, Range } from '@tiptap/react'
+import { useEffect, useMemo, useRef } from 'react'
 
-// --- Lib ---
-import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
-
+// --- UI Primitives ---
+import { Avatar, AvatarFallback, AvatarImage } from '@/tiptap-editor/components/tiptap-ui-primitive/avatar'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
 // --- Tiptap UI ---
 import type {
   SuggestionItem,
@@ -13,11 +14,8 @@ import type {
   SuggestionMenuRenderProps,
 } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
 import { SuggestionMenu } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
-
-// --- UI Primitives ---
-import { Avatar, AvatarImage, AvatarFallback } from '@/tiptap-editor/components/tiptap-ui-primitive/avatar'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
+// --- Lib ---
+import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 interface User {
   id: number

@@ -1,18 +1,16 @@
 'use client'
 
+import { type Editor, isNodeSelection } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
-import { isNodeSelection, type Editor } from '@tiptap/react'
 import { useHotkeys } from 'react-hotkeys-hook'
-
-// --- Lib ---
-import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 
 // --- Icons ---
 import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseAiAskConfig {
   /**

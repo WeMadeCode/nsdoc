@@ -2,10 +2,11 @@ import type { Editor } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
 import type { ResolvedPos } from '@tiptap/pm/model'
 import debounce from 'lodash.debounce'
+
 import { BridgeError } from './errors'
-import { nsBridge } from './web-bridge'
 import type { EditorActiveTools, EditorContentSnapshot, EditorSelectionContext, EditorSetContentParams } from './types'
 import { BRIDGE_VERSION } from './types'
+import { nsBridge } from './web-bridge'
 
 const capabilities = [
   'editor.setContent',
@@ -239,6 +240,7 @@ export const setupEditorBridge = (editor: Editor | null) => {
       return { active: editor.isActive('taskList') }
     }),
     nsBridge.register<never, { active: boolean }>('editor', 'toggleBlockquote', () => {
+      console.log('toggleBlockquote')
       editor.chain().focus().toggleBlockquote().run()
       return { active: editor.isActive('blockquote') }
     }),

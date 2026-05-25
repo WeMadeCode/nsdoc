@@ -1,4 +1,5 @@
 import { type Editor } from '@tiptap/react'
+
 import { getSelectedDOMElement } from '@/tiptap-editor/lib/tiptap-advanced-utils'
 
 /**

@@ -1,32 +1,29 @@
 'use client'
 
-import { forwardRef, useCallback, useEffect, useState } from 'react'
-import type { Editor } from '@tiptap/react'
+import './link-popover.scss'
 
-// --- Hooks ---
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import type { Editor } from '@tiptap/react'
+import { forwardRef, useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { CornerDownLeftIcon } from '@/tiptap-editor/components/tiptap-icons/corner-down-left-icon'
 import { ExternalLinkIcon } from '@/tiptap-editor/components/tiptap-icons/external-link-icon'
 import { LinkIcon } from '@/tiptap-editor/components/tiptap-icons/link-icon'
 import { TrashIcon } from '@/tiptap-editor/components/tiptap-icons/trash-icon'
-
 // --- Tiptap UI ---
 import type { UseLinkPopoverConfig } from '@/tiptap-editor/components/tiptap-ui/link-popover'
 import { useLinkPopover } from '@/tiptap-editor/components/tiptap-ui/link-popover'
-
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
 import { Card, CardBody, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
 import { Input } from '@/tiptap-editor/components/tiptap-ui-primitive/input'
-import { ButtonGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/button-group'
-
-import './link-popover.scss'
+import { Popover, PopoverContent, PopoverTrigger } from '@/tiptap-editor/components/tiptap-ui-primitive/popover'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+// --- Hooks ---
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export interface LinkMainProps {
   /**

@@ -1,7 +1,5 @@
 'use client'
 
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { getAvatar } from '@/tiptap-editor/lib/tiptap-collab-utils'
 import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from '@/tiptap-editor/components/tiptap-ui-primitive/avatar'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
@@ -11,6 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { getAvatar } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 type User = { clientId: number; id: string; name: string; color: string }
 

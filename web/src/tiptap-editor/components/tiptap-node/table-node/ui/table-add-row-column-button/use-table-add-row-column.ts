@@ -1,17 +1,17 @@
 'use client'
 
-import { useCallback } from 'react'
-import type { Editor } from '@tiptap/react'
-import type { TableMap } from '@tiptap/pm/tables'
-import { addRowBefore, addRowAfter, addColumnBefore, addColumnAfter, CellSelection, rowIsHeader, columnIsHeader } from '@tiptap/pm/tables'
-import type { Transaction } from '@tiptap/pm/state'
 import type { Node } from '@tiptap/pm/model'
+import type { Transaction } from '@tiptap/pm/state'
+import type { TableMap } from '@tiptap/pm/tables'
+import { addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, CellSelection, columnIsHeader, rowIsHeader } from '@tiptap/pm/tables'
+import type { Editor } from '@tiptap/react'
+import { useCallback } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+// --- Icons ---
+import { AddColLeftIcon } from '@/tiptap-editor/components/tiptap-icons/add-col-left-icon'
+import { AddColRightIcon } from '@/tiptap-editor/components/tiptap-icons/add-col-right-icon'
+import { AddRowBottomIcon } from '@/tiptap-editor/components/tiptap-icons/add-row-bottom-icon'
+import { AddRowTopIcon } from '@/tiptap-editor/components/tiptap-icons/add-row-top-icon'
 import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
   getTable,
@@ -19,12 +19,10 @@ import {
   selectCellsByCoords,
   updateSelectionAfterAction,
 } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
-// --- Icons ---
-import { AddColLeftIcon } from '@/tiptap-editor/components/tiptap-icons/add-col-left-icon'
-import { AddColRightIcon } from '@/tiptap-editor/components/tiptap-icons/add-col-right-icon'
-import { AddRowBottomIcon } from '@/tiptap-editor/components/tiptap-icons/add-row-bottom-icon'
-import { AddRowTopIcon } from '@/tiptap-editor/components/tiptap-icons/add-row-top-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type RowSide = 'above' | 'below'
 export type ColSide = 'left' | 'right'

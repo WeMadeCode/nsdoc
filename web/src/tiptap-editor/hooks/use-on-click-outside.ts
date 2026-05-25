@@ -2,6 +2,7 @@
 
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
+
 import { useIsomorphicLayoutEffect } from '@/tiptap-editor/hooks/use-isomorphic-layout-effect'
 
 // MediaQueryList Event based useEventListener interface

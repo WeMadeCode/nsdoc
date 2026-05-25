@@ -1,19 +1,17 @@
 'use client'
 
+import { flip, offset, shift, type UseFloatingOptions, useMergeRefs } from '@floating-ui/react'
+import { Selection } from '@tiptap/pm/state'
+import { type Editor } from '@tiptap/react'
 import type { HTMLAttributes } from 'react'
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type Editor } from '@tiptap/react'
-import { flip, offset, shift, useMergeRefs, type UseFloatingOptions } from '@floating-ui/react'
-import { Selection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useFloatingElement } from '@/tiptap-editor/hooks/use-floating-element'
-
-// --- Lib ---
-import { getSelectionBoundingRect, isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 import { isElementWithinEditor, isElementWithinExternalPortal } from '@/tiptap-editor/components/tiptap-ui-utils/floating-element'
+import { useFloatingElement } from '@/tiptap-editor/hooks/use-floating-element'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { getSelectionBoundingRect, isSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 import { isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface FloatingElementProps extends HTMLAttributes<HTMLDivElement> {

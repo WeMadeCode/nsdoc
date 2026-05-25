@@ -1,10 +1,10 @@
-import type { Editor } from '@tiptap/react'
 import type { Node } from '@tiptap/pm/model'
 import type { Command } from '@tiptap/pm/state'
-import { Selection, type EditorState, type Transaction } from '@tiptap/pm/state'
+import { type EditorState, Selection, type Transaction } from '@tiptap/pm/state'
 import type { FindNodeResult, Rect } from '@tiptap/pm/tables'
-import { TableMap, CellSelection, findTable, selectedRect, cellAround, selectionCell, isInTable } from '@tiptap/pm/tables'
+import { cellAround, CellSelection, findTable, isInTable, selectedRect, selectionCell, TableMap } from '@tiptap/pm/tables'
 import { Mapping } from '@tiptap/pm/transform'
+import type { Editor } from '@tiptap/react'
 
 export const RESIZE_MIN_WIDTH = 35
 export const EMPTY_CELL_WIDTH = 120

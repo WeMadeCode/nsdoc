@@ -1,39 +1,35 @@
 'use client'
 
-import { useCallback, useMemo, useState, createContext, useContext } from 'react'
-import type { Editor } from '@tiptap/react'
-import { TableMap } from '@tiptap/pm/tables'
-import type { Node } from '@tiptap/pm/model'
+import './table-handle-menu.scss'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { cn, isValidPosition, SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import { selectCellsByCoords } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import type { Node } from '@tiptap/pm/model'
+import { TableMap } from '@tiptap/pm/tables'
+import type { Editor } from '@tiptap/react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 // --- Icons ---
 import { MoreVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/more-vertical-icon'
-
+import { dragEnd } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { selectCellsByCoords } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import { useTableAddRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button'
+import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
+import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
+import { useTableDeleteRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button'
+// --- Tiptap UI ---
+import { useTableDuplicateRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
+import { useTableHeaderRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-header-row-column-button'
+import { useTableMoveRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-move-row-column-button'
+import { useTableSortRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button'
+import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
 // --- UI Primitives ---
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
 import { Menu, MenuButton, MenuContent, MenuGroup, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-
-// --- Tiptap UI ---
-import { useTableDuplicateRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-duplicate-row-column-button'
-import { useTableMoveRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-move-row-column-button'
-import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
-import { useTableHeaderRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-header-row-column-button'
-import { useTableAddRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-add-row-column-button'
-import { useTableDeleteRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-delete-row-column-button'
-import { useTableSortRowColumn } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-sort-row-column-button'
-import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
-import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
-
-import { dragEnd } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
-
-import './table-handle-menu.scss'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { cn, isValidPosition, SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
 
 /* -------------------------------------------------------------------------------------------------
  * Types & Interfaces

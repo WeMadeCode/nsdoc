@@ -13,13 +13,12 @@ import '@/tiptap-editor/components/tiptap-templates/simple/simple-editor.scss'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 import { useEffect } from 'react'
 
-// --- Tiptap Node ---
-import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
 // --- Lib ---
 import { setupBridge } from '@/bridge'
+// --- Tiptap Node ---
+import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
 import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
 import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
-import TextView from './text-view'
 
 export function SimpleEditor() {
   const editor = useEditor({

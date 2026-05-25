@@ -1,5 +1,7 @@
 'use client'
 
+import '@/tiptap-editor/components/tiptap-ui-primitive/avatar/avatar.scss'
+
 import {
   Children,
   createContext,
@@ -12,7 +14,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import '@/tiptap-editor/components/tiptap-ui-primitive/avatar/avatar.scss'
 
 type ImageLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
 type Size = 'default' | 'sm' | 'lg' | 'xl'

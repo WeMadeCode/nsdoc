@@ -1,18 +1,17 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import type { Editor } from '@tiptap/react'
-import { useHotkeys } from 'react-hotkeys-hook'
+import { Fragment, Slice } from '@tiptap/pm/model'
 import type { Transaction } from '@tiptap/pm/state'
 import { TextSelection } from '@tiptap/pm/state'
-import { Fragment, Slice } from '@tiptap/pm/model'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 // --- Icons ---
 import { ClipboardIcon } from '@/tiptap-editor/components/tiptap-icons/clipboard-icon'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 
 export const COPY_TO_CLIPBOARD_SHORTCUT_KEY = 'mod+c'
 

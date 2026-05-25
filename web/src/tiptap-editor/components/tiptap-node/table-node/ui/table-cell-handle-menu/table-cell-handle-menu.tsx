@@ -1,30 +1,26 @@
 'use client'
 
-import { forwardRef, useCallback, useEffect, useState } from 'react'
+import './table-cell-handle-menu.scss'
+
 import type { Editor } from '@tiptap/react'
+import { forwardRef, useCallback, useEffect, useState } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { cn, SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
-
-// --- UI ---
-import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
+// --- Icons ---
+import { Grip4Icon } from '@/tiptap-editor/components/tiptap-icons/grip-4-icon'
 import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
 import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
 import { useTableMergeSplitCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-merge-split-cell-button'
-
+// --- UI ---
+import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
 // --- UI Primitives ---
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
 import { Menu, MenuButton, MenuContent, MenuGroup, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-
-// --- Icons ---
-import { Grip4Icon } from '@/tiptap-editor/components/tiptap-icons/grip-4-icon'
-
-import './table-cell-handle-menu.scss'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { cn, SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
 
 interface TableAction {
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>

@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect, useState } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-
+import { IndentDecreaseIcon } from '@/tiptap-editor/components/tiptap-icons/indent-decrease-icon'
 // --- Icons ---
 import { IndentIncreaseIcon } from '@/tiptap-editor/components/tiptap-icons/indent-increase-icon'
-import { IndentDecreaseIcon } from '@/tiptap-editor/components/tiptap-icons/indent-decrease-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export type IndentAction = 'indent' | 'outdent'
 

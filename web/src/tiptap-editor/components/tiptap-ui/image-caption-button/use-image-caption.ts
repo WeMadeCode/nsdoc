@@ -1,17 +1,15 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import { type Editor } from '@tiptap/react'
 import { NodeSelection } from '@tiptap/pm/state'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
+import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { ImageCaptionIcon } from '@/tiptap-editor/components/tiptap-icons/image-caption-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable, isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 /**
  * Configuration for the image caption functionality

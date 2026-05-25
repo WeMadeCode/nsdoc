@@ -1,21 +1,18 @@
 import type { Editor } from '@tiptap/react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
-
+import { RefreshCcwIcon } from '@/tiptap-editor/components/tiptap-icons/refresh-ccw-icon'
 // --- Tiptap UI ---
 import { DeleteNodeButton } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
-import { ImageDownloadButton } from '@/tiptap-editor/components/tiptap-ui/image-download-button'
 import { ImageAlignButton } from '@/tiptap-editor/components/tiptap-ui/image-align-button'
-
+import { ImageCaptionButton } from '@/tiptap-editor/components/tiptap-ui/image-caption-button'
+import { ImageDownloadButton } from '@/tiptap-editor/components/tiptap-ui/image-download-button'
+import { ImageUploadButton } from '@/tiptap-editor/components/tiptap-ui/image-upload-button'
 // --- UI Primitive ---
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-import { ImageCaptionButton } from '@/tiptap-editor/components/tiptap-ui/image-caption-button'
-import { ImageUploadButton } from '@/tiptap-editor/components/tiptap-ui/image-upload-button'
-import { RefreshCcwIcon } from '@/tiptap-editor/components/tiptap-icons/refresh-ccw-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
 
 export function ImageNodeFloating({ editor: providedEditor }: { editor?: Editor | null }) {
   const { editor } = useTiptapEditor(providedEditor)

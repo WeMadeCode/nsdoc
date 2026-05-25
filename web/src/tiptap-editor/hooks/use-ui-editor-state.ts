@@ -2,6 +2,7 @@
 
 import type { Editor } from '@tiptap/react'
 import { useEditorState } from '@tiptap/react'
+
 import { defaultUiState, type UiState } from '@/tiptap-editor/components/tiptap-extension/ui-state-extension'
 
 export function useUiEditorState(editor: Editor | null): UiState {

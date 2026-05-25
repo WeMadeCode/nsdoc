@@ -1,34 +1,32 @@
 'use client'
 
-import { useCallback } from 'react'
 import type { Editor } from '@tiptap/react'
+import { useCallback } from 'react'
 
+import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
+import { AtSignIcon } from '@/tiptap-editor/components/tiptap-icons/at-sign-icon'
+import { BlockquoteIcon } from '@/tiptap-editor/components/tiptap-icons/blockquote-icon'
 // --- Icons ---
 import { CodeBlockIcon } from '@/tiptap-editor/components/tiptap-icons/code-block-icon'
 import { HeadingOneIcon } from '@/tiptap-editor/components/tiptap-icons/heading-one-icon'
-import { HeadingTwoIcon } from '@/tiptap-editor/components/tiptap-icons/heading-two-icon'
 import { HeadingThreeIcon } from '@/tiptap-editor/components/tiptap-icons/heading-three-icon'
+import { HeadingTwoIcon } from '@/tiptap-editor/components/tiptap-icons/heading-two-icon'
 import { ImageIcon } from '@/tiptap-editor/components/tiptap-icons/image-icon'
 import { ListIcon } from '@/tiptap-editor/components/tiptap-icons/list-icon'
+import { ListIndentedIcon } from '@/tiptap-editor/components/tiptap-icons/list-indented-icon'
 import { ListOrderedIcon } from '@/tiptap-editor/components/tiptap-icons/list-ordered-icon'
-import { BlockquoteIcon } from '@/tiptap-editor/components/tiptap-icons/blockquote-icon'
 import { ListTodoIcon } from '@/tiptap-editor/components/tiptap-icons/list-todo-icon'
-import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
 import { MinusIcon } from '@/tiptap-editor/components/tiptap-icons/minus-icon'
-import { TypeIcon } from '@/tiptap-editor/components/tiptap-icons/type-icon'
-import { AtSignIcon } from '@/tiptap-editor/components/tiptap-icons/at-sign-icon'
 import { SmilePlusIcon } from '@/tiptap-editor/components/tiptap-icons/smile-plus-icon'
 import { TableIcon } from '@/tiptap-editor/components/tiptap-icons/table-icon'
-import { ListIndentedIcon } from '@/tiptap-editor/components/tiptap-icons/list-indented-icon'
-
-// --- Lib ---
-import { isExtensionAvailable, isNodeInSchema } from '@/tiptap-editor/lib/tiptap-utils'
-import { findSelectionPosition, hasContentAbove } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-
-// --- Tiptap UI ---
-import type { SuggestionItem } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { TypeIcon } from '@/tiptap-editor/components/tiptap-icons/type-icon'
 import { addEmojiTrigger } from '@/tiptap-editor/components/tiptap-ui/emoji-trigger-button'
 import { addMentionTrigger } from '@/tiptap-editor/components/tiptap-ui/mention-trigger-button'
+// --- Tiptap UI ---
+import type { SuggestionItem } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu'
+import { findSelectionPosition, hasContentAbove } from '@/tiptap-editor/lib/tiptap-advanced-utils'
+// --- Lib ---
+import { isExtensionAvailable, isNodeInSchema } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface SlashMenuConfig {
   enabledItems?: SlashMenuItemType[]

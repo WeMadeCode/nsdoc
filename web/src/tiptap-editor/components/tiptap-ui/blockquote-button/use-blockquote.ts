@@ -1,14 +1,12 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useCallback, useEffect, useState } from 'react'
 
 // --- Icons ---
 import { BlockquoteIcon } from '@/tiptap-editor/components/tiptap-icons/blockquote-icon'
-
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- UI Utils ---
 import { isNodeInSchema, isNodeTypeSelected, selectionWithinConvertibleTypes } from '@/tiptap-editor/lib/tiptap-utils'
 

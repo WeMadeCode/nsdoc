@@ -1,25 +1,23 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import type { Editor } from '@tiptap/react'
 import { cellAround, CellSelection, deleteCellSelection } from '@tiptap/pm/tables'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-import {
-  getTable,
-  getTableSelectionType,
-  getRowOrColumnCells,
-  setCellAttr,
-  isCellEmpty,
-} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
 // --- Icons ---
 import { SquareXIcon } from '@/tiptap-editor/components/tiptap-icons/square-x-icon'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+import {
+  getRowOrColumnCells,
+  getTable,
+  getTableSelectionType,
+  isCellEmpty,
+  setCellAttr,
+} from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseTableClearRowColumnContentConfig {
   /**

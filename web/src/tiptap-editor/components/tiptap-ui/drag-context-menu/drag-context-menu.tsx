@@ -1,66 +1,59 @@
 'use client'
 
 // ─── React & External Libraries ──────────────────────────────────────────────
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Node as TiptapNode } from '@tiptap/pm/model'
+// ─── Styles ───────────────────────────────────────────────────────────────────
+import './drag-context-menu.scss'
+
 import { offset } from '@floating-ui/react'
 import { DragHandle } from '@tiptap/extension-drag-handle-react'
+import type { Node as TiptapNode } from '@tiptap/pm/model'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+// ─── Icons ────────────────────────────────────────────────────────────────────
+import { GripVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/grip-vertical-icon'
+import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
+// ─── Tiptap Node Extensions ───────────────────────────────────────────────────
+import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
+import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
+import { useTableFitToWidth } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button'
+import { useTocShowTitle } from '@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button'
+import { AskAiShortcutBadge, useAiAsk } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
+import { useBlockquote } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
+import { useCodeBlock } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
+import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
+import { CopyAnchorLinkShortcutBadge, useCopyAnchorLink } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
+import { CopyToClipboardShortcutBadge, useCopyToClipboard } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
+import { DeleteNodeShortcutBadge, useDeleteNode } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
 // ─── Types ────────────────────────────────────────────────────────────────────
 import type {
   DragContextMenuProps,
   MenuItemProps,
   NodeChangeData,
 } from '@/tiptap-editor/components/tiptap-ui/drag-context-menu/drag-context-menu-types'
-
-// ─── Hooks ────────────────────────────────────────────────────────────────────
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
-import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
-import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
-
-// ─── Primitive UI Components ──────────────────────────────────────────────────
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
-import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
-import { Menu, MenuContent, MenuItem, MenuGroup, MenuGroupLabel, MenuButton } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
-
+import { DuplicateShortcutBadge, useDuplicate } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
+import { useHeading } from '@/tiptap-editor/components/tiptap-ui/heading-button'
 // ─── Tiptap UI — Hooks ────────────────────────────────────────────────────────
 import { useImageDownload } from '@/tiptap-editor/components/tiptap-ui/image-download-button'
-import { useDuplicate, DuplicateShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/duplicate-button'
-import { useCopyToClipboard, CopyToClipboardShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/copy-to-clipboard-button'
-import { useDeleteNode, DeleteNodeShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/delete-node-button'
-import { useCopyAnchorLink, CopyAnchorLinkShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/copy-anchor-link-button'
-import { useResetAllFormatting } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
-import { useAiAsk, AskAiShortcutBadge } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
-import { useText } from '@/tiptap-editor/components/tiptap-ui/text-button'
-import { useHeading } from '@/tiptap-editor/components/tiptap-ui/heading-button'
 import { useList } from '@/tiptap-editor/components/tiptap-ui/list-button'
-import { useBlockquote } from '@/tiptap-editor/components/tiptap-ui/blockquote-button'
-import { useCodeBlock } from '@/tiptap-editor/components/tiptap-ui/code-block-button'
-
+import { useResetAllFormatting } from '@/tiptap-editor/components/tiptap-ui/reset-all-formatting-button'
 // ─── Tiptap UI — Components ───────────────────────────────────────────────────
 import { SlashCommandTriggerButton } from '@/tiptap-editor/components/tiptap-ui/slash-command-trigger-button'
-import { ColorMenu } from '@/tiptap-editor/components/tiptap-ui/color-menu'
-
-// ─── Tiptap Node Extensions ───────────────────────────────────────────────────
-import { TableAlignMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-alignment-menu'
-import { useTableFitToWidth } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-fit-to-width-button'
-import { useTableClearRowColumnContent } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-clear-row-column-content-button'
-import { useTocShowTitle } from '@/tiptap-editor/components/tiptap-node/toc-node/ui/toc-show-title-button'
-
+import { useText } from '@/tiptap-editor/components/tiptap-ui/text-button'
+// ─── Primitive UI Components ──────────────────────────────────────────────────
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Combobox, ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+import { Menu, MenuButton, MenuContent, MenuGroup, MenuGroupLabel, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
+import { Spacer } from '@/tiptap-editor/components/tiptap-ui-primitive/spacer'
+import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
+import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
 // ─── Utils ────────────────────────────────────────────────────────────────────
 import { getNodeDisplayName, isTextSelectionValid } from '@/tiptap-editor/lib/tiptap-collab-utils'
 import { SR_ONLY } from '@/tiptap-editor/lib/tiptap-utils'
-
-// ─── Icons ────────────────────────────────────────────────────────────────────
-import { GripVerticalIcon } from '@/tiptap-editor/components/tiptap-icons/grip-vertical-icon'
-import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
-import { Repeat2Icon } from '@/tiptap-editor/components/tiptap-icons/repeat-2-icon'
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-import './drag-context-menu.scss'
 
 const useNodeTransformActions = () => {
   const text = useText()

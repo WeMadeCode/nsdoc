@@ -2,7 +2,7 @@ import type { Node as PMNode } from '@tiptap/pm/model'
 import type { Transaction } from '@tiptap/pm/state'
 import { AllSelection, NodeSelection, Selection, TextSelection } from '@tiptap/pm/state'
 import { cellAround, CellSelection } from '@tiptap/pm/tables'
-import { findParentNodeClosestToPos, type Editor, type NodeWithPos } from '@tiptap/react'
+import { type Editor, findParentNodeClosestToPos, type NodeWithPos } from '@tiptap/react'
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 

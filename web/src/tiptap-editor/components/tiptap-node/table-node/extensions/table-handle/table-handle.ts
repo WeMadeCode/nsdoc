@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core'
+
 import type { TableHandlesState } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
 import {
   TableHandlePlugin,

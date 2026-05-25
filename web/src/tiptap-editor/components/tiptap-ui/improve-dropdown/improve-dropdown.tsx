@@ -1,42 +1,39 @@
 'use client'
 
-import { useMemo } from 'react'
 import { type Editor } from '@tiptap/react'
 import type { TextOptions, Tone } from '@tiptap-pro/extension-ai'
+import { useMemo } from 'react'
 
-// --- Hooks ---
-import { useImproveDropdown, type AICommand } from '@/tiptap-editor/components/tiptap-ui/improve-dropdown'
-
-// --- Icons ---
-import { MicAiIcon } from '@/tiptap-editor/components/tiptap-icons/mic-ai-icon'
 import { AiSparklesIcon } from '@/tiptap-editor/components/tiptap-icons/ai-sparkles-icon'
 import { CheckAiIcon } from '@/tiptap-editor/components/tiptap-icons/check-ai-icon'
-import { TextExtendIcon } from '@/tiptap-editor/components/tiptap-icons/text-extend-icon'
-import { TextReduceIcon } from '@/tiptap-editor/components/tiptap-icons/text-reduce-icon'
+import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
+import { CompleteSentenceIcon } from '@/tiptap-editor/components/tiptap-icons/complete-sentence-icon'
+import { LanguagesIcon } from '@/tiptap-editor/components/tiptap-icons/languages-icon'
+// --- Icons ---
+import { MicAiIcon } from '@/tiptap-editor/components/tiptap-icons/mic-ai-icon'
 import { Simplify2Icon } from '@/tiptap-editor/components/tiptap-icons/simplify-2-icon'
 import { SmileAiIcon } from '@/tiptap-editor/components/tiptap-icons/smile-ai-icon'
-import { CompleteSentenceIcon } from '@/tiptap-editor/components/tiptap-icons/complete-sentence-icon'
 import { SummarizeTextIcon } from '@/tiptap-editor/components/tiptap-icons/summarize-text-icon'
-import { LanguagesIcon } from '@/tiptap-editor/components/tiptap-icons/languages-icon'
-import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
-
+import { TextExtendIcon } from '@/tiptap-editor/components/tiptap-icons/text-extend-icon'
+import { TextReduceIcon } from '@/tiptap-editor/components/tiptap-icons/text-reduce-icon'
+import { AiAskButton } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
 // --- Tiptap UI ---
 import { SUPPORTED_LANGUAGES, SUPPORTED_TONES } from '@/tiptap-editor/components/tiptap-ui/ai-menu'
-import { AiAskButton } from '@/tiptap-editor/components/tiptap-ui/ai-ask-button'
-
+// --- Hooks ---
+import { type AICommand, useImproveDropdown } from '@/tiptap-editor/components/tiptap-ui/improve-dropdown'
 // --- UI Primitives ---
 import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from '@/tiptap-editor/components/tiptap-ui-primitive/dropdown-menu'
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 

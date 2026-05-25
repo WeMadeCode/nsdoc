@@ -2,20 +2,17 @@
 
 import { forwardRef, useCallback } from 'react'
 
-// --- Lib ---
-import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
-
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- UI Primitives ---
-import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
-
 // --- Tiptap UI ---
 import type { ListType, UseListConfig } from '@/tiptap-editor/components/tiptap-ui/list-button'
 import { LIST_SHORTCUT_KEYS, useList } from '@/tiptap-editor/components/tiptap-ui/list-button'
+import { Badge } from '@/tiptap-editor/components/tiptap-ui-primitive/badge'
+// --- UI Primitives ---
+import type { ButtonProps } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { parseShortcutKeys } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface ListButtonProps extends Omit<ButtonProps, 'type'>, UseListConfig {
   /**

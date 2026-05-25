@@ -1,13 +1,13 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import { NodeViewWrapper } from '@tiptap/react'
-import type { NodeViewProps } from '@tiptap/react'
+import './toc-node.scss'
+
 import type { TableOfContentData, TableOfContentDataItem } from '@tiptap/extension-table-of-contents'
+import type { NodeViewProps } from '@tiptap/react'
+import { NodeViewWrapper } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
 import { useToc } from '@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context'
-
-import './toc-node.scss'
 
 type TocTreeNode = {
   item: TableOfContentDataItem

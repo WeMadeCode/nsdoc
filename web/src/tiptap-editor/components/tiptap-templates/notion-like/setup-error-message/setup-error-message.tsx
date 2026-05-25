@@ -1,8 +1,9 @@
 'use client'
 
 import './setup-error-message.scss'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+
 import { ExternalLinkIcon } from '@/tiptap-editor/components/tiptap-icons/external-link-icon'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 
 export interface SetupErrorMessageProps {
   aiSetupError: boolean

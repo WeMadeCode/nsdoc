@@ -1,12 +1,12 @@
 import { CodeBlockLowlight as CodeBlockLowlightTipTap } from '@tiptap/extension-code-block-lowlight'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import CodeBlockWrapper from './code-block-wrpper'
-
 import css from 'highlight.js/lib/languages/css'
 import js from 'highlight.js/lib/languages/javascript'
 import ts from 'highlight.js/lib/languages/typescript'
 import html from 'highlight.js/lib/languages/xml'
 import { all, createLowlight } from 'lowlight'
+
+import CodeBlockWrapper from './code-block-wrpper'
 
 const lowlight = createLowlight(all)
 

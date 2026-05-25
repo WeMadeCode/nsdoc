@@ -1,11 +1,13 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node.scss'
+
 import type { NodeViewProps } from '@tiptap/react'
 import { NodeViewWrapper } from '@tiptap/react'
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { useRef, useState } from 'react'
+
 import { CloseIcon } from '@/tiptap-editor/components/tiptap-icons/close-icon'
-import '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node.scss'
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { focusNextNode, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface FileItem {

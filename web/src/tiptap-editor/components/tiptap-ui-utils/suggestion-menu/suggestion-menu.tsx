@@ -1,25 +1,21 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { flip, offset, shift, size } from '@floating-ui/react'
 import { PluginKey } from '@tiptap/pm/state'
+// --- Tiptap Editor ---
+import type { Range } from '@tiptap/react'
+// --- Tiptap UI ---
+import { Suggestion } from '@tiptap/suggestion'
+// --- UI Primitives ---
+import { type SuggestionKeyDownProps, SuggestionPluginKey, type SuggestionProps } from '@tiptap/suggestion'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
+import type { SuggestionItem, SuggestionMenuProps } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types'
+import { calculateStartPosition } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-utils'
 // --- Hooks ---
 import { useFloatingElement } from '@/tiptap-editor/hooks/use-floating-element'
 import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Tiptap Editor ---
-import type { Range } from '@tiptap/react'
-
-// --- Tiptap UI ---
-import { Suggestion } from '@tiptap/suggestion'
-
-// --- UI Primitives ---
-import { SuggestionPluginKey, type SuggestionKeyDownProps, type SuggestionProps } from '@tiptap/suggestion'
-
-import { calculateStartPosition } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-utils'
-import type { SuggestionItem, SuggestionMenuProps } from '@/tiptap-editor/components/tiptap-ui-utils/suggestion-menu/suggestion-menu-types'
 
 /**
  * A component that renders a suggestion menu for Tiptap editors.

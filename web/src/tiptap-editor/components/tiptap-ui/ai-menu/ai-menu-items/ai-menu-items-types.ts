@@ -1,6 +1,7 @@
-import type { Action } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
-import { type TextOptions } from '@tiptap-pro/extension-ai'
 import type { Editor } from '@tiptap/react'
+import { type TextOptions } from '@tiptap-pro/extension-ai'
+
+import type { Action } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
 
 export interface MenuActionBase {
   icon: React.ReactNode

@@ -1,5 +1,6 @@
 import { offset, size, useFloating, useTransitionStyles } from '@floating-ui/react'
 import { useEffect, useMemo } from 'react'
+
 import { clamp } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 
 type Orientation = 'row' | 'col' | 'cell'

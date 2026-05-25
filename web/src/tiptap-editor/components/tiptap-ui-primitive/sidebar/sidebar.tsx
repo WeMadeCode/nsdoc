@@ -1,10 +1,13 @@
 'use client'
 
-import React, { createContext, forwardRef, useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
-import { useMergeRefs } from '@floating-ui/react'
 import './sidebar.scss'
+
+import { useMergeRefs } from '@floating-ui/react'
+import React, { createContext, forwardRef, useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
+
+import { clamp, cn } from '@/tiptap-editor/lib/tiptap-utils'
+
 import { Button } from '../button'
-import { cn, clamp } from '@/tiptap-editor/lib/tiptap-utils'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar:state'
 const SIDEBAR_WIDTH_COOKIE_NAME = 'sidebar:width'

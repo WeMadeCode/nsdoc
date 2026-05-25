@@ -1,24 +1,22 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import type { Editor } from '@tiptap/react'
-import { deleteRow, deleteColumn, CellSelection } from '@tiptap/pm/tables'
 import type { Transaction } from '@tiptap/pm/state'
+import { CellSelection, deleteColumn, deleteRow } from '@tiptap/pm/tables'
+import type { Editor } from '@tiptap/react'
+import { useCallback, useMemo } from 'react'
 
-// --- Hooks ---
-import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
-
-// --- Lib ---
-import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+// --- Icons ---
+import { TrashIcon } from '@/tiptap-editor/components/tiptap-icons/trash-icon'
 import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
 import {
   getTable,
   getTableSelectionType,
   selectCellsByCoords,
 } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
-// --- Icons ---
-import { TrashIcon } from '@/tiptap-editor/components/tiptap-icons/trash-icon'
+// --- Hooks ---
+import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
+// --- Lib ---
+import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface UseTableDeleteRowColumnConfig {
   /**

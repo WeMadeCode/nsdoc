@@ -1,23 +1,20 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { EmojiItem } from '@tiptap/extension-emoji'
-
-// --- Hooks ---
-import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
-
-// --- Lib ---
-import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
-
-// --- UI Primitives ---
-import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
-import { Input } from '@/tiptap-editor/components/tiptap-ui-primitive/input'
-import { Card, CardBody, CardHeader, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
-
-import { getFilteredEmojis } from '@/tiptap-editor/components/tiptap-ui/emoji-menu/emoji-menu-utils'
-
 // --- Styles ---
 import '@/tiptap-editor/components/tiptap-ui/emoji-menu/emoji-menu.scss'
+
+import type { EmojiItem } from '@tiptap/extension-emoji'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
+import { getFilteredEmojis } from '@/tiptap-editor/components/tiptap-ui/emoji-menu/emoji-menu-utils'
+// --- UI Primitives ---
+import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
+import { Card, CardBody, CardHeader, CardItemGroup } from '@/tiptap-editor/components/tiptap-ui-primitive/card'
+import { Input } from '@/tiptap-editor/components/tiptap-ui-primitive/input'
+// --- Hooks ---
+import { useMenuNavigation } from '@/tiptap-editor/hooks/use-menu-navigation'
+// --- Lib ---
+import { getElementOverflowPosition } from '@/tiptap-editor/lib/tiptap-collab-utils'
 
 export interface EmojiMenuItemProps<T extends EmojiItem> {
   emoji: T

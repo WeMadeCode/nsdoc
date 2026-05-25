@@ -1,19 +1,16 @@
 'use client'
 
 // --- Lib ---
-import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
-
-// --- UI ---
-import { useTableAlignCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button'
-
 // --- Icons ---
 import { AlignmentIcon } from '@/tiptap-editor/components/tiptap-icons/alignment-icon'
 import { ChevronRightIcon } from '@/tiptap-editor/components/tiptap-icons/chevron-right-icon'
-
-// --- UI Primitives ---
-import { Menu, MenuButton, MenuButtonArrow, MenuContent, MenuGroup, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
+import type { Orientation } from '@/tiptap-editor/components/tiptap-node/table-node/lib/tiptap-table-utils'
+// --- UI ---
+import { useTableAlignCell } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-align-cell-button'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { ComboboxList } from '@/tiptap-editor/components/tiptap-ui-primitive/combobox'
+// --- UI Primitives ---
+import { Menu, MenuButton, MenuButtonArrow, MenuContent, MenuGroup, MenuItem } from '@/tiptap-editor/components/tiptap-ui-primitive/menu'
 import { Separator } from '@/tiptap-editor/components/tiptap-ui-primitive/separator'
 
 export interface ActionItemProps {

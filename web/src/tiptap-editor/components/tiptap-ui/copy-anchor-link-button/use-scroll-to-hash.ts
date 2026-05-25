@@ -1,10 +1,11 @@
 'use client'
 
-import { useCallback, useEffect } from 'react'
 import { type Editor } from '@tiptap/react'
+import { useCallback, useEffect } from 'react'
+
+import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 import { getEditorExtension } from '@/tiptap-editor/lib/tiptap-advanced-utils'
-import { selectNodeAndHideFloating } from '@/tiptap-editor/hooks/use-floating-toolbar-visibility'
 
 export interface UseScrollToHashConfig {
   /**
