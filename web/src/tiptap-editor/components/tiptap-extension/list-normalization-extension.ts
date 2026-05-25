@@ -39,14 +39,18 @@ export const ListNormalizationExtension = Extension.create({
     const listTypes = ['bulletList', 'orderedList', 'taskList']
     const listItemTypes = ['listItem', 'taskItem']
 
-    const getActiveListItemName = (editor: Editor) => {
+    const getActiveListItem = (editor: Editor) => {
       const { $from } = editor.state.selection
 
       for (let depth = $from.depth; depth > 0; depth--) {
-        const nodeName = $from.node(depth).type.name
+        const node = $from.node(depth)
+        const nodeName = node.type.name
 
         if (listItemTypes.includes(nodeName)) {
-          return nodeName
+          return {
+            name: nodeName,
+            node,
+          }
         }
       }
 
@@ -56,16 +60,19 @@ export const ListNormalizationExtension = Extension.create({
     const handleEnter = ({ editor }: { editor: Editor }) => {
       const { selection } = editor.state
 
-      if (!selection.empty) return false
+      const listItem = getActiveListItem(editor)
 
-      const listItemName = getActiveListItemName(editor)
-      if (!listItemName) return false
+      if (!listItem) return false
 
-      if (selection.$from.parent.type.name === 'paragraph' && selection.$from.parent.content.size === 0) {
-        return editor.commands.liftListItem(listItemName)
+      if (!selection.empty) {
+        return true
       }
 
-      return editor.commands.splitListItem(listItemName)
+      if (listItem.node.textContent.trim().length === 0) {
+        return editor.commands.liftListItem(listItem.name)
+      }
+
+      return editor.commands.splitListItem(listItem.name)
     }
 
     const handleBackspace = ({ editor }: { editor: Editor }) => {

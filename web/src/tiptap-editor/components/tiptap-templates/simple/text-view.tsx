@@ -14,7 +14,7 @@ const TextView: React.FC<TextViewProps> = props => {
           event.preventDefault()
         }}
         onClick={() => {
-          const res = editor?.chain().focus().toggleStrike().run()
+          const res = editor?.chain().focus().toggleBulletList().run()
           console.log('我被人点了！！', res)
         }}
       >
