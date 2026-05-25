@@ -4,7 +4,22 @@ import { ReactNodeViewRenderer } from '@tiptap/react'
 
 import { ImageUploadNode as ImageUploadNodeComponent } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node'
 
-export type UploadFunction = (file: File, onProgress?: (event: { progress: number }) => void, abortSignal?: AbortSignal) => Promise<string>
+export type ImageUploadResult =
+  | string
+  | {
+      src: string
+      attachmentId?: string
+      alt?: string
+      title?: string
+      width?: string | number | null
+      height?: string | number | null
+    }
+
+export type UploadFunction = (
+  file: File,
+  onProgress?: (event: { progress: number }) => void,
+  abortSignal?: AbortSignal
+) => Promise<ImageUploadResult>
 
 export interface ImageUploadNodeOptions {
   /**

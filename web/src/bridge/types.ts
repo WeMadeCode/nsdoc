@@ -90,6 +90,29 @@ export type EditorBooleanResult = {
   align?: string
 }
 
+export type MediaImageResult = {
+  attachmentId: string
+  src: string
+  filename: string
+  mimeType: string
+  byteSize: number
+}
+
+export type MediaPickImageParams = {
+  source?: 'photoLibrary'
+}
+
+export type MediaPickImageResult = MediaImageResult
+
+export type MediaResolveImageParams = {
+  attachmentId: string
+}
+
+export type MediaResolveImageResult = {
+  src: string
+  mimeType: string
+}
+
 declare global {
   interface Window {
     NSBridge: NSBridgePublicApi

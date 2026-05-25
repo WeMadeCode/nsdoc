@@ -11,7 +11,9 @@ struct NSBridgePermissionGuard {
         "editor.contentChanged",
         "editor.selectionChanged",
         "editor.focusChanged",
-        "editor.error"
+        "editor.error",
+        "media.pickImage",
+        "media.resolveImage"
     ]
 
     func validateIncoming(_ message: NSBridgeMessage) -> NSBridgeRuntimeError? {
@@ -38,4 +40,3 @@ struct NSBridgePermissionGuard {
         return nil
     }
 }
-

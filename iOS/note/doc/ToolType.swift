@@ -139,7 +139,7 @@ enum ToolType {
         case .camera:
             ""
         case .picture:
-            ""
+            "insertNativeImage"
         case .table:
             "insertTable"
         case .insert:

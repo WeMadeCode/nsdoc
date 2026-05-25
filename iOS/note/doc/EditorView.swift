@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftData
+import PhotosUI
+import UniformTypeIdentifiers
 
 struct EditorView: View {
     
@@ -22,6 +24,10 @@ struct EditorView: View {
     @State private var didApplyInitialContent = false
     @State private var isSaving = false
     @State private var didRecordAccess = false
+    @State private var isImagePickerPresented = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var didReceiveImagePickerSelection = false
+    @State private var pendingImagePickerCompletion: NSBridgeHandlerCompletion?
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
@@ -75,6 +81,34 @@ struct EditorView: View {
         .task {
             recordDocumentAccessIfNeeded()
         }
+        .photosPicker(
+            isPresented: $isImagePickerPresented,
+            selection: $selectedPhotoItem,
+            matching: .images
+        )
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            guard let newItem else {
+                return
+            }
+
+            didReceiveImagePickerSelection = true
+            Task {
+                await handlePickedPhotoItem(newItem)
+            }
+        }
+        .onChange(of: isImagePickerPresented) { _, isPresented in
+            guard !isPresented else {
+                return
+            }
+
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 300_000_000)
+                if !didReceiveImagePickerSelection, let completion = pendingImagePickerCompletion {
+                    pendingImagePickerCompletion = nil
+                    completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: "Image selection cancelled", recoverable: true)))
+                }
+            }
+        }
     }
     
     private var mainView: some View {
@@ -92,6 +126,10 @@ struct EditorView: View {
                     saveContentSnapshot(snapshot)
                 } toolsUpdate: { activeTools, selectionContext in
                     viewModel.updateSelected(activeTools: activeTools, selectionContext: selectionContext)
+                } pickImageAttachment: { params, completion in
+                    pickImageAttachment(params, completion: completion)
+                } resolveImageAttachment: { params in
+                    resolveImageAttachment(params)
                 }
             } else {
                 Text("文档编辑器资源未找到")
@@ -280,6 +318,76 @@ struct EditorView: View {
         )
         modelContext.insert(document)
         return document
+    }
+
+    @MainActor
+    private func pickImageAttachment(_ params: [String: Any]?, completion: @escaping NSBridgeHandlerCompletion) {
+        if let pendingImagePickerCompletion {
+            pendingImagePickerCompletion(.failure(NSBridgeRuntimeError(code: .handlerError, message: "Another image selection was started", recoverable: true)))
+        }
+
+        selectedPhotoItem = nil
+        didReceiveImagePickerSelection = false
+        pendingImagePickerCompletion = completion
+        isImagePickerPresented = true
+    }
+
+    @MainActor
+    private func handlePickedPhotoItem(_ item: PhotosPickerItem) async {
+        guard let completion = pendingImagePickerCompletion else {
+            return
+        }
+
+        pendingImagePickerCompletion = nil
+
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self) else {
+                throw NSBridgeRuntimeError(code: .handlerError, message: "Failed to read selected image", recoverable: true)
+            }
+
+            let contentType = item.supportedContentTypes.first { $0.conforms(to: .image) }
+            let mimeType = contentType?.preferredMIMEType ?? "image/jpeg"
+            let fileExtension = contentType?.preferredFilenameExtension ?? "jpg"
+            let filename = "Image-\(Int(Date().timeIntervalSince1970)).\(fileExtension)"
+            let document = try currentOrNewDocument()
+
+            let result = try AttachmentService.storeImageData(
+                data,
+                filename: filename,
+                mimeType: mimeType,
+                document: document,
+                modelContext: modelContext
+            )
+
+            completion(.success(result))
+        } catch let error as NSBridgeRuntimeError {
+            completion(.failure(error))
+        } catch {
+            completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: error.localizedDescription, recoverable: true)))
+        }
+    }
+
+    private func currentOrNewDocument() throws -> Document {
+        if let workingDocument {
+            return workingDocument
+        }
+
+        let document = try makeNewDocument()
+        workingDocument = document
+        return document
+    }
+
+    private func resolveImageAttachment(_ params: [String: Any]?) -> Result<Any?, NSBridgeRuntimeError> {
+        do {
+            return .success(try AttachmentService.resolveImage(
+                params: params,
+                modelContext: modelContext
+            ))
+        } catch let error as NSBridgeRuntimeError {
+            return .failure(error)
+        } catch {
+            return .failure(NSBridgeRuntimeError(code: .handlerError, message: error.localizedDescription, recoverable: true))
+        }
     }
 
     private func saveContentJSON(_ contentJSON: String, for document: Document) {

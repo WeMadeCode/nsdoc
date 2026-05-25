@@ -7,6 +7,7 @@ import { NodeViewWrapper } from '@tiptap/react'
 import { useRef, useState } from 'react'
 
 import { CloseIcon } from '@/tiptap-editor/components/tiptap-icons/close-icon'
+import type { ImageUploadResult } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
 import { Button } from '@/tiptap-editor/components/tiptap-ui-primitive/button'
 import { focusNextNode, isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
@@ -33,7 +34,7 @@ export interface FileItem {
    * URL to the uploaded file, available after successful upload
    * @optional
    */
-  url?: string
+  uploadResult?: ImageUploadResult
   /**
    * Controller that can be used to abort the upload process
    * @optional
@@ -60,15 +61,15 @@ export interface UploadOptions {
    * @param {File} file - The file to be uploaded
    * @param {Function} onProgress - Callback function to report upload progress
    * @param {AbortSignal} signal - Signal that can be used to abort the upload
-   * @returns {Promise<string>} Promise resolving to the URL of the uploaded file
+   * @returns Promise resolving to the uploaded image result
    */
-  upload: (file: File, onProgress: (event: { progress: number }) => void, signal: AbortSignal) => Promise<string>
+  upload: (file: File, onProgress: (event: { progress: number }) => void, signal: AbortSignal) => Promise<ImageUploadResult>
   /**
    * Callback triggered when a file is uploaded successfully
-   * @param {string} url - URL of the successfully uploaded file
+   * @param {ImageUploadResult} result - Result of the successfully uploaded file
    * @optional
    */
-  onSuccess?: (url: string) => void
+  onSuccess?: (result: ImageUploadResult) => void
   /**
    * Callback triggered when an error occurs during upload
    * @param {Error} error - The error that occurred
@@ -83,7 +84,7 @@ export interface UploadOptions {
 function useFileUpload(options: UploadOptions) {
   const [fileItems, setFileItems] = useState<FileItem[]>([])
 
-  const uploadFile = async (file: File): Promise<string | null> => {
+  const uploadFile = async (file: File): Promise<ImageUploadResult | null> => {
     if (file.size > options.maxSize) {
       const error = new Error(`File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`)
       options.onError?.(error)
@@ -108,7 +109,7 @@ function useFileUpload(options: UploadOptions) {
         throw new Error('Upload function is not defined')
       }
 
-      const url = await options.upload(
+      const uploadResult = await options.upload(
         file,
         (event: { progress: number }) => {
           setFileItems(prev => prev.map(item => (item.id === fileId ? { ...item, progress: event.progress } : item)))
@@ -116,12 +117,13 @@ function useFileUpload(options: UploadOptions) {
         abortController.signal
       )
 
-      if (!url) throw new Error('Upload failed: No URL returned')
+      const src = typeof uploadResult === 'string' ? uploadResult : uploadResult.src
+      if (!src) throw new Error('Upload failed: No URL returned')
 
       if (!abortController.signal.aborted) {
-        setFileItems(prev => prev.map(item => (item.id === fileId ? { ...item, status: 'success', url, progress: 100 } : item)))
-        options.onSuccess?.(url)
-        return url
+        setFileItems(prev => prev.map(item => (item.id === fileId ? { ...item, status: 'success', uploadResult, progress: 100 } : item)))
+        options.onSuccess?.(uploadResult)
+        return uploadResult
       }
 
       return null
@@ -134,7 +136,7 @@ function useFileUpload(options: UploadOptions) {
     }
   }
 
-  const uploadFiles = async (files: File[]): Promise<string[]> => {
+  const uploadFiles = async (files: File[]): Promise<ImageUploadResult[]> => {
     if (!files || files.length === 0) {
       options.onError?.(new Error('No files to upload'))
       return []
@@ -150,7 +152,7 @@ function useFileUpload(options: UploadOptions) {
     const results = await Promise.all(uploadPromises)
 
     // Filter out null results (failed uploads)
-    return results.filter((url): url is string => url !== null)
+    return results.filter((result): result is ImageUploadResult => result !== null)
   }
 
   const removeFileItem = (fileId: string) => {
@@ -158,9 +160,6 @@ function useFileUpload(options: UploadOptions) {
       const fileToRemove = prev.find(item => item.id === fileId)
       if (fileToRemove?.abortController) {
         fileToRemove.abortController.abort()
-      }
-      if (fileToRemove?.url) {
-        URL.revokeObjectURL(fileToRemove.url)
       }
       return prev.filter(item => item.id !== fileId)
     })
@@ -170,9 +169,6 @@ function useFileUpload(options: UploadOptions) {
     fileItems.forEach(item => {
       if (item.abortController) {
         item.abortController.abort()
-      }
-      if (item.url) {
-        URL.revokeObjectURL(item.url)
       }
     })
     setFileItems([])
@@ -401,21 +397,24 @@ export const ImageUploadNode: React.FC<NodeViewProps> = props => {
   const { fileItems, uploadFiles, removeFileItem, clearAllFiles } = useFileUpload(uploadOptions)
 
   const handleUpload = async (files: File[]) => {
-    const urls = await uploadFiles(files)
+    const results = await uploadFiles(files)
 
-    if (urls.length > 0) {
+    if (results.length > 0) {
       const pos = props.getPos()
 
       if (isValidPosition(pos)) {
-        const imageNodes = urls.map((url, index) => {
+        const imageNodes = results.map((result, index) => {
           const filename = files[index]?.name.replace(/\.[^/.]+$/, '') || 'unknown'
+          const attrs = typeof result === 'string' ? { src: result } : result
           return {
             type: extension.options.type,
             attrs: {
-              ...extension.options,
-              src: url,
-              alt: filename,
-              title: filename,
+              src: attrs.src,
+              attachmentId: typeof result === 'string' ? null : result.attachmentId,
+              alt: attrs.alt ?? filename,
+              title: attrs.title ?? filename,
+              width: attrs.width,
+              height: attrs.height,
             },
           }
         })

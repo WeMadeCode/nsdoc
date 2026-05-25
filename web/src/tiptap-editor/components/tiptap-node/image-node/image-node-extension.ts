@@ -8,6 +8,7 @@ import { ImageNodeView } from '@/tiptap-editor/components/tiptap-node/image-node
 
 interface ImageAttributes {
   src: string | null
+  attachmentId?: string | null
   alt?: string | null
   title?: string | null
   width?: string | null
@@ -17,6 +18,7 @@ interface ImageAttributes {
 
 const parseImageAttributes = (img: Element): Partial<ImageAttributes> => ({
   src: img.getAttribute('src'),
+  attachmentId: img.getAttribute('data-attachment-id'),
   alt: img.getAttribute('alt'),
   title: img.getAttribute('title'),
   width: img.getAttribute('width'),
@@ -26,6 +28,7 @@ const parseImageAttributes = (img: Element): Partial<ImageAttributes> => ({
 function buildImageHTMLAttributes(attrs: ImageAttributes): Record<string, string> {
   const result: Record<string, string> = { src: attrs.src || '' }
 
+  if (attrs.attachmentId) result['data-attachment-id'] = attrs.attachmentId
   if (attrs.alt) result.alt = attrs.alt
   if (attrs.title) result.title = attrs.title
   if (attrs.width) result.width = attrs.width
@@ -42,6 +45,14 @@ export const Image = TiptapImage.extend<ImageOptions>({
       ...this.parent?.(),
       'data-align': {
         default: null,
+      },
+      attachmentId: {
+        default: null,
+        parseHTML: element => element.getAttribute('data-attachment-id'),
+        renderHTML: attributes => {
+          if (!attributes.attachmentId) return {}
+          return { 'data-attachment-id': attributes.attachmentId }
+        },
       },
       showCaption: {
         default: false,
@@ -88,11 +99,12 @@ export const Image = TiptapImage.extend<ImageOptions>({
   },
 
   renderHTML({ node }) {
-    const { src, alt, title, width, height, showCaption } = node.attrs
+    const { src, attachmentId, alt, title, width, height, showCaption } = node.attrs
     const align = node.attrs['data-align']
 
     const imgAttrs = buildImageHTMLAttributes({
       src,
+      attachmentId,
       alt,
       title,
       width,

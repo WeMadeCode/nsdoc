@@ -18,13 +18,11 @@ import { useEffect } from 'react'
 // --- Lib ---
 import { setupBridge } from '@/bridge'
 // --- Tiptap Node ---
-import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
 import { TableCellHandleMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-cell-handle-menu'
 import { TableExtendRowColumnButtons } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button'
 import { TableHandle } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/table-handle'
 import { TableSelectionOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay'
 import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
-import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
 
 // import TextView from './text-view'
 
@@ -40,15 +38,7 @@ export function SimpleEditor() {
         class: 'simple-editor',
       },
     },
-    extensions: [
-      ...baseExtensions,
-      ImageUploadNode.configure({
-        accept: 'image/*',
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-      }),
-    ],
+    extensions: baseExtensions,
   })
 
   useEffect(() => {

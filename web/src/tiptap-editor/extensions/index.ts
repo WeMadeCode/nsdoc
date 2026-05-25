@@ -5,7 +5,6 @@ import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import Highlight from '@tiptap/extension-highlight'
 import History from '@tiptap/extension-history'
-import Image from '@tiptap/extension-image'
 import Italic from '@tiptap/extension-italic'
 import Link from '@tiptap/extension-link'
 import ListItem from '@tiptap/extension-list-item'
@@ -26,6 +25,7 @@ import { TrailingNode } from '@tiptap/extensions'
 import { ListNormalizationExtension } from '@/tiptap-editor/components/tiptap-extension/list-normalization-extension'
 import { NodeAlignment } from '@/tiptap-editor/components/tiptap-extension/node-alignment-extension'
 import { NodeBackground } from '@/tiptap-editor/components/tiptap-extension/node-background-extension'
+import { Image } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-extension'
 import { TableHandleExtension } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
 import { TableKit } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-node-extension'
 import { Blockquote } from '@/tiptap-editor/extensions/extension-blockquote'
@@ -35,6 +35,9 @@ import { HorizontalRule } from '@/tiptap-editor/extensions/extension-horizontal-
 import { Placeholder } from '@/tiptap-editor/extensions/extension-placeholder'
 import { TableCell } from '@/tiptap-editor/extensions/extension-table-cell'
 import { Title } from '@/tiptap-editor/extensions/extension-title'
+
+import { ImageUploadNode } from '../components/tiptap-node/image-upload-node'
+import { handleImageUpload, MAX_FILE_SIZE } from '../lib/tiptap-utils'
 
 export const extensions = [
   Document,
@@ -87,5 +90,11 @@ export const extensions = [
   TrailingNode.configure({
     node: 'paragraph',
     notAfter: ['paragraph', 'blockquote'],
+  }),
+  ImageUploadNode.configure({
+    accept: 'image/*',
+    maxSize: MAX_FILE_SIZE,
+    limit: 3,
+    upload: handleImageUpload,
   }),
 ]

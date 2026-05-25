@@ -4,6 +4,8 @@ import { AllSelection, NodeSelection, Selection, TextSelection } from '@tiptap/p
 import { cellAround, CellSelection } from '@tiptap/pm/tables'
 import { type Editor, findParentNodeClosestToPos, type NodeWithPos } from '@tiptap/react'
 
+import type { ImageUploadResult } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
+
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
 export const MAC_SYMBOLS: Record<string, string> = {
@@ -320,7 +322,7 @@ export const handleImageUpload = async (
   file: File,
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal
-): Promise<string> => {
+): Promise<ImageUploadResult> => {
   // Validate file
   if (!file) {
     throw new Error('No file provided')
@@ -330,17 +332,28 @@ export const handleImageUpload = async (
     throw new Error(`File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`)
   }
 
-  // For demo/testing: Simulate upload progress. In production, replace the following code
-  // with your own upload implementation.
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
-      throw new Error('Upload cancelled')
-    }
-    await new Promise(resolve => setTimeout(resolve, 500))
-    onProgress?.({ progress })
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Only image files are supported')
   }
 
-  return '/images/tiptap-ui-placeholder-image.jpg'
+  if (abortSignal?.aborted) {
+    throw new Error('Upload cancelled')
+  }
+
+  const fallbackName = file.name.replace(/\.[^/.]+$/, '')
+  onProgress?.({ progress: 10 })
+
+  if (window.webkit?.messageHandlers?.nsBridge) {
+    throw new Error('Use the native image picker to insert images')
+  }
+
+  onProgress?.({ progress: 100 })
+
+  return {
+    src: URL.createObjectURL(file),
+    alt: fallbackName,
+    title: fallbackName,
+  }
 }
 
 type ProtocolOptions = {

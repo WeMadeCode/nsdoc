@@ -11,6 +11,8 @@ import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- Lib ---
 import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
+import type { MediaPickImageParams, MediaPickImageResult } from '@/bridge/types'
+import { nsBridge } from '@/bridge/web-bridge'
 
 export const IMAGE_UPLOAD_SHORTCUT_KEY = 'mod+shift+i'
 
@@ -38,9 +40,9 @@ export interface UseImageUploadConfig {
  */
 export function canInsertImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, 'imageUpload')) return false
+  if (!isExtensionAvailable(editor, ['image', 'imageUpload'])) return false
 
-  return editor.can().insertContent({ type: 'imageUpload' })
+  return editor.can().insertContent({ type: isExtensionAvailable(editor, 'image') ? 'image' : 'imageUpload' })
 }
 
 /**
@@ -64,6 +66,41 @@ export function insertImage(editor: Editor | null): boolean {
       .focus()
       .insertContent({
         type: 'imageUpload',
+      })
+      .run()
+  } catch {
+    return false
+  }
+}
+
+export async function insertNativeImage(editor: Editor | null): Promise<boolean> {
+  if (!editor || !editor.isEditable) return false
+  if (!canInsertImage(editor)) return false
+
+  if (!window.webkit?.messageHandlers?.nsBridge) {
+    return insertImage(editor)
+  }
+
+  try {
+    const image = await nsBridge.call<MediaPickImageParams, MediaPickImageResult>(
+      'media',
+      'pickImage',
+      { source: 'photoLibrary' },
+      { timeoutMs: 120000 }
+    )
+    const displayName = image.filename.replace(/\.[^/.]+$/, '')
+
+    return editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'image',
+        attrs: {
+          src: image.src,
+          attachmentId: image.attachmentId,
+          alt: displayName,
+          title: displayName,
+        },
       })
       .run()
   } catch {
@@ -156,11 +193,12 @@ export function useImageUpload(config?: UseImageUploadConfig) {
   const handleImage = useCallback(() => {
     if (!editor) return false
 
-    const success = insertImage(editor)
-    if (success) {
-      onInserted?.()
-    }
-    return success
+    void insertNativeImage(editor).then(success => {
+      if (success) {
+        onInserted?.()
+      }
+    })
+    return true
   }, [editor, onInserted])
 
   useHotkeys(

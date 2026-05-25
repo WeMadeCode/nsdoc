@@ -42,6 +42,8 @@ struct SLWebView: UIViewRepresentable {
     let bridgeReady: (() -> Void)?
     let contentChanged: ((EditorContentSnapshot) -> Void)?
     let toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)?
+    let pickImageAttachment: (([String: Any]?, @escaping NSBridgeHandlerCompletion) -> Void)?
+    let resolveImageAttachment: (([String: Any]?) -> Result<Any?, NSBridgeRuntimeError>)?
     
     init(url: URL,
          javaScriptCommand: Binding<JavaScriptCommand?>,
@@ -50,7 +52,9 @@ struct SLWebView: UIViewRepresentable {
          isLoadFinsh: (() -> Void)? = nil,
          bridgeReady: (() -> Void)? = nil,
          contentChanged: ((EditorContentSnapshot) -> Void)? = nil,
-         toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)? = nil
+         toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)? = nil,
+         pickImageAttachment: (([String: Any]?, @escaping NSBridgeHandlerCompletion) -> Void)? = nil,
+         resolveImageAttachment: (([String: Any]?) -> Result<Any?, NSBridgeRuntimeError>)? = nil
     ) {
         self.url = url
         self._javaScriptCommand = javaScriptCommand
@@ -60,6 +64,8 @@ struct SLWebView: UIViewRepresentable {
         self.bridgeReady = bridgeReady
         self.contentChanged = contentChanged
         self.toolsUpdate = toolsUpdate
+        self.pickImageAttachment = pickImageAttachment
+        self.resolveImageAttachment = resolveImageAttachment
     }
 
     func makeUIView(context: Context) -> WKWebView {
@@ -161,6 +167,24 @@ struct SLWebView: UIViewRepresentable {
                     self?.parent.toolsUpdate?(activeTools, selectionContext)
                 },
                 onError: { _ in
+                }
+            )
+            MediaBridgeHandlers.register(
+                on: bridge,
+                pickImage: { [weak self] params, completion in
+                    guard let self, let pickImageAttachment = self.parent.pickImageAttachment else {
+                        completion(.failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.pickImage is not available")))
+                        return
+                    }
+
+                    pickImageAttachment(params, completion)
+                },
+                resolveImage: { [weak self] params in
+                    guard let self, let resolveImageAttachment = self.parent.resolveImageAttachment else {
+                        return .failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.resolveImage is not available"))
+                    }
+
+                    return resolveImageAttachment(params)
                 }
             )
         }
@@ -418,7 +442,7 @@ private final class EditorInsertKeyboardView: UIView {
             Block(toolType: .reference, title: "引用块", iconTitle: nil, systemImage: "quote.opening", iconColor: .tertiaryLabel)
         ]),
         Section(title: "高级部分", blocks: [
-            Block(toolType: nil, title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
+            Block(toolType: .picture, title: "图片", iconTitle: nil, systemImage: "photo.on.rectangle.angled", iconColor: .systemPink),
             Block(toolType: .table, title: "表格", iconTitle: nil, systemImage: "tablecells", iconColor: .systemTeal),
             Block(toolType: .code, title: "代码块", iconTitle: nil, systemImage: "chevron.left.forwardslash.chevron.right", iconColor: .systemIndigo)
         ])

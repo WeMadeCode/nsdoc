@@ -5,6 +5,8 @@ import type { Editor, NodeViewProps } from '@tiptap/react'
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import type { MediaResolveImageParams, MediaResolveImageResult } from '@/bridge/types'
+import { nsBridge } from '@/bridge/web-bridge'
 import { isValidPosition } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface ResizeParams {
@@ -15,6 +17,7 @@ export interface ResizeParams {
 
 export interface ResizableImageProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string
+  attachmentId?: string | null
   alt?: string
   editor?: Editor
   minWidth?: number
@@ -37,6 +40,7 @@ export function ImageNodeView(props: NodeViewProps) {
   return (
     <ResizableImage
       src={node.attrs.src}
+      attachmentId={node.attrs.attachmentId}
       alt={node.attrs.alt || ''}
       editor={editor}
       align={node.attrs['data-align']}
@@ -53,6 +57,7 @@ export function ImageNodeView(props: NodeViewProps) {
 
 export const ResizableImage: React.FC<ResizableImageProps> = ({
   src,
+  attachmentId,
   alt = '',
   editor,
   minWidth = 96,
@@ -69,12 +74,45 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   const [resizeParams, setResizeParams] = useState<ResizeParams | undefined>()
   const [width, setWidth] = useState<number | undefined>(initialWidth)
   const [showHandles, setShowHandles] = useState(false)
+  const [displaySrc, setDisplaySrc] = useState(src)
   const isResizingRef = useRef(false)
   const isMountedRef = useRef(true)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const leftResizeHandleRef = useRef<HTMLDivElement>(null)
   const rightResizeHandleRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const resolvedAttachmentId = attachmentId ?? (src.startsWith('attachment://') ? src.slice('attachment://'.length) : null)
+
+    if (!resolvedAttachmentId || !window.webkit?.messageHandlers?.nsBridge) {
+      setDisplaySrc(src)
+      return
+    }
+
+    void nsBridge
+      .call<MediaResolveImageParams, MediaResolveImageResult>(
+        'media',
+        'resolveImage',
+        { attachmentId: resolvedAttachmentId },
+        { timeoutMs: 5000 }
+      )
+      .then(result => {
+        if (!cancelled) {
+          setDisplaySrc(result.src)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDisplaySrc(src)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [attachmentId, src])
 
   // Listen to editor selection changes to detect when focus leaves the caption
   useEffect(() => {
@@ -272,7 +310,7 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
         <div className="tiptap-image-content">
           <img
             ref={imageRef}
-            src={src}
+            src={displaySrc}
             alt={alt}
             className="tiptap-image-img"
             contentEditable={false}

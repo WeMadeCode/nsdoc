@@ -4,7 +4,14 @@ import type { ResolvedPos } from '@tiptap/pm/model'
 import debounce from 'lodash.debounce'
 
 import { BridgeError } from './errors'
-import type { EditorActiveTools, EditorContentSnapshot, EditorSelectionContext, EditorSetContentParams } from './types'
+import type {
+  EditorActiveTools,
+  EditorContentSnapshot,
+  EditorSelectionContext,
+  EditorSetContentParams,
+  MediaPickImageParams,
+  MediaPickImageResult,
+} from './types'
 import { BRIDGE_VERSION } from './types'
 import { nsBridge } from './web-bridge'
 
@@ -28,6 +35,8 @@ const capabilities = [
   'editor.setTextAlign',
   'editor.setHorizontalRule',
   'editor.insertTable',
+  'editor.insertImageUpload',
+  'editor.insertNativeImage',
 ]
 
 const readyEditors = new WeakSet<Editor>()
@@ -279,6 +288,32 @@ export const setupEditorBridge = (editor: Editor | null) => {
         })
         .run()
       return { inserted: inserted }
+    }),
+    nsBridge.register<never, { inserted: boolean }>('editor', 'insertImageUpload', () => {
+      const inserted = editor.chain().focus().insertContent({ type: 'imageUpload' }).run()
+      return { inserted }
+    }),
+    nsBridge.register<MediaPickImageParams | undefined, Promise<{ inserted: boolean }>>('editor', 'insertNativeImage', async params => {
+      const image = await nsBridge.call<MediaPickImageParams | undefined, MediaPickImageResult>('media', 'pickImage', params, {
+        timeoutMs: 120000,
+      })
+      console.log('pickImage = ', image)
+      const displayName = image.filename.replace(/\.[^/.]+$/, '')
+      const inserted = editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'image',
+          attrs: {
+            src: image.src,
+            attachmentId: image.attachmentId,
+            alt: displayName,
+            title: displayName,
+          },
+        })
+        .run()
+
+      return { inserted }
     }),
   ]
 
