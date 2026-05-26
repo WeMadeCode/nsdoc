@@ -20,6 +20,7 @@ enum ToolType {
     case order
     case unOrder
     case check
+    case inlineCode
     case code
     case foldList
     case page
@@ -32,6 +33,7 @@ enum ToolType {
     
     case bold
     case italic
+    case underline
     case strikethrough
     case line
     case reference
@@ -65,6 +67,8 @@ enum ToolType {
             Image(.fontUnOrder)
         case .check:
             Image(.fontCheck)
+        case .inlineCode:
+            Image(systemName: "chevron.left.forwardslash.chevron.right")
         case .code:
             Image(.fontCode)
         case .foldList:
@@ -97,6 +101,8 @@ enum ToolType {
             Image(.otherB)
         case .italic:
             Image(.otherI)
+        case .underline:
+            Image(systemName: "underline")
         case .strikethrough:
             Image(.otherS)
         case .mention:
@@ -116,6 +122,8 @@ enum ToolType {
             "toggleBulletList"
         case .check:
             "toggleTaskList"
+        case .inlineCode:
+            "toggleCode"
         case .code:
             "toggleCodeBlock"
         case .foldList:
@@ -127,6 +135,8 @@ enum ToolType {
             "toggleBold"
         case .italic:
             "toggleItalic"
+        case .underline:
+            "toggleUnderline"
         case .strikethrough:
             "toggleStrike"
         case .line:

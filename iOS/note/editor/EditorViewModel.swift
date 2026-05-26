@@ -8,29 +8,13 @@
 import Foundation
 import SwiftUI
 
-struct ToolItem: Identifiable {
-    
-    var id = UUID()
-    
-    var toolType: ToolType
-    var isSelected: Bool
-    var image: Image
-    var isRealTool: Bool
-    
-    init(toolType: ToolType, isSelected: Bool = false, isRealTool: Bool = true) {
-        self.toolType = toolType
-        self.isSelected = isSelected
-        self.image = toolType.image
-        self.isRealTool = isRealTool
-    }
-    
-}
 
 class EditorViewModel: ObservableObject {
     
     @Published var mainTools: [ToolItem]
 
     @Published var subFontTools: [ToolItem]
+    @Published var subStyleTools: [ToolItem]
     @Published var subAlignTools: [ToolItem]
     @Published var isInsertToolEnabled = false
     @Published var activeTools: [ToolType: Bool] = [:]
@@ -43,7 +27,7 @@ class EditorViewModel: ObservableObject {
         self.mainTools = [
             ToolItem(toolType: .insert, isRealTool: false),
             ToolItem(toolType: .text, isRealTool: false),
-            ToolItem(toolType: .style),
+            ToolItem(toolType: .style, isRealTool: false),
             ToolItem(toolType: .left, isRealTool: false),
             ToolItem(toolType: .picture),
             ToolItem(toolType: .check),
@@ -57,6 +41,15 @@ class EditorViewModel: ObservableObject {
             ToolItem(toolType: .check),
             ToolItem(toolType: .order),
             ToolItem(toolType: .unOrder),
+        ]
+        self.subStyleTools = [
+            ToolItem(toolType: .bold),
+            ToolItem(toolType: .italic),
+            ToolItem(toolType: .underline),
+            ToolItem(toolType: .strikethrough),
+            ToolItem(toolType: .inlineCode),
+            ToolItem(toolType: .reference),
+            ToolItem(toolType: .colors),
         ]
         self.subAlignTools = [
             ToolItem(toolType: .left),
@@ -84,6 +77,14 @@ class EditorViewModel: ObservableObject {
         }
         
         self.subFontTools = self.subFontTools.map { item in
+            var item = item
+            if item.isRealTool {
+                item.isSelected = activeTools[item.toolType] ?? false
+            }
+            return item
+        }
+
+        self.subStyleTools = self.subStyleTools.map { item in
             var item = item
             if item.isRealTool {
                 item.isSelected = activeTools[item.toolType] ?? false

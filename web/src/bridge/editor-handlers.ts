@@ -25,6 +25,10 @@ const capabilities = [
   'editor.toggleUnderline',
   'editor.toggleStrike',
   'editor.toggleCode',
+  'editor.setTextColor',
+  'editor.unsetTextColor',
+  'editor.setBackgroundColor',
+  'editor.unsetBackgroundColor',
   'editor.setParagraph',
   'editor.toggleHeading',
   'editor.toggleBulletList',
@@ -217,6 +221,32 @@ export const setupEditorBridge = (editor: Editor | null) => {
     nsBridge.register<never, { active: boolean }>('editor', 'toggleCode', () => {
       editor.chain().focus().toggleCode().run()
       return { active: editor.isActive('code') }
+    }),
+    nsBridge.register<{ color: unknown }, { color: string; applied: boolean }>('editor', 'setTextColor', params => {
+      const color = params?.color
+      if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
+        throw new BridgeError('INVALID_PARAMS', 'editor.setTextColor requires a hex color', false)
+      }
+
+      const applied = editor.chain().focus().setColor(color).run()
+      return { color, applied }
+    }),
+    nsBridge.register<never, { applied: boolean }>('editor', 'unsetTextColor', () => {
+      const applied = editor.chain().focus().unsetColor().run()
+      return { applied }
+    }),
+    nsBridge.register<{ color: unknown }, { color: string; applied: boolean }>('editor', 'setBackgroundColor', params => {
+      const color = params?.color
+      if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
+        throw new BridgeError('INVALID_PARAMS', 'editor.setBackgroundColor requires a hex color', false)
+      }
+
+      const applied = editor.chain().focus().setBackgroundColor(color).run()
+      return { color, applied }
+    }),
+    nsBridge.register<never, { applied: boolean }>('editor', 'unsetBackgroundColor', () => {
+      const applied = editor.chain().focus().unsetBackgroundColor().run()
+      return { applied }
     }),
     nsBridge.register<never, { active: boolean; applied: boolean }>('editor', 'setParagraph', () => {
       const applied = editor.chain().focus().setParagraph().run()

@@ -1,5 +1,5 @@
 //
-//  noteApp.swift
+//  NoteApp.swift
 //  note
 //
 //  Created by 倪申雷 on 2025/6/20.
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct noteApp: App {
+struct NoteApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Folder.self,
