@@ -28,6 +28,9 @@ struct EditorView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var didReceiveImagePickerSelection = false
     @State private var pendingImagePickerCompletion: NSBridgeHandlerCompletion?
+    @State private var isColorPanelPresented = false
+    @State private var selectedTextColor: String? = "#BC4C00"
+    @State private var selectedBackgroundColor: String? = "#FFF68A"
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
@@ -80,6 +83,31 @@ struct EditorView: View {
         }
         .task {
             recordDocumentAccessIfNeeded()
+        }
+        .sheet(isPresented: $isColorPanelPresented) {
+            ColorAndHighlightSheet(
+                selectedTextColor: selectedTextColor,
+                selectedBackgroundColor: selectedBackgroundColor,
+                onDismiss: {
+                    isColorPanelPresented = false
+                },
+                onSetTextColor: { color in
+                    selectedTextColor = color
+                },
+                onSetBackgroundColor: { color in
+                    selectedBackgroundColor = color
+                },
+                onUnsetBackgroundColor: {
+                    selectedBackgroundColor = nil
+                },
+                onReset: {
+                    selectedTextColor = nil
+                    selectedBackgroundColor = nil
+                }
+            )
+            .presentationDetents([.height(408)])
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(24)
         }
         .photosPicker(
             isPresented: $isImagePickerPresented,
@@ -142,7 +170,10 @@ struct EditorView: View {
                     javaScriptCommand: $javaScriptCommand,
                     viewModel: viewModel,
                     isSystemKeyboardVisible: isKeyboardShow,
-                    keyboardHeight: keyboardHeight
+                    keyboardHeight: keyboardHeight,
+                    onPresentColorPanel: {
+                        isColorPanelPresented = true
+                    }
                 )
             }
         }

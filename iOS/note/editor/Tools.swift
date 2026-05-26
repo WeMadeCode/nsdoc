@@ -14,12 +14,10 @@ struct Tools: View {
     @ObservedObject var viewModel: EditorViewModel
     let isSystemKeyboardVisible: Bool
     let keyboardHeight: CGFloat
+    let onPresentColorPanel: () -> Void
     private let mainToolbarHeight: CGFloat = 56
     private let toolbarSpacing: CGFloat = 8
     private let topPadding: CGFloat = 8
-    @State private var isColorPanelPresented = false
-    @State private var selectedTextColor: String? = "#BC4C00"
-    @State private var selectedBackgroundColor: String? = "#FFF68A"
 
     var body: some View {
         VStack(spacing: toolbarSpacing) {
@@ -38,31 +36,6 @@ struct Tools: View {
         .padding(.top, topPadding)
         .padding(.bottom, 10)
         .background(.clear)
-        .sheet(isPresented: $isColorPanelPresented) {
-            ColorAndHighlightSheet(
-                selectedTextColor: selectedTextColor,
-                selectedBackgroundColor: selectedBackgroundColor,
-                onDismiss: {
-                    isColorPanelPresented = false
-                },
-                onSetTextColor: { color in
-                    selectedTextColor = color
-                },
-                onSetBackgroundColor: { color in
-                    selectedBackgroundColor = color
-                },
-                onUnsetBackgroundColor: {
-                    selectedBackgroundColor = nil
-                },
-                onReset: {
-                    selectedTextColor = nil
-                    selectedBackgroundColor = nil
-                }
-            )
-            .presentationDetents([.height(430)])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(24)
-        }
     }
     
     func mainTools(with items: Binding<[ToolItem]>) -> some View {
@@ -151,7 +124,7 @@ struct Tools: View {
             ToolDivider()
 
             TextColorPopupButton {
-                isColorPanelPresented = true
+                onPresentColorPanel()
             }
             .padding(.trailing, 10)
         }
@@ -166,7 +139,7 @@ struct Tools: View {
             ForEach(items) { item in
                 if item.wrappedValue.toolType == .colors {
                     TextColorPopupButton {
-                        isColorPanelPresented = true
+                        onPresentColorPanel()
                     }
                 } else {
                     ToolBarButton(item: item) {
@@ -278,7 +251,7 @@ private struct TextColorPopupButton: View {
     }
 }
 
-private struct ColorAndHighlightSheet: View {
+struct ColorAndHighlightSheet: View {
     let selectedTextColor: String?
     let selectedBackgroundColor: String?
     let onDismiss: () -> Void
@@ -323,29 +296,34 @@ private struct ColorAndHighlightSheet: View {
 
             Divider()
 
-            VStack(alignment: .leading, spacing: 28) {
-                colorSectionTitle("字体颜色")
-                textColorGrid
+            VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 12) {
+                    colorSectionTitle("字体颜色")
+                    textColorGrid
+                }
 
-                colorSectionTitle("背景颜色")
-                    .padding(.top, 4)
-                backgroundColorGrid
+                VStack(alignment: .leading, spacing: 12) {
+                    colorSectionTitle("背景颜色")
+                    backgroundColorGrid
+                }
 
                 Button(action: onReset) {
                     Text("恢复默认")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(Color(.label))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 52)
                         .background(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(Color(.separator), lineWidth: 1)
+                                .stroke(Color(.separator).opacity(0.65), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
+                .padding(.top, 2)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 24)
+            .padding(.horizontal, 24)
+            .padding(.top, 22)
+            .padding(.bottom, 18)
 
             Spacer(minLength: 0)
         }
@@ -356,7 +334,7 @@ private struct ColorAndHighlightSheet: View {
         HStack {
             Button(action: onDismiss) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 24, weight: .medium))
+                    .font(.system(size: 24, weight: .semibold))
                     .frame(width: 44, height: 44)
                     .foregroundStyle(Color(.label))
             }
@@ -373,18 +351,18 @@ private struct ColorAndHighlightSheet: View {
             Color.clear
                 .frame(width: 44, height: 44)
         }
-        .padding(.horizontal, 12)
-        .frame(height: 58)
+        .padding(.horizontal, 14)
+        .frame(height: 56)
     }
 
     private func colorSectionTitle(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 17, weight: .medium))
+            .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(Color(.label))
     }
 
     private var textColorGrid: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             ForEach(textColors, id: \.value) { item in
                 Button {
                     onSetTextColor(item.value)
@@ -393,9 +371,14 @@ private struct ColorAndHighlightSheet: View {
                         .font(.system(size: 28, weight: .regular))
                         .foregroundStyle(item.color)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 58)
+                        .frame(height: 54)
                         .background(Color(.secondarySystemBackground))
                         .overlay(selectionBorder(isSelected: selectedTextColor == item.value))
+                        .overlay(alignment: .trailing) {
+                            if item.value != textColors.last?.value {
+                                Divider()
+                            }
+                        }
                 }
                 .buttonStyle(.plain)
             }
@@ -404,25 +387,41 @@ private struct ColorAndHighlightSheet: View {
     }
 
     private var backgroundColorGrid: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: 8), spacing: 1) {
-            ForEach(backgroundColors, id: \.name) { item in
-                Button {
-                    if let value = item.value {
-                        onSetBackgroundColor(value)
-                    } else {
-                        onUnsetBackgroundColor()
-                    }
-                } label: {
-                    ZStack {
-                        item.color
-                        if item.value == nil {
-                            diagonalLine
+        VStack(spacing: 0) {
+            ForEach(0..<2, id: \.self) { row in
+                HStack(spacing: 0) {
+                    ForEach(0..<8, id: \.self) { column in
+                        let item = backgroundColors[row * 8 + column]
+                        Button {
+                            if let value = item.value {
+                                onSetBackgroundColor(value)
+                            } else {
+                                onUnsetBackgroundColor()
+                            }
+                        } label: {
+                            ZStack {
+                                item.color
+                                if item.value == nil {
+                                    diagonalLine
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                            .overlay(selectionBorder(isSelected: selectedBackgroundColor == item.value))
+                            .overlay(alignment: .trailing) {
+                                if column < 7 {
+                                    Divider()
+                                }
+                            }
+                            .overlay(alignment: .bottom) {
+                                if row == 0 {
+                                    Divider()
+                                }
+                            }
                         }
+                        .buttonStyle(.plain)
                     }
-                    .frame(height: 58)
-                    .overlay(selectionBorder(isSelected: selectedBackgroundColor == item.value))
                 }
-                .buttonStyle(.plain)
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -431,7 +430,7 @@ private struct ColorAndHighlightSheet: View {
     private func selectionBorder(isSelected: Bool) -> some View {
         RoundedRectangle(cornerRadius: 6, style: .continuous)
             .stroke(isSelected ? Color(.systemBlue) : Color.clear, lineWidth: 4)
-            .padding(2)
+            .padding(2.5)
     }
 
     private var diagonalLine: some View {
