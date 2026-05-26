@@ -32,9 +32,6 @@ struct Tools: View {
         .padding(.top, topPadding)
         .padding(.bottom, 10)
         .background(.clear)
-        .animation(.spring(response: 0.25, dampingFraction: 0.88), value: isPanelOpen(.insert))
-        .animation(.spring(response: 0.25, dampingFraction: 0.88), value: isPanelOpen(.text))
-        .animation(.spring(response: 0.25, dampingFraction: 0.88), value: isPanelOpen(.left))
     }
     
     func mainTools(with items: Binding<[ToolItem]>) -> some View {
@@ -51,7 +48,8 @@ struct Tools: View {
                             }
 
                             if itemValue.isRealTool == false {
-                                togglePanel(item)
+                                let shouldAnimatePanel = isSystemKeyboardVisible && !viewModel.isCustomKeyboardVisible && itemValue.toolType != .insert
+                                togglePanel(item, animated: shouldAnimatePanel)
                             } else {
                                 guard !itemValue.toolType.jsMethodName.isEmpty else {
                                     return
@@ -100,7 +98,7 @@ struct Tools: View {
             subTools(with: items)
                 .padding(.horizontal, 18)
         }
-        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .transition(.opacity)
     }
 
     func subTools(with items: Binding<[ToolItem]>) -> some View {
@@ -129,7 +127,21 @@ struct Tools: View {
         )
     }
 
-    private func togglePanel(_ item: Binding<ToolItem>) {
+    private func togglePanel(_ item: Binding<ToolItem>, animated: Bool) {
+        if animated {
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.88)) {
+                updatePanelSelection(item)
+            }
+        } else {
+            var transaction = Transaction(animation: nil)
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                updatePanelSelection(item)
+            }
+        }
+    }
+
+    private func updatePanelSelection(_ item: Binding<ToolItem>) {
         let selectedID = item.wrappedValue.id
         let toolType = item.wrappedValue.toolType
         let willOpen = !item.wrappedValue.isSelected
