@@ -181,13 +181,10 @@ private struct ToolBarButton: View {
                         .opacity(0.72)
                 }
             }
-            .frame(minWidth: minWidth, minHeight: 38)
+            .frame(width: buttonWidth, height: 38)
             .foregroundStyle(foregroundColor)
             .padding(.horizontal, item.toolType == .style ? 2 : 0)
-            .background(
-                Capsule()
-                    .fill(item.isSelected && isEnabled ? Color(.systemBlue).opacity(0.12) : Color.clear)
-            )
+            .background(selectedBackground)
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -202,14 +199,29 @@ private struct ToolBarButton: View {
         return item.isSelected ? Color(.systemBlue) : Color(.label).opacity(0.82)
     }
 
-    private var minWidth: CGFloat {
+    private var buttonWidth: CGFloat {
         switch item.toolType {
         case .text where !item.isRealTool:
-            return 42
+            return 56
         case .style:
             return 46
         default:
             return 42
+        }
+    }
+
+    @ViewBuilder
+    private var selectedBackground: some View {
+        if item.isSelected && isEnabled {
+            Capsule()
+                .fill(Color(.systemBlue).opacity(item.toolType == .text && !item.isRealTool ? 0.14 : 0.12))
+                .overlay(
+                    Capsule()
+                        .stroke(Color(.systemBlue).opacity(0.16), lineWidth: 1)
+                )
+        } else {
+            Capsule()
+                .fill(Color.clear)
         }
     }
 
