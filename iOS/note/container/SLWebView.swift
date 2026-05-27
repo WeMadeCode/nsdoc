@@ -69,13 +69,19 @@ struct SLWebView: UIViewRepresentable {
         wkWebView.navigationDelegate = context.coordinator
         wkWebView.isOpaque = false
         wkWebView.backgroundColor = .clear
+        #if DEBUG
         wkWebView.isInspectable = true
+        #endif
         wkWebView.scrollView.isScrollEnabled = false
         wkWebView.scrollView.bounces = false
         wkWebView.scrollView.showsVerticalScrollIndicator = false
         wkWebView.scrollView.showsHorizontalScrollIndicator = false
-        let request = URLRequest(url: url)
-        wkWebView.load(request)
+        if url.isFileURL {
+            wkWebView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        } else {
+            let request = URLRequest(url: url)
+            wkWebView.load(request)
+        }
         return wkWebView
     }
     

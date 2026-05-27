@@ -17,6 +17,7 @@ enum NSBridgeWebViewInstaller {
         userContentController.add(bridge, name: JSBridgeChannel.nsBridge)
 
         configuration.userContentController = userContentController
+        configuration.setURLSchemeHandler(DocBundleURLSchemeHandler(), forURLScheme: DocBundleURLSchemeHandler.scheme)
         return configuration
     }
 }

@@ -61,7 +61,7 @@ struct Tools: View {
                                 runTool(itemValue)
                             }
                         }
-                        if item.wrappedValue.toolType == .insert || item.wrappedValue.toolType == .left {
+                        if item.wrappedValue.toolType == .insert {
                             ToolDivider()
                         }
                     }
@@ -460,7 +460,7 @@ private struct ToolBarButton: View {
             HStack(spacing: 6) {
                 buttonContent
 
-                if !item.isRealTool && item.toolType != .insert && item.toolType != .style {
+                if !item.isRealTool && item.toolType != .insert && item.toolType != .style && item.toolType != .left {
                     Image(systemName: item.isSelected ? "chevron.down" : "chevron.up")
                         .font(.system(size: 11, weight: .bold))
                         .opacity(item.isSelected ? 0.82 : 0.68)

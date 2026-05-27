@@ -174,7 +174,11 @@ struct EditorView: View {
     }
 
     private static var editorURL: URL? {
+        #if DEBUG
         URL(string: "http://localhost:5173/")
+        #else
+        DocBundleURLSchemeHandler.indexURL
+        #endif
     }
 
     private func applyInitialContentIfNeeded() {
