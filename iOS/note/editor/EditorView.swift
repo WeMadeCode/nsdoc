@@ -142,7 +142,7 @@ struct EditorView: View {
     }
     
     private var mainView: some View {
-        VStack {
+        ZStack(alignment: .bottom) {
             if let editorURL = Self.editorURL {
                 SLWebView(
                     url: editorURL,
@@ -166,7 +166,6 @@ struct EditorView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Spacer()
             if isKeyboardShow || viewModel.isCustomKeyboardVisible {
                 Tools(
                     javaScriptCommand: $javaScriptCommand,
