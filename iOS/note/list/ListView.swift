@@ -265,16 +265,6 @@ private struct PrivateSectionHeader: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-
-            Button {
-            } label: {
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 34, height: 34)
-                    .background(HomePalette.card, in: Circle())
-            }
-            .buttonStyle(.plain)
         }
     }
 }

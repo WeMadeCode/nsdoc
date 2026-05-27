@@ -59,13 +59,6 @@ struct EditorView: View {
                     }
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    flushEditorContent()
-                } label: {
-                    Image(systemName: "square.and.arrow.down")
-                }
-            }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { noti in
             if
