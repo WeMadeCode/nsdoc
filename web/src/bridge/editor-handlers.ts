@@ -26,9 +26,8 @@ const capabilities = [
   'editor.toggleStrike',
   'editor.toggleCode',
   'editor.setTextColor',
-  'editor.unsetTextColor',
   'editor.setBackgroundColor',
-  'editor.unsetBackgroundColor',
+  'editor.unsetColors',
   'editor.setParagraph',
   'editor.toggleHeading',
   'editor.toggleBulletList',
@@ -45,6 +44,15 @@ const capabilities = [
 
 const readyEditors = new WeakSet<Editor>()
 const CONTENT_CHANGED_DEBOUNCE_MS = 900
+
+type EditorColorParams = {
+  color?: string | null
+}
+
+type TextStyleColorAttributes = {
+  color?: string | null
+  backgroundColor?: string | null
+}
 
 const isValidHeadingLevel = (level: unknown): level is Level => typeof level === 'number' && [1, 2, 3, 4, 5].includes(level)
 
@@ -66,11 +74,25 @@ const isPositionInsideNode = ($pos: ResolvedPos, nodeName: string) => {
   return false
 }
 
+const normalizeHexColor = (value?: string | null): string | null => {
+  const trimmed = value?.trim()
+  if (!trimmed) return null
+
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) {
+    return trimmed.toUpperCase()
+  }
+
+  return null
+}
+
 const getEditorSelectionContext = (editor: Editor): EditorSelectionContext => {
   const { selection } = editor.state
+  const textStyleAttrs = editor.getAttributes('textStyle') as TextStyleColorAttributes
 
   return {
     isInTitle: selection.ranges.some(range => isPositionInsideNode(range.$from, 'title') || isPositionInsideNode(range.$to, 'title')),
+    textColor: normalizeHexColor(textStyleAttrs.color),
+    backgroundColor: normalizeHexColor(textStyleAttrs.backgroundColor),
   }
 }
 
@@ -222,30 +244,40 @@ export const setupEditorBridge = (editor: Editor | null) => {
       editor.chain().focus().toggleCode().run()
       return { active: editor.isActive('code') }
     }),
-    nsBridge.register<{ color: unknown }, { color: string; applied: boolean }>('editor', 'setTextColor', params => {
+    nsBridge.register<EditorColorParams | undefined, { color: string; applied: boolean }>('editor', 'setTextColor', params => {
       const color = params?.color
-      if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
+      if (color == null) {
+        return {
+          color: '',
+          applied: editor.chain().focus().unsetColor().run(),
+        }
+      }
+      if (!/^#[0-9a-fA-F]{6}$/.test(color)) {
         throw new BridgeError('INVALID_PARAMS', 'editor.setTextColor requires a hex color', false)
       }
 
-      const applied = editor.chain().focus().setColor(color).run()
-      return { color, applied }
+      const normalizedColor = color.toUpperCase()
+      const applied = editor.chain().focus().setColor(normalizedColor).run()
+      return { color: normalizedColor, applied }
     }),
-    nsBridge.register<never, { applied: boolean }>('editor', 'unsetTextColor', () => {
-      const applied = editor.chain().focus().unsetColor().run()
-      return { applied }
-    }),
-    nsBridge.register<{ color: unknown }, { color: string; applied: boolean }>('editor', 'setBackgroundColor', params => {
+    nsBridge.register<EditorColorParams | undefined, { color: string; applied: boolean }>('editor', 'setBackgroundColor', params => {
       const color = params?.color
-      if (typeof color !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(color)) {
+      if (color == null) {
+        return {
+          color: '',
+          applied: editor.chain().focus().unsetBackgroundColor().run(),
+        }
+      }
+      if (!/^#[0-9a-fA-F]{6}$/.test(color)) {
         throw new BridgeError('INVALID_PARAMS', 'editor.setBackgroundColor requires a hex color', false)
       }
 
-      const applied = editor.chain().focus().setBackgroundColor(color).run()
-      return { color, applied }
+      const normalizedColor = color.toUpperCase()
+      const applied = editor.chain().focus().setBackgroundColor(normalizedColor).run()
+      return { color: normalizedColor, applied }
     }),
-    nsBridge.register<never, { applied: boolean }>('editor', 'unsetBackgroundColor', () => {
-      const applied = editor.chain().focus().unsetBackgroundColor().run()
+    nsBridge.register<never, { applied: boolean }>('editor', 'unsetColors', () => {
+      const applied = editor.chain().focus().unsetColor().unsetBackgroundColor().run()
       return { applied }
     }),
     nsBridge.register<never, { active: boolean; applied: boolean }>('editor', 'setParagraph', () => {

@@ -30,10 +30,14 @@ struct EditorContentSnapshot {
 
 struct EditorSelectionContext {
     let isInTitle: Bool
+    let textColor: String?
+    let backgroundColor: String?
 
     init(params: [String: Any]?) {
         let selectionContext = params?["selectionContext"] as? [String: Any] ?? [:]
         self.isInTitle = selectionContext["isInTitle"] as? Bool ?? false
+        self.textColor = selectionContext["textColor"] as? String
+        self.backgroundColor = selectionContext["backgroundColor"] as? String
     }
 }
 

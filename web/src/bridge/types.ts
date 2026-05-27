@@ -65,6 +65,8 @@ export type EditorActiveTools = {
 
 export type EditorSelectionContext = {
   isInTitle: boolean
+  textColor?: string | null
+  backgroundColor?: string | null
 }
 
 export type EditorContentSnapshot = {

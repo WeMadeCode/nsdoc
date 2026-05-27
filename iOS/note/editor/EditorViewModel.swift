@@ -18,6 +18,8 @@ class EditorViewModel: ObservableObject {
     @Published var subAlignTools: [ToolItem]
     @Published var isInsertToolEnabled = false
     @Published var activeTools: [ToolType: Bool] = [:]
+    @Published var selectedTextColor: String?
+    @Published var selectedBackgroundColor: String?
 
     var isCustomKeyboardVisible: Bool {
         mainTools.first { $0.toolType == .insert }?.isSelected == true
@@ -63,6 +65,8 @@ class EditorViewModel: ObservableObject {
 
         if let selectionContext {
             isInsertToolEnabled = !selectionContext.isInTitle
+            selectedTextColor = selectionContext.textColor
+            selectedBackgroundColor = selectionContext.backgroundColor
             if selectionContext.isInTitle {
                 setPanel(.insert, isOpen: false)
             }

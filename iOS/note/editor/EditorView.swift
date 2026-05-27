@@ -29,8 +29,6 @@ struct EditorView: View {
     @State private var didReceiveImagePickerSelection = false
     @State private var pendingImagePickerCompletion: NSBridgeHandlerCompletion?
     @State private var isColorPanelPresented = false
-    @State private var selectedTextColor: String? = "#BC4C00"
-    @State private var selectedBackgroundColor: String? = "#FFF68A"
     @State var javaScriptCommand: JavaScriptCommand? = nil
     @Environment(\.dismiss) var dismiss
 
@@ -86,26 +84,30 @@ struct EditorView: View {
         }
         .sheet(isPresented: $isColorPanelPresented) {
             ColorAndHighlightSheet(
-                selectedTextColor: selectedTextColor,
-                selectedBackgroundColor: selectedBackgroundColor,
+                selectedTextColor: viewModel.selectedTextColor,
+                selectedBackgroundColor: viewModel.selectedBackgroundColor,
                 onDismiss: {
                     isColorPanelPresented = false
                 },
                 onSetTextColor: { color in
-                    selectedTextColor = color
+                    viewModel.selectedTextColor = color
+                    javaScriptCommand = JavaScriptCommand(methodName: "setTextColor", params: ["color": color])
                 },
                 onSetBackgroundColor: { color in
-                    selectedBackgroundColor = color
+                    viewModel.selectedBackgroundColor = color
+                    javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": color])
                 },
                 onUnsetBackgroundColor: {
-                    selectedBackgroundColor = nil
+                    viewModel.selectedBackgroundColor = nil
+                    javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": NSNull()])
                 },
                 onReset: {
-                    selectedTextColor = nil
-                    selectedBackgroundColor = nil
+                    viewModel.selectedTextColor = nil
+                    viewModel.selectedBackgroundColor = nil
+                    javaScriptCommand = JavaScriptCommand(methodName: "unsetColors")
                 }
             )
-            .presentationDetents([.height(408)])
+            .presentationDetents([.height(422)])
             .presentationDragIndicator(.hidden)
             .presentationCornerRadius(24)
         }

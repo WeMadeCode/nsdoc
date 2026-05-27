@@ -457,10 +457,10 @@ private struct ToolBarButton: View {
                 if !item.isRealTool && item.toolType != .insert && item.toolType != .style {
                     Image(systemName: item.isSelected ? "chevron.down" : "chevron.up")
                         .font(.system(size: 11, weight: .bold))
-                        .opacity(0.72)
+                        .opacity(item.isSelected ? 0.82 : 0.68)
                 }
             }
-            .frame(width: buttonWidth, height: 38)
+            .frame(width: buttonWidth, height: 36)
             .foregroundStyle(foregroundColor)
             .padding(.horizontal, item.toolType == .style ? 2 : 0)
             .background(selectedBackground)
@@ -482,6 +482,8 @@ private struct ToolBarButton: View {
         switch item.toolType {
         case .text where !item.isRealTool:
             return 56
+        case .left where !item.isRealTool:
+            return 58
         case .style:
             return item.isRealTool ? 46 : 52
         default:
@@ -493,15 +495,20 @@ private struct ToolBarButton: View {
     private var selectedBackground: some View {
         if item.isSelected && isEnabled {
             Capsule()
-                .fill(Color(.systemBlue).opacity(item.toolType == .text && !item.isRealTool ? 0.14 : 0.12))
+                .fill(Color(.systemBlue).opacity(isPanelButton ? 0.10 : 0.12))
                 .overlay(
                     Capsule()
-                        .stroke(Color(.systemBlue).opacity(0.16), lineWidth: 1)
+                        .stroke(Color(.systemBlue).opacity(isPanelButton ? 0.20 : 0.16), lineWidth: 1)
                 )
+                .shadow(color: Color(.systemBlue).opacity(isPanelButton ? 0.08 : 0), radius: 5, x: 0, y: 2)
         } else {
             Capsule()
                 .fill(Color.clear)
         }
+    }
+
+    private var isPanelButton: Bool {
+        !item.isRealTool
     }
 
     @ViewBuilder
@@ -571,8 +578,12 @@ private struct ToolBarButton: View {
                 .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 22, height: 22)
+                .frame(width: iconSize, height: iconSize)
         }
+    }
+
+    private var iconSize: CGFloat {
+        item.toolType == .left && !item.isRealTool ? 23 : 22
     }
 
     private func headingLabel(_ text: String) -> some View {
