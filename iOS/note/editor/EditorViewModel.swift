@@ -33,7 +33,6 @@ class EditorViewModel: ObservableObject {
             ToolItem(toolType: .left, isRealTool: false),
             ToolItem(toolType: .picture),
             ToolItem(toolType: .check),
-            ToolItem(toolType: .mention),
         ]
         self.subFontTools = [
             ToolItem(toolType: .text),

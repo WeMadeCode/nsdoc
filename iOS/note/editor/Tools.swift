@@ -70,6 +70,8 @@ struct Tools: View {
             }
         
             Spacer()
+
+            ToolDivider()
             
             Button {
                 UIApplication.shared.endEditing()
@@ -77,10 +79,14 @@ struct Tools: View {
                 Image(systemName: "keyboard.chevron.compact.down")
                     .font(.system(size: 19, weight: .semibold))
                     .frame(width: 38, height: 38)
-                    .foregroundStyle(Color(.systemBlue))
+                    .foregroundStyle(Color(.label).opacity(0.82))
             }
             .buttonStyle(.plain)
-            .background(Color(.secondarySystemFill), in: Circle())
+            .background(
+                Circle()
+                    .fill(Color(.systemBackground).opacity(0.98))
+                    .shadow(color: .black.opacity(0.14), radius: 5, x: 0, y: 2)
+            )
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 8)
