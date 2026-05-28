@@ -406,8 +406,32 @@ private struct SearchView: View {
         .searchable(text: $keyword, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索文档")
         .overlay {
             if searchResults.isEmpty {
-                ContentUnavailableView.search(text: keyword)
+                GeometryReader { proxy in
+                    SearchEmptyState()
+                        .frame(maxWidth: .infinity)
+                        .position(x: proxy.size.width / 2, y: proxy.size.height * 0.43)
+                }
             }
+        }
+    }
+}
+
+private struct SearchEmptyState: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 52, weight: .regular))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 16)
+
+            Text("未找到结果")
+                .font(.title3.weight(.bold))
+                .foregroundStyle(.primary)
+                .padding(.bottom, 8)
+
+            Text("请检查关键词或尝试重新搜索")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
     }
 }
