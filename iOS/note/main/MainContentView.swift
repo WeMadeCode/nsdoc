@@ -8,8 +8,28 @@
 import SwiftUI
 
 struct MainContentView: View {
+    @State private var showsSplash = true
+
     var body: some View {
-        ListView()
+        ZStack {
+            ListView()
+                .opacity(showsSplash ? 0 : 1)
+
+            if showsSplash {
+                AppSplashView()
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .task {
+            try? await Task.sleep(for: .milliseconds(950))
+
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.34)) {
+                    showsSplash = false
+                }
+            }
+        }
     }
 }
 

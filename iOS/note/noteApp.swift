@@ -33,6 +33,7 @@ struct NoteApp: App {
     var body: some Scene {
         WindowGroup {
             MainContentView()
+                .preferredColorScheme(.light)
         }
         .modelContainer(sharedModelContainer)
     }

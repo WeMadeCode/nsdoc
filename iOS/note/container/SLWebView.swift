@@ -48,6 +48,8 @@ struct SLWebView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
+        configuration.userContentController.addUserScript(Self.lightModeUserScript)
+
         let wkWebView = WKWebView(frame: .zero, configuration: configuration)
         context.coordinator.bridge.attach(webView: wkWebView)
         wkWebView.hideKeyboardAccessoryBar()
@@ -67,6 +69,7 @@ struct SLWebView: UIViewRepresentable {
             animated: false
         )
         wkWebView.navigationDelegate = context.coordinator
+        wkWebView.overrideUserInterfaceStyle = .light
         wkWebView.isOpaque = false
         wkWebView.backgroundColor = .clear
         #if DEBUG
@@ -129,6 +132,23 @@ struct SLWebView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
+
+    private static let lightModeUserScript = WKUserScript(
+        source: """
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+
+        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]') || document.createElement('meta');
+        colorSchemeMeta.name = 'color-scheme';
+        colorSchemeMeta.content = 'light';
+
+        if (!colorSchemeMeta.parentNode) {
+            document.head.appendChild(colorSchemeMeta);
+        }
+        """,
+        injectionTime: .atDocumentStart,
+        forMainFrameOnly: true
+    )
     
     class Coordinator: NSObject, WKNavigationDelegate {
         
