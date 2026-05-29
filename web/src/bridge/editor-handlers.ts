@@ -216,12 +216,16 @@ export const setupEditorBridge = (editor: Editor | null) => {
       flushContentChanged('flush')
       return { flushed: true }
     }),
-    nsBridge.register<never, { focused: boolean }>('editor', 'focus', () => ({
-      focused: focusEditor(editor),
-    })),
-    nsBridge.register<never, { blurred: boolean }>('editor', 'blur', () => ({
-      blurred: editor.chain().blur().run(),
-    })),
+    nsBridge.register<never, { focused: boolean }>('editor', 'focus', () => {
+      console.log('focus editor command received from bridge')
+      const focused = focusEditor(editor)
+      return { focused }
+    }),
+    nsBridge.register<never, { blurred: boolean }>('editor', 'blur', () => {
+      console.log('blur editor command received from bridge')
+      const blurred = editor.chain().blur().run()
+      return { blurred }
+    }),
     nsBridge.register<never, { active: boolean }>('editor', 'toggleBold', () => {
       editor.chain().focus().toggleBold().run()
       return { active: editor.isActive('bold') }

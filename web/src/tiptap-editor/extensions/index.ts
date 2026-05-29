@@ -89,7 +89,7 @@ export const extensions = [
   ListNormalizationExtension,
   TrailingNode.configure({
     node: 'paragraph',
-    notAfter: ['paragraph', 'blockquote'],
+    notAfter: ['paragraph', 'blockquote', 'title'],
   }),
   ImageUploadNode.configure({
     accept: 'image/*',
