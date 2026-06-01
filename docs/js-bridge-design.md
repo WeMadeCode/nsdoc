@@ -305,7 +305,7 @@ Web 侧规则：
 
 | 完整方法 | 参数 | 返回 | 说明 |
 | --- | --- | --- | --- |
-| `editor.setContent` | `{ content: object, focus?: boolean }` | `{ applied: boolean }` | 设置 Tiptap JSON 内容 |
+| `editor.setContent` | `{ content: object, focus?: boolean }` | 无 | 设置 Tiptap JSON 内容 |
 | `editor.flushContent` | `{}` | `{ flushed: boolean }` | 立即通过 `editor.contentChanged` 推送当前内容快照 |
 | `editor.focus` | `{}` | `{ focused: boolean }` | 聚焦编辑器 |
 | `editor.blur` | `{}` | `{ blurred: boolean }` | 取消聚焦 |
@@ -611,10 +611,10 @@ sequenceDiagram
 4. Bridge 集成测试。
 5. Web 构建产物同步到 `iOS/note/doc.bundle` 的稳定脚本。
 
-## 18. 待确认问题
+## 18. 已确认问题
 
-- 编辑器资源生产环境使用 `doc.bundle` 直读，不再通过本地 HTTP 服务访问。
-- Bridge 消息大小限制是否需要小于 2 MB。
-- 图片插入第一期是只插入本地临时引用，还是同时进入附件服务。
-- 自动保存触发间隔，建议初始值为内容变化后 800 ms 到 1500 ms。
-- 生产环境是否完全关闭 `webView.isInspectable`。
+- 编辑器资源生产环境使用 `doc.bundle` 直读，不再通过本地 HTTP 服务访问；开发模式使用本地 HTTP 服务承载编辑器资源。
+- Bridge 消息大小第一阶段不设置小于 2 MB 的硬限制。
+- 图片插入第一期直接接入附件服务。
+- 生产环境完全关闭 `webView.isInspectable`。
+- 自动保存触发间隔为内容变化后 1500 ms。

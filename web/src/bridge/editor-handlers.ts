@@ -195,22 +195,19 @@ export const setupEditorBridge = (editor: Editor | null) => {
   }
 
   const cleanupHandlers = [
-    nsBridge.register<EditorSetContentParams, { applied: boolean }>('editor', 'setContent', params => {
-      let applied = false
+    nsBridge.register<EditorSetContentParams, void>('editor', 'setContent', params => {
       if (params.content) {
         isApplyingContent = true
         try {
-          applied = editor.chain().setContent(params.content).run()
+          editor.chain().setContent(params.content).run()
         } finally {
           isApplyingContent = false
         }
       }
 
       if (params.focus) {
-        applied = editor.chain().focus().run()
+        editor.chain().focus().run()
       }
-
-      return { applied }
     }),
     nsBridge.register<never, { flushed: boolean }>('editor', 'flushContent', () => {
       flushContentChanged('flush')
