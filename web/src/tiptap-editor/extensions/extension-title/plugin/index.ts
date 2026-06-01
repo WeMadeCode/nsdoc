@@ -13,37 +13,45 @@ const getTitleDepth = (selection: TextSelection, titleNodeName: string) => {
   return -1
 }
 
-export const createTitlePlugin = (titleNodeName: string) => {
-  const insertParagraphAtDocumentStart = (view: EditorView) => {
-    const { state, dispatch } = view
-    const selection = state.selection
+const insertParagraphAtDocumentStart = (view: EditorView, titleNodeName: string) => {
+  const { state, dispatch } = view
+  const selection = state.selection
 
-    if (!(selection instanceof TextSelection)) {
-      return false
-    }
-
-    const titleDepth = getTitleDepth(selection, titleNodeName)
-    if (titleDepth < 0) {
-      return false
-    }
-
-    const titleEnd = selection.$from.after(titleDepth)
-    const paragraph = state.schema.nodes.paragraph.create()
-    let tr = state.tr.insert(titleEnd, paragraph)
-
-    tr = tr.setSelection(TextSelection.create(tr.doc, titleEnd + 1))
-    dispatch(tr.scrollIntoView())
-    return true
+  if (!(selection instanceof TextSelection)) {
+    return false
   }
 
+  const titleDepth = getTitleDepth(selection, titleNodeName)
+  if (titleDepth < 0) {
+    return false
+  }
+
+  const titleEnd = selection.$from.after(titleDepth)
+  const paragraph = state.schema.nodes.paragraph.create()
+  let tr = state.tr.insert(titleEnd, paragraph)
+
+  tr = tr.setSelection(TextSelection.create(tr.doc, titleEnd + 1))
+  dispatch(tr.scrollIntoView())
+  return true
+}
+
+export const createTitlePlugin = (titleNodeName: string) => {
+  let isComposing = false
   return new Plugin({
     props: {
       handleKeyDown(view, event) {
-        if (event.key !== 'Enter' || event.isComposing || event.keyCode === 229) {
+        if (event.key !== 'Enter' || event.isComposing || isComposing || event.keyCode === 229) {
           return false
         }
-
-        return insertParagraphAtDocumentStart(view)
+        return insertParagraphAtDocumentStart(view, titleNodeName)
+      },
+      handleDOMEvents: {
+        compositionend: () => {
+          isComposing = false
+        },
+        compositionstart: () => {
+          isComposing = true
+        },
       },
     },
   })
