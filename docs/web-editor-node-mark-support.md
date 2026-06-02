@@ -57,7 +57,7 @@
 
 ### 内容与焦点
 
-- `editor.setContent`
+- `editor.openDoc`
 - `editor.flushContent`
 - `editor.focus`
 - `editor.blur`

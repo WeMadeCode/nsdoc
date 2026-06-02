@@ -10,8 +10,8 @@ import type {
   EditorActiveTools,
   EditorContentSnapshot,
   EditorHistoryState,
+  EditorOpenDocParams,
   EditorSelectionContext,
-  EditorSetContentParams,
   MediaPickImageParams,
   MediaPickImageResult,
 } from './types'
@@ -19,7 +19,7 @@ import { BRIDGE_VERSION } from './types'
 import { nsBridge } from './web-bridge'
 
 const capabilities = [
-  'editor.setContent',
+  'editor.openDoc',
   'editor.flushContent',
   'editor.focus',
   'editor.blur',
@@ -210,11 +210,18 @@ export const setupEditorBridge = (editor: Editor | null) => {
   }
 
   const cleanupHandlers = [
-    nsBridge.register<EditorSetContentParams, void>('editor', 'setContent', params => {
+    nsBridge.register<EditorOpenDocParams, void>('editor', 'openDoc', params => {
       if (params.content) {
         isApplyingContent = true
         try {
-          editor.chain().setContent(params.content).run()
+          editor
+            .chain()
+            .setContent(params.content, { emitUpdate: false })
+            .command(({ tr }) => {
+              tr.setMeta('addToHistory', false)
+              return true
+            })
+            .run()
         } finally {
           isApplyingContent = false
         }
@@ -223,6 +230,8 @@ export const setupEditorBridge = (editor: Editor | null) => {
       if (params.focus) {
         editor.chain().focus().run()
       }
+
+      emitSelectionChanged(editor)
     }),
     nsBridge.register<never, { flushed: boolean }>('editor', 'flushContent', () => {
       flushContentChanged('flush')

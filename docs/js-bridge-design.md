@@ -99,7 +99,7 @@ flowchart TB
 
 适合 iOS 主动驱动编辑器：
 
-- 初始化内容：`editor.setContent`
+- 打开文档：`editor.openDoc`
 - 立即刷出当前内容快照：`editor.flushContent`
 - 工具栏命令：`editor.toggleBold`、`editor.toggleHeading`
 - 插入内容：`editor.insertImage`、`editor.insertHorizontalRule`
@@ -246,7 +246,7 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
 
 命名原则：
 
-- 使用动词开头：`flushContent`、`setContent`、`toggleBold`。
+- 使用动词开头：`openDoc`、`flushContent`、`toggleBold`。
 - 事件使用过去式或状态变化语义：`ready`、`contentChanged`、`selectionChanged`。
 - 不暴露技术实现名，例如 `tiptap.toggleNode`。
 - 不使用拼写错误作为协议名，例如旧实现中的 `toggleCodeBlcok` 不进入新协议。
@@ -261,7 +261,7 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
 3. iOS 注入最小启动脚本，创建 `window.NSBridgeNativeChannel`。
 4. Web 应用启动，初始化 `NSBridge Web SDK`。
 5. Web 编辑器初始化完成后发送 `editor.ready`。
-6. iOS 收到 ready 后标记 Bridge 可用，开始发送 `editor.setContent`。
+6. iOS 收到 ready 后标记 Bridge 可用，开始发送 `editor.openDoc`。
 
 ### 8.2 Ready 事件
 
@@ -276,7 +276,7 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
     "editorVersion": "1.0.0",
     "supportedBridgeVersion": "1.0",
     "capabilities": [
-      "editor.setContent",
+      "editor.openDoc",
       "editor.flushContent",
       "editor.toggleBold"
     ]
@@ -289,7 +289,7 @@ Bridge 方法采用 `namespace.method` 的逻辑命名，对外文档分成命�
 
 iOS 侧规则：
 
-- Bridge 未 ready 时，只允许排队 `editor.setContent` 等初始化必要命令。
+- Bridge 未 ready 时，只允许排队 `editor.openDoc` 等初始化必要命令。
 - 工具栏点击类命令在未 ready 时直接失败，不排队。
 - 队列有最大长度，建议 20 条。
 - WebView 重新加载时清空所有 pending 请求。
@@ -305,7 +305,7 @@ Web 侧规则：
 
 | 完整方法 | 参数 | 返回 | 说明 |
 | --- | --- | --- | --- |
-| `editor.setContent` | `{ content: object, focus?: boolean }` | 无 | 设置 Tiptap JSON 内容 |
+| `editor.openDoc` | `{ content: object, focus?: boolean }` | 无 | 打开文档并载入 Tiptap JSON 内容 |
 | `editor.flushContent` | `{}` | `{ flushed: boolean }` | 立即通过 `editor.contentChanged` 推送当前内容快照 |
 | `editor.focus` | `{}` | `{ focused: boolean }` | 聚焦编辑器 |
 | `editor.blur` | `{}` | `{ blurred: boolean }` | 取消聚焦 |
@@ -573,7 +573,7 @@ sequenceDiagram
 - 超时后清理 pending 请求。
 - 未注册 handler 返回 `METHOD_NOT_FOUND`。
 - handler throw 时返回 `HANDLER_ERROR`。
-- `editor.setContent` 后触发 `editor.flushContent` 能推送一致的 Tiptap JSON。
+- `editor.openDoc` 后触发 `editor.flushContent` 能推送一致的 Tiptap JSON。
 
 ### 16.2 iOS 单元测试
 
@@ -586,7 +586,7 @@ sequenceDiagram
 ### 16.3 集成测试
 
 - 新建笔记进入编辑器后收到 `editor.ready`。
-- iOS 调 `editor.setContent` 后 Web 正确渲染。
+- iOS 调 `editor.openDoc` 后 Web 正确渲染。
 - 用户输入后 Web 防抖发送带标题和完整 JSON 的 `editor.contentChanged`。
 - iOS 收到 `editor.contentChanged` 后能保存并重新打开。
 - 工具栏点击 bold / heading 后 Web 状态变化并回传 `selectionChanged`。

@@ -246,7 +246,7 @@ struct EditorView: View {
         initialContentJSON = nil
 
         javaScriptCommand = JavaScriptCommand(
-            methodName: "setContent",
+            methodName: "openDoc",
             params: [
                 "content": contentObject,
                 "focus": autoFocusOnLoad

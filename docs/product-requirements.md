@@ -389,7 +389,7 @@ iOS 与 Web 编辑器之间需要稳定的桥接协议。
 
 | 方法 | 说明 |
 | --- | --- |
-| setContent | 设置编辑器内容 |
+| openDoc | 打开文档并载入编辑器内容 |
 | flushContent | 立即通过 `contentChanged` 推送当前标题和完整 Tiptap JSON |
 | toggleBold | 切换加粗 |
 | toggleItalic | 切换斜体 |

@@ -247,7 +247,7 @@ sequenceDiagram
     User->>List: 点击笔记
     List->>Data: 获取 Article
     Data-->>Editor: Article
-    Editor->>Web: setContent(contentJSON)
+    Editor->>Web: openDoc(contentJSON)
     Web-->>Editor: 内容渲染完成
     User->>Web: 编辑内容
     Web->>Web: 防抖内容变化
@@ -459,7 +459,7 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 
 - Tiptap 扩展初始化测试。
 - Bridge 方法注册测试。
-- `setContent` / `flushContent` 快照一致性测试。
+- `openDoc` / `flushContent` 快照一致性测试。
 - 内容 JSON 兼容测试。
 
 ### 13.3 集成测试
@@ -526,7 +526,7 @@ MVP 需要采集匿名崩溃和性能数据，优先使用 iOS 系统框架，�
 3. 将 `EditorView` 中的保存流程抽到 `ArticleService` 或新的 `EditorSaveCoordinator`。
 4. 修正保存时未更新 `updateDate` 的问题。
 5. 按 `js-bridge-design.md` 重建 Bridge 方法命名，不继承旧实现中的拼写错误和散装调用。
-6. 为 `setContent` 增加 JSON 解析失败保护。
+6. 为 `openDoc` 增加 JSON 解析失败保护。
 7. 生产环境关闭 `wkWebView.isInspectable`。
 8. 增加 Web 构建到 `doc.bundle` 的自动脚本。
 9. 新增 `DiagnosticsService`，接入 MetricKit、OSLog 和 OSLog Signpost。

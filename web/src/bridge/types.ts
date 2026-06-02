@@ -82,7 +82,7 @@ export type EditorContentSnapshot = {
   reason?: 'debounced' | 'flush' | 'destroy'
 }
 
-export type EditorSetContentParams = {
+export type EditorOpenDocParams = {
   content?: JSONContent | null
   focus?: boolean
 }
