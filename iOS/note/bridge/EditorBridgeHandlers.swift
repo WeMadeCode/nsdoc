@@ -32,12 +32,17 @@ struct EditorSelectionContext {
     let isInTitle: Bool
     let textColor: String?
     let backgroundColor: String?
+    let canUndo: Bool
+    let canRedo: Bool
 
     init(params: [String: Any]?) {
         let selectionContext = params?["selectionContext"] as? [String: Any] ?? [:]
+        let editorState = params?["editorState"] as? [String: Any] ?? [:]
         self.isInTitle = selectionContext["isInTitle"] as? Bool ?? false
         self.textColor = selectionContext["textColor"] as? String
         self.backgroundColor = selectionContext["backgroundColor"] as? String
+        self.canUndo = editorState["canUndo"] as? Bool ?? false
+        self.canRedo = editorState["canRedo"] as? Bool ?? false
     }
 }
 

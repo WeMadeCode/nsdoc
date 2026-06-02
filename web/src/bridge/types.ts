@@ -69,6 +69,11 @@ export type EditorSelectionContext = {
   backgroundColor?: string | null
 }
 
+export type EditorHistoryState = {
+  canUndo: boolean
+  canRedo: boolean
+}
+
 export type EditorContentSnapshot = {
   changeVersion: number
   title: string

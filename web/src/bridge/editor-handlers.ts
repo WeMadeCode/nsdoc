@@ -3,10 +3,13 @@ import type { Level } from '@tiptap/extension-heading'
 import type { ResolvedPos } from '@tiptap/pm/model'
 import debounce from 'lodash.debounce'
 
+import { isNodeTypeSelected } from '@/tiptap-editor/lib/tiptap-utils'
+
 import { BridgeError } from './errors'
 import type {
   EditorActiveTools,
   EditorContentSnapshot,
+  EditorHistoryState,
   EditorSelectionContext,
   EditorSetContentParams,
   MediaPickImageParams,
@@ -20,6 +23,8 @@ const capabilities = [
   'editor.flushContent',
   'editor.focus',
   'editor.blur',
+  'editor.undo',
+  'editor.redo',
   'editor.toggleBold',
   'editor.toggleItalic',
   'editor.toggleUnderline',
@@ -134,6 +139,15 @@ export const getEditorActiveTools = (editor: Editor): EditorActiveTools => {
   }
 }
 
+const getEditorHistoryState = (editor: Editor): EditorHistoryState => {
+  const canUseHistory = editor.isEditable && !isNodeTypeSelected(editor, ['image'])
+
+  return {
+    canUndo: canUseHistory && editor.can().undo(),
+    canRedo: canUseHistory && editor.can().redo(),
+  }
+}
+
 const createContentSnapshot = (editor: Editor, changeVersion: number, reason: EditorContentSnapshot['reason']): EditorContentSnapshot => ({
   changeVersion,
   title: editor.state.doc.firstChild?.textContent?.trim() ?? '',
@@ -150,6 +164,7 @@ const emitSelectionChanged = (editor: Editor) => {
   nsBridge.emit('editor', 'selectionChanged', {
     activeTools: getEditorActiveTools(editor),
     selectionContext: getEditorSelectionContext(editor),
+    editorState: getEditorHistoryState(editor),
   })
 }
 
@@ -222,6 +237,24 @@ export const setupEditorBridge = (editor: Editor | null) => {
       console.log('blur editor command received from bridge')
       const blurred = editor.chain().blur().run()
       return { blurred }
+    }),
+    nsBridge.register<never, EditorHistoryState & { applied: boolean }>('editor', 'undo', () => {
+      const historyState = getEditorHistoryState(editor)
+      if (!historyState.canUndo) {
+        return { ...historyState, applied: false }
+      }
+
+      const applied = editor.chain().focus().undo().run()
+      return { ...getEditorHistoryState(editor), applied }
+    }),
+    nsBridge.register<never, EditorHistoryState & { applied: boolean }>('editor', 'redo', () => {
+      const historyState = getEditorHistoryState(editor)
+      if (!historyState.canRedo) {
+        return { ...historyState, applied: false }
+      }
+
+      const applied = editor.chain().focus().redo().run()
+      return { ...getEditorHistoryState(editor), applied }
     }),
     nsBridge.register<never, { active: boolean }>('editor', 'toggleBold', () => {
       editor.chain().focus().toggleBold().run()

@@ -20,6 +20,8 @@ class EditorViewModel: ObservableObject {
     @Published var activeTools: [ToolType: Bool] = [:]
     @Published var selectedTextColor: String?
     @Published var selectedBackgroundColor: String?
+    @Published var canUndo = false
+    @Published var canRedo = false
 
     var isCustomKeyboardVisible: Bool {
         mainTools.first { $0.toolType == .insert }?.isSelected == true
@@ -66,6 +68,8 @@ class EditorViewModel: ObservableObject {
             isInsertToolEnabled = !selectionContext.isInTitle
             selectedTextColor = selectionContext.textColor
             selectedBackgroundColor = selectionContext.backgroundColor
+            canUndo = selectionContext.canUndo
+            canRedo = selectionContext.canRedo
             if selectionContext.isInTitle {
                 setPanel(.insert, isOpen: false)
             }

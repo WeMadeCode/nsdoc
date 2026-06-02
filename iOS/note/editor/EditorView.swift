@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import UniformTypeIdentifiers
+import UIKit
 
 struct EditorView: View {
     
@@ -45,10 +46,9 @@ struct EditorView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            mainView
-        }
-        .navigationBarBackButtonHidden(true)
+        mainView
+        .navigationBarBackButtonHidden(showsCloseButton)
+        .toolbar(.visible, for: .navigationBar)
         .toolbar(content: {
             if showsCloseButton {
                 ToolbarItem(placement: .topBarLeading) {
@@ -59,7 +59,25 @@ struct EditorView: View {
                     }
                 }
             }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 8) {
+                    editorNavigationButton(
+                        systemName: "arrow.uturn.backward",
+                        accessibilityLabel: "撤销",
+                        isEnabled: viewModel.canUndo,
+                        action: undo
+                    )
+                    editorNavigationButton(
+                        systemName: "arrow.uturn.forward",
+                        accessibilityLabel: "重做",
+                        isEnabled: viewModel.canRedo,
+                        action: redo
+                    )
+                }
+            }
         })
+        .background(InteractivePopGestureEnabler())
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { noti in
             if
                 let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
@@ -179,6 +197,42 @@ struct EditorView: View {
         #else
         DocBundleURLSchemeHandler.indexURL
         #endif
+    }
+
+    private func editorNavigationButton(
+        systemName: String,
+        accessibilityLabel: String,
+        isEnabled: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            guard isEnabled else {
+                return
+            }
+            action()
+        } label: {
+            Image(systemName: systemName)
+                .font(.system(size: 17, weight: .semibold))
+                .frame(width: 36, height: 36)
+                .foregroundStyle(Color(.label).opacity(isEnabled ? 0.84 : 0.24))
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private func undo() {
+        guard viewModel.canUndo else {
+            return
+        }
+        javaScriptCommand = JavaScriptCommand(methodName: "undo")
+    }
+
+    private func redo() {
+        guard viewModel.canRedo else {
+            return
+        }
+        javaScriptCommand = JavaScriptCommand(methodName: "redo")
     }
 
     private func applyInitialContentIfNeeded() {
@@ -450,4 +504,21 @@ struct EditorView: View {
 }
 
 #Preview {
+}
+
+private struct InteractivePopGestureEnabler: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        UIViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        DispatchQueue.main.async {
+            guard let navigationController = uiViewController.navigationController else {
+                return
+            }
+
+            navigationController.interactivePopGestureRecognizer?.isEnabled = true
+            navigationController.interactivePopGestureRecognizer?.delegate = nil
+        }
+    }
 }
