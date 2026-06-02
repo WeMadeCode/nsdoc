@@ -10,13 +10,13 @@ import SwiftUI
 
 struct HomeActionBar: View {
     let documents: [Document]
+    @Binding var navigationPath: [HomeRoute]
     @Environment(\.modelContext) private var modelContext
-    @State private var newDocument: Document?
 
     var body: some View {
         HStack(spacing: 14) {
-            NavigationLink {
-                SearchView(documents: documents)
+            Button {
+                navigationPath.append(.search)
             } label: {
                 HomeSearchField()
             }
@@ -28,12 +28,6 @@ struct HomeActionBar: View {
                 FloatingActionButton(systemImage: "square.and.pencil")
             }
             .buttonStyle(.plain)
-        }
-        .navigationDestination(item: $newDocument) { document in
-            EditorView(
-                document: document,
-                autoFocusOnLoad: true
-            )
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
@@ -67,7 +61,7 @@ struct HomeActionBar: View {
 
             modelContext.insert(document)
             try modelContext.save()
-            newDocument = document
+            navigationPath.append(.editor(document.id, autoFocusOnLoad: true))
         } catch {}
     }
 }

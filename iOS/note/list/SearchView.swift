@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SearchView: View {
     let documents: [Document]
+    let onOpenDocument: (Document) -> Void
     @State private var keyword = ""
 
     private var searchResults: [Document] {
@@ -26,11 +27,12 @@ struct SearchView: View {
     var body: some View {
         List {
             ForEach(searchResults) { document in
-                NavigationLink {
-                    EditorView(document: document)
+                Button {
+                    onOpenDocument(document)
                 } label: {
                     SearchResultRow(document: document)
                 }
+                .buttonStyle(.plain)
             }
         }
         .listStyle(.plain)
@@ -72,15 +74,12 @@ private struct SearchResultRow: View {
     let document: Document
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 22))
-                .foregroundStyle(.secondary)
-                .frame(width: 28)
+        HStack(spacing: 14) {
+            HomeDocumentIcon(documentType: document.documentType)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(document.title.isEmpty ? "未命名文档" : document.title)
-                    .font(.body)
+                    .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
@@ -89,7 +88,13 @@ private struct SearchResultRow: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
+
+            Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(Color(.tertiaryLabel))
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
     }
 }

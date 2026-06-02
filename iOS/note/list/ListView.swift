@@ -8,10 +8,16 @@
 import SwiftUI
 import SwiftData
 
+enum HomeRoute: Hashable {
+    case search
+    case editor(UUID, autoFocusOnLoad: Bool = false)
+}
+
 struct ListView: View {
     @State private var isPrivateFolderExpanded = true
     @State private var deletingDocumentIDs: Set<UUID> = []
     @State private var isFeedbackPresented = false
+    @State private var navigationPath: [HomeRoute] = []
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
     @Query(sort: \Document.accessedAt, order: .reverse) private var documents: [Document]
@@ -43,7 +49,7 @@ struct ListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             List {
                 Section {
                     Color.clear
@@ -72,9 +78,7 @@ struct ListView: View {
 
                     if isPrivateFolderExpanded {
                         ForEach(visibleDocuments) { document in
-                            NavigationLink {
-                                EditorView(document: document)
-                            } label: {
+                            NavigationLink(value: HomeRoute.editor(document.id)) {
                                 NoteRow(document: document)
                                     .frame(height: rowHeight)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -116,7 +120,13 @@ struct ListView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                HomeActionBar(documents: currentFolderDocuments)
+                HomeActionBar(
+                    documents: currentFolderDocuments,
+                    navigationPath: $navigationPath
+                )
+            }
+            .navigationDestination(for: HomeRoute.self) { route in
+                destination(for: route)
             }
             .sheet(isPresented: $isFeedbackPresented) {
                 FeedbackContactSheet()
@@ -128,6 +138,25 @@ struct ListView: View {
             }
             .animation(.easeInOut(duration: 0.18), value: isPrivateFolderExpanded)
             .animation(rowDeleteAnimation, value: visibleDocuments.map(\.id))
+        }
+    }
+
+    @ViewBuilder
+    private func destination(for route: HomeRoute) -> some View {
+        switch route {
+        case .search:
+            SearchView(documents: currentFolderDocuments) { document in
+                navigationPath = [.editor(document.id)]
+            }
+        case let .editor(documentID, autoFocusOnLoad):
+            if let document = documents.first(where: { $0.id == documentID && $0.deletedAt == nil }) {
+                EditorView(
+                    document: document,
+                    autoFocusOnLoad: autoFocusOnLoad
+                )
+            } else {
+                Text("文档不存在")
+            }
         }
     }
 

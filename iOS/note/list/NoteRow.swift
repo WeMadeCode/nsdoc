@@ -10,31 +10,9 @@ import SwiftUI
 struct NoteRow: View {
     let document: Document
 
-    private var iconStyle: (Color, Color, String) {
-        switch document.documentType {
-        case DocumentType.mindMap:
-            return (HomePalette.violet, Color(red: 0.733, green: 0.439, blue: 0.961), "square.grid.2x2.fill")
-        case DocumentType.whiteboard:
-            return (Color(red: 0.067, green: 0.651, blue: 0.780), HomePalette.mint, "scribble.variable")
-        case DocumentType.flowchart:
-            return (Color(red: 0.984, green: 0.537, blue: 0.180), HomePalette.yellow, "flowchart.fill")
-        default:
-            return (HomePalette.primaryBlue, HomePalette.cyan, "doc.text.fill")
-        }
-    }
-
     var body: some View {
         HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(iconStyle.0.opacity(0.10))
-
-                Image(systemName: iconStyle.2)
-                    .font(.system(size: 24, weight: .semibold))
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(iconStyle.0, iconStyle.1)
-            }
-            .frame(width: 48, height: 48)
+            HomeDocumentIcon(documentType: document.documentType)
 
             VStack(alignment: .leading, spacing: 7) {
                 Text(document.title.isEmpty ? "未命名文档" : document.title)
@@ -57,6 +35,37 @@ struct NoteRow: View {
             Spacer(minLength: 0)
         }
         .frame(minHeight: 76)
+    }
+}
+
+struct HomeDocumentIcon: View {
+    let documentType: String
+    var size: CGFloat = 48
+
+    private var iconStyle: (Color, Color, String) {
+        switch documentType {
+        case DocumentType.mindMap:
+            return (HomePalette.violet, Color(red: 0.733, green: 0.439, blue: 0.961), "square.grid.2x2.fill")
+        case DocumentType.whiteboard:
+            return (Color(red: 0.067, green: 0.651, blue: 0.780), HomePalette.mint, "scribble.variable")
+        case DocumentType.flowchart:
+            return (Color(red: 0.984, green: 0.537, blue: 0.180), HomePalette.yellow, "flowchart.fill")
+        default:
+            return (HomePalette.primaryBlue, HomePalette.cyan, "doc.text.fill")
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(iconStyle.0.opacity(0.10))
+
+            Image(systemName: iconStyle.2)
+                .font(.system(size: size * 0.5, weight: .semibold))
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(iconStyle.0, iconStyle.1)
+        }
+        .frame(width: size, height: size)
     }
 }
 
