@@ -5,16 +5,8 @@
       "type": "title",
       "content": [
         {
-          "type": "paragraph",
-          "attrs": {
-            "textAlign": null
-          },
-          "content": [
-            {
-              "type": "text",
-              "text": "Getting started"
-            }
-          ]
+          "type": "text",
+          "text": "快速开始"
         }
       ]
     },
@@ -26,7 +18,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Welcome to the "
+          "text": "欢迎使用 "
         },
         {
           "type": "text",
@@ -41,11 +33,11 @@
               }
             }
           ],
-          "text": "Simple Editor"
+          "text": "简洁编辑器"
         },
         {
           "type": "text",
-          "text": " template! This template integrates "
+          "text": " 模板！该模板集成了采用 "
         },
         {
           "type": "text",
@@ -54,11 +46,11 @@
               "type": "bold"
             }
           ],
-          "text": "open source"
+          "text": "开源"
         },
         {
           "type": "text",
-          "text": " UI components and Tiptap extensions licensed under "
+          "text": " 方式发布的 UI 组件和 Tiptap 扩展，并遵循 "
         },
         {
           "type": "text",
@@ -71,7 +63,7 @@
         },
         {
           "type": "text",
-          "text": "."
+          "text": " 许可证。"
         }
       ]
     },
@@ -83,7 +75,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Integrate it by following the "
+          "text": "你可以按照 "
         },
         {
           "type": "text",
@@ -98,11 +90,11 @@
               }
             }
           ],
-          "text": "Tiptap UI Components docs"
+          "text": "Tiptap UI 组件文档"
         },
         {
           "type": "text",
-          "text": " or using our CLI tool."
+          "text": " 集成它，也可以使用我们的 CLI 工具。"
         }
       ]
     },
@@ -127,7 +119,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Features"
+          "text": "功能特性"
         }
       ]
     },
@@ -147,7 +139,7 @@
                   "type": "italic"
                 }
               ],
-              "text": "A fully responsive rich text editor with built-in support for common formatting and layout tools. Type markdown "
+              "text": "一个完全响应式的富文本编辑器，内置支持常用格式和布局工具。输入 Markdown "
             },
             {
               "type": "text",
@@ -165,7 +157,7 @@
                   "type": "italic"
                 }
               ],
-              "text": " or use keyboard shortcuts "
+              "text": "，或使用键盘快捷键 "
             },
             {
               "type": "text",
@@ -178,7 +170,7 @@
             },
             {
               "type": "text",
-              "text": " for "
+              "text": " 来实现"
             },
             {
               "type": "text",
@@ -187,11 +179,11 @@
                   "type": "strike"
                 }
               ],
-              "text": "most"
+              "text": "大多数"
             },
             {
               "type": "text",
-              "text": " all common markdown marks. 🪄"
+              "text": "所有常见的 Markdown 标记。🪄"
             }
           ]
         }
@@ -205,7 +197,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Add images, customize alignment, and apply "
+          "text": "添加图片、自定义对齐方式，并应用"
         },
         {
           "type": "text",
@@ -217,11 +209,11 @@
               }
             }
           ],
-          "text": "advanced formatting"
+          "text": "高级格式"
         },
         {
           "type": "text",
-          "text": " to make your writing more engaging and professional."
+          "text": "，让你的写作更具吸引力，也更专业。"
         }
       ]
     },
@@ -229,8 +221,8 @@
       "type": "image",
       "attrs": {
         "src": "/images/tiptap-ui-placeholder-image.jpg",
-        "alt": "placeholder-image",
-        "title": "placeholder-image"
+        "alt": "占位图片",
+        "title": "占位图片"
       }
     },
     {
@@ -252,7 +244,7 @@
                       "type": "bold"
                     }
                   ],
-                  "text": "Superscript"
+                  "text": "上标"
                 },
                 {
                   "type": "text",
@@ -269,7 +261,7 @@
                 },
                 {
                   "type": "text",
-                  "text": ") and "
+                  "text": "）和"
                 },
                 {
                   "type": "text",
@@ -278,7 +270,7 @@
                       "type": "bold"
                     }
                   ],
-                  "text": "Subscript"
+                  "text": "下标"
                 },
                 {
                   "type": "text",
@@ -295,7 +287,7 @@
                 },
                 {
                   "type": "text",
-                  "text": "O) for precision."
+                  "text": "O），用于精确表达。"
                 }
               ]
             }
@@ -317,11 +309,11 @@
                       "type": "bold"
                     }
                   ],
-                  "text": "Typographic conversion"
+                  "text": "排版转换"
                 },
                 {
                   "type": "text",
-                  "text": ": automatically convert to "
+                  "text": "：自动将 "
                 },
                 {
                   "type": "text",
@@ -334,7 +326,7 @@
                 },
                 {
                   "type": "text",
-                  "text": " an arrow "
+                  "text": " 转换为箭头 "
                 },
                 {
                   "type": "text",
@@ -383,7 +375,7 @@
               }
             }
           ],
-          "text": "Learn more"
+          "text": "了解更多"
         }
       ]
     },
@@ -399,7 +391,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Make it your own"
+          "text": "打造你的专属编辑器"
         }
       ]
     },
@@ -411,7 +403,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Switch between light and dark modes, and tailor the editor's appearance with customizable CSS to match your style."
+          "text": "在浅色和深色模式之间切换，并通过可自定义的 CSS 调整编辑器外观，让它匹配你的风格。"
         }
       ]
     },
@@ -432,7 +424,7 @@
               "content": [
                 {
                   "type": "text",
-                  "text": "Test template"
+                  "text": "测试模板"
                 }
               ]
             }
@@ -463,7 +455,7 @@
                       }
                     }
                   ],
-                  "text": "Integrate the free template"
+                  "text": "集成免费模板"
                 }
               ]
             }

@@ -12,6 +12,7 @@ import '@/tiptap-editor/components/tiptap-node/paragraph-node/paragraph-node.scs
 // --- Styles ---
 import '@/tiptap-editor/components/tiptap-templates/simple/simple-editor.scss'
 
+// import type { JSONContent } from '@tiptap/core'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 import { useEffect } from 'react'
 
@@ -24,11 +25,16 @@ import { TableHandle } from '@/tiptap-editor/components/tiptap-node/table-node/u
 import { TableSelectionOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay'
 import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
 
+// import travelGuideContentJson from './data/travel-guide.json?raw'
+
 // import TextView from './text-view'
+
+// const defaultContent = JSON.parse(travelGuideContentJson) as JSONContent
 
 export function SimpleEditor() {
   const editor = useEditor({
     immediatelyRender: true,
+    // content: defaultContent,
     editorProps: {
       attributes: {
         autocomplete: 'off',
