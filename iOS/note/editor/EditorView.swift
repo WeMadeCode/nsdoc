@@ -192,7 +192,7 @@ struct EditorView: View {
     }
 
     private static var editorURL: URL? {
-        #if DEBUG
+        #if DEBUG && targetEnvironment(simulator)
         URL(string: "http://localhost:5173/")
         #else
         DocBundleURLSchemeHandler.indexURL

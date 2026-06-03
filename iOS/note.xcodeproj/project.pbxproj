@@ -164,7 +164,7 @@
 				CODE_SIGN_ENTITLEMENTS = note/note.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"note/Preview Content\"";
 				DEVELOPMENT_TEAM = 58838986DS;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -211,7 +211,7 @@
 				CODE_SIGN_ENTITLEMENTS = note/note.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"note/Preview Content\"";
 				DEVELOPMENT_TEAM = 58838986DS;
 				ENABLE_HARDENED_RUNTIME = YES;
