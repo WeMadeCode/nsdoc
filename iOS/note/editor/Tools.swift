@@ -219,7 +219,19 @@ struct Tools: View {
     }
 
     private func runTool(_ item: ToolItem) {
+        if shouldSwitchToSystemKeyboardBeforeRunning(item.toolType) {
+            viewModel.closeCustomKeyboard()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                runCommand(methodName: item.toolType.jsMethodName, params: item.toolType.jsParams)
+            }
+            return
+        }
+
         runCommand(methodName: item.toolType.jsMethodName, params: item.toolType.jsParams)
+    }
+
+    private func shouldSwitchToSystemKeyboardBeforeRunning(_ toolType: ToolType) -> Bool {
+        viewModel.isCustomKeyboardVisible && toolType == .check
     }
 
     private func runCommand(methodName: String, params: [String: Any]? = nil) {
