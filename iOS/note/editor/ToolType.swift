@@ -44,6 +44,58 @@ enum ToolType {
     case mention
     
     var image: Image {
+        #if os(macOS)
+        switch self {
+        case .insert:
+            Image(systemName: "plus.circle")
+        case .h1, .h2, .h3, .h4, .h5, .text, .style:
+            Image(systemName: "textformat")
+        case .order:
+            Image(systemName: "list.number")
+        case .unOrder:
+            Image(systemName: "list.bullet")
+        case .check:
+            Image(systemName: "checklist")
+        case .inlineCode, .code:
+            Image(systemName: "chevron.left.forwardslash.chevron.right")
+        case .foldList:
+            Image(systemName: "list.triangle")
+        case .page:
+            Image(systemName: "doc.text")
+        case .left:
+            Image(systemName: "text.alignleft")
+        case .right:
+            Image(systemName: "text.alignright")
+        case .center:
+            Image(systemName: "text.aligncenter")
+        case .goLeft:
+            Image(systemName: "decrease.indent")
+        case .goRight:
+            Image(systemName: "increase.indent")
+        case .camera:
+            Image(systemName: "camera")
+        case .picture:
+            Image(systemName: "photo")
+        case .table:
+            Image(systemName: "tablecells")
+        case .line:
+            Image(systemName: "minus")
+        case .reference:
+            Image(systemName: "quote.opening")
+        case .colors:
+            Image(systemName: "paintpalette")
+        case .bold:
+            Image(systemName: "bold")
+        case .italic:
+            Image(systemName: "italic")
+        case .underline:
+            Image(systemName: "underline")
+        case .strikethrough:
+            Image(systemName: "strikethrough")
+        case .mention:
+            Image(systemName: "at")
+        }
+        #else
         switch self {
         case .insert:
             Image(systemName: "plus.circle")
@@ -108,6 +160,7 @@ enum ToolType {
         case .mention:
             Image(systemName: "at")
         }
+        #endif
     }
     
     var jsMethodName: String {

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct HomeFloatingHeader: View {
     let onFeedback: () -> Void
 
@@ -80,3 +81,4 @@ private struct HomeHeader: View {
         .frame(height: 58)
     }
 }
+#endif

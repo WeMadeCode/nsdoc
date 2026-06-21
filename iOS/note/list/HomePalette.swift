@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 enum HomePalette {
     static let background = Color(red: 0.975, green: 0.980, blue: 0.992)
     static let card = Color(.systemBackground)
@@ -16,3 +17,4 @@ enum HomePalette {
     static let yellow = Color(red: 1.000, green: 0.733, blue: 0.082)
     static let violet = Color(red: 0.553, green: 0.392, blue: 0.941)
 }
+#endif

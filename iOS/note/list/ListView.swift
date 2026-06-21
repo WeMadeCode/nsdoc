@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+#if os(iOS)
 enum HomeRoute: Hashable {
     case search
     case editor(UUID, autoFocusOnLoad: Bool = false)
@@ -208,3 +209,4 @@ struct ListView: View {
 #Preview {
     ListView()
 }
+#endif

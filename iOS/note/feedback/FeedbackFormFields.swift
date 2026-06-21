@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct FeedbackFormFields: View {
     @Binding var category: FeedbackCategory
     @Binding var message: String
@@ -74,3 +75,4 @@ struct FeedbackFormFields: View {
         }
     }
 }
+#endif

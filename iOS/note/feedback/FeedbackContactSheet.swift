@@ -5,6 +5,7 @@
 //  Created by Codex on 2026/6/2.
 //
 
+#if os(iOS)
 import MessageUI
 import SwiftUI
 import UIKit
@@ -134,3 +135,4 @@ struct FeedbackContactSheet: View {
         )
     }
 }
+#endif

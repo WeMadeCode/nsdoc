@@ -71,8 +71,9 @@ struct Tools: View {
         
             Spacer()
 
+            #if os(iOS)
             ToolDivider()
-            
+
             Button {
                 UIApplication.shared.endEditing()
             } label: {
@@ -87,6 +88,7 @@ struct Tools: View {
                     .fill(Color(.systemBackground).opacity(0.98))
                     .shadow(color: .black.opacity(0.14), radius: 5, x: 0, y: 2)
             )
+            #endif
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 8)
@@ -703,11 +705,13 @@ private struct ToolDivider: View {
     }
 }
 
+#if os(iOS)
 extension UIApplication {
     func endEditing() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
+#endif
 
 #Preview {
 }

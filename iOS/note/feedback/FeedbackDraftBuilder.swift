@@ -5,6 +5,7 @@
 //  Created by Codex on 2026/6/3.
 //
 
+#if os(iOS)
 struct FeedbackDraftBuilder {
     func mailDraft(
         category: FeedbackCategory,
@@ -45,3 +46,4 @@ struct FeedbackDraftBuilder {
         """
     }
 }
+#endif

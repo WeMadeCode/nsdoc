@@ -7,17 +7,19 @@
 
 import SwiftUI
 import SwiftData
-import PhotosUI
 import UniformTypeIdentifiers
+#if os(iOS)
+import PhotosUI
 import UIKit
+#endif
 
 struct EditorView: View {
-    
     let showsCloseButton: Bool
     let autoFocusOnLoad: Bool
-    
+
     @StateObject var viewModel = EditorViewModel()
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @State private var workingDocument: Document?
     @State private var initialContentJSON: String?
     @State private var isKeyboardShow: Bool = false
@@ -25,13 +27,17 @@ struct EditorView: View {
     @State private var didApplyInitialContent = false
     @State private var isSaving = false
     @State private var didRecordAccess = false
-    @State private var isImagePickerPresented = false
-    @State private var selectedPhotoItem: PhotosPickerItem?
-    @State private var didReceiveImagePickerSelection = false
     @State private var pendingImagePickerCompletion: NSBridgeHandlerCompletion?
     @State private var isColorPanelPresented = false
     @State var javaScriptCommand: JavaScriptCommand? = nil
-    @Environment(\.dismiss) var dismiss
+
+    #if os(iOS)
+    @State private var isImagePickerPresented = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var didReceiveImagePickerSelection = false
+    #elseif os(macOS)
+    @State private var isImageImporterPresented = false
+    #endif
 
     init(
         document: Document?,
@@ -44,114 +50,97 @@ struct EditorView: View {
         _workingDocument = State(initialValue: document)
         _initialContentJSON = State(initialValue: initialContentJSON)
     }
-    
+
     var body: some View {
+        #if os(iOS)
+        iOSEditorBody
+        #elseif os(macOS)
+        macEditorBody
+        #endif
+    }
+
+    #if os(iOS)
+    private var iOSEditorBody: some View {
         mainView
-        .navigationBarBackButtonHidden(showsCloseButton)
-        .toolbar(.visible, for: .navigationBar)
-        .toolbar(content: {
-            if showsCloseButton {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        closeEditor()
-                    } label: {
-                        Image(systemName: "arrow.left")
+            .navigationBarBackButtonHidden(showsCloseButton)
+            .toolbar(.visible, for: .navigationBar)
+            .toolbar(content: { editorToolbar })
+            .background(InteractivePopGestureEnabler())
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { noti in
+                if
+                    let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+                    frame.height > 0
+                {
+                    keyboardHeight = frame.height
+                }
+                isKeyboardShow = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                isKeyboardShow = false
+            }
+            .task {
+                recordDocumentAccessIfNeeded()
+            }
+            .sheet(isPresented: $isColorPanelPresented) {
+                colorPanel
+                    .presentationDetents([.height(422)])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(24)
+            }
+            .photosPicker(
+                isPresented: $isImagePickerPresented,
+                selection: $selectedPhotoItem,
+                matching: .images
+            )
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                guard let newItem else {
+                    return
+                }
+
+                didReceiveImagePickerSelection = true
+                Task {
+                    await handlePickedPhotoItem(newItem)
+                }
+            }
+            .onChange(of: isImagePickerPresented) { _, isPresented in
+                guard !isPresented else {
+                    return
+                }
+
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    if !didReceiveImagePickerSelection, let completion = pendingImagePickerCompletion {
+                        pendingImagePickerCompletion = nil
+                        completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: "Image selection cancelled", recoverable: true)))
                     }
                 }
             }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 8) {
-                    editorNavigationButton(
-                        systemName: "arrow.uturn.backward",
-                        accessibilityLabel: "撤销",
-                        isEnabled: viewModel.canUndo,
-                        action: undo
-                    )
-                    editorNavigationButton(
-                        systemName: "arrow.uturn.forward",
-                        accessibilityLabel: "重做",
-                        isEnabled: viewModel.canRedo,
-                        action: redo
-                    )
-                }
-            }
-        })
-        .background(InteractivePopGestureEnabler())
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { noti in
-            if
-                let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-                frame.height > 0
-            {
-                keyboardHeight = frame.height
-            }
-            isKeyboardShow = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { noti in
-            isKeyboardShow = false
-        }
-        .task {
-            recordDocumentAccessIfNeeded()
-        }
-        .sheet(isPresented: $isColorPanelPresented) {
-            ColorAndHighlightSheet(
-                selectedTextColor: viewModel.selectedTextColor,
-                selectedBackgroundColor: viewModel.selectedBackgroundColor,
-                onDismiss: {
-                    isColorPanelPresented = false
-                },
-                onSetTextColor: { color in
-                    viewModel.selectedTextColor = color
-                    javaScriptCommand = JavaScriptCommand(methodName: "setTextColor", params: ["color": color])
-                },
-                onSetBackgroundColor: { color in
-                    viewModel.selectedBackgroundColor = color
-                    javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": color])
-                },
-                onUnsetBackgroundColor: {
-                    viewModel.selectedBackgroundColor = nil
-                    javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": NSNull()])
-                },
-                onReset: {
-                    viewModel.selectedTextColor = nil
-                    viewModel.selectedBackgroundColor = nil
-                    javaScriptCommand = JavaScriptCommand(methodName: "unsetColors")
-                }
-            )
-            .presentationDetents([.height(422)])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(24)
-        }
-        .photosPicker(
-            isPresented: $isImagePickerPresented,
-            selection: $selectedPhotoItem,
-            matching: .images
-        )
-        .onChange(of: selectedPhotoItem) { _, newItem in
-            guard let newItem else {
-                return
-            }
-
-            didReceiveImagePickerSelection = true
-            Task {
-                await handlePickedPhotoItem(newItem)
-            }
-        }
-        .onChange(of: isImagePickerPresented) { _, isPresented in
-            guard !isPresented else {
-                return
-            }
-
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 300_000_000)
-                if !didReceiveImagePickerSelection, let completion = pendingImagePickerCompletion {
-                    pendingImagePickerCompletion = nil
-                    completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: "Image selection cancelled", recoverable: true)))
-                }
-            }
-        }
     }
-    
+    #endif
+
+    #if os(macOS)
+    private var macEditorBody: some View {
+        mainView
+            .toolbar(content: { editorToolbar })
+            .task {
+                recordDocumentAccessIfNeeded()
+            }
+            .sheet(isPresented: $isColorPanelPresented) {
+                colorPanel
+                    .frame(width: 560, height: 520)
+            }
+            .fileImporter(
+                isPresented: $isImageImporterPresented,
+                allowedContentTypes: [.image],
+                allowsMultipleSelection: false
+            ) { result in
+                Task { @MainActor in
+                    handleImportedImage(result)
+                }
+            }
+    }
+    #endif
+
     private var mainView: some View {
         ZStack(alignment: .bottom) {
             if let editorURL = Self.editorURL {
@@ -177,6 +166,7 @@ struct EditorView: View {
                     .foregroundStyle(.secondary)
             }
 
+            #if os(iOS)
             if isKeyboardShow || viewModel.isCustomKeyboardVisible {
                 Tools(
                     javaScriptCommand: $javaScriptCommand,
@@ -188,11 +178,68 @@ struct EditorView: View {
                     }
                 )
             }
+            #endif
         }
     }
 
+    @ToolbarContentBuilder
+    private var editorToolbar: some ToolbarContent {
+        if showsCloseButton {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    closeEditor()
+                } label: {
+                    Image(systemName: "arrow.left")
+                }
+                .accessibilityLabel("关闭")
+            }
+        }
+
+        ToolbarItemGroup(placement: .primaryAction) {
+            editorNavigationButton(
+                systemName: "arrow.uturn.backward",
+                accessibilityLabel: "撤销",
+                isEnabled: viewModel.canUndo,
+                action: undo
+            )
+            editorNavigationButton(
+                systemName: "arrow.uturn.forward",
+                accessibilityLabel: "重做",
+                isEnabled: viewModel.canRedo,
+                action: redo
+            )
+        }
+    }
+
+    private var colorPanel: some View {
+        ColorAndHighlightSheet(
+            selectedTextColor: viewModel.selectedTextColor,
+            selectedBackgroundColor: viewModel.selectedBackgroundColor,
+            onDismiss: {
+                isColorPanelPresented = false
+            },
+            onSetTextColor: { color in
+                viewModel.selectedTextColor = color
+                javaScriptCommand = JavaScriptCommand(methodName: "setTextColor", params: ["color": color])
+            },
+            onSetBackgroundColor: { color in
+                viewModel.selectedBackgroundColor = color
+                javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": color])
+            },
+            onUnsetBackgroundColor: {
+                viewModel.selectedBackgroundColor = nil
+                javaScriptCommand = JavaScriptCommand(methodName: "setBackgroundColor", params: ["color": NSNull()])
+            },
+            onReset: {
+                viewModel.selectedTextColor = nil
+                viewModel.selectedBackgroundColor = nil
+                javaScriptCommand = JavaScriptCommand(methodName: "unsetColors")
+            }
+        )
+    }
+
     private static var editorURL: URL? {
-        #if DEBUG && targetEnvironment(simulator)
+        #if os(iOS) && DEBUG && targetEnvironment(simulator)
         URL(string: "http://localhost:5173/")
         #else
         DocBundleURLSchemeHandler.indexURL
@@ -253,12 +300,6 @@ struct EditorView: View {
             ],
             timeout: 3
         )
-    }
-
-    private func flushEditorContent() {
-        Task {
-            await flushEditorContentAsync()
-        }
     }
 
     private func closeEditor() {
@@ -403,6 +444,7 @@ struct EditorView: View {
         return document
     }
 
+    #if os(iOS)
     @MainActor
     private func pickImageAttachment(_ params: [String: Any]?, completion: @escaping NSBridgeHandlerCompletion) {
         if let pendingImagePickerCompletion {
@@ -449,6 +491,59 @@ struct EditorView: View {
             completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: error.localizedDescription, recoverable: true)))
         }
     }
+    #elseif os(macOS)
+    @MainActor
+    private func pickImageAttachment(_ params: [String: Any]?, completion: @escaping NSBridgeHandlerCompletion) {
+        if let pendingImagePickerCompletion {
+            pendingImagePickerCompletion(.failure(NSBridgeRuntimeError(code: .handlerError, message: "Another image selection was started", recoverable: true)))
+        }
+
+        pendingImagePickerCompletion = completion
+        isImageImporterPresented = true
+    }
+
+    @MainActor
+    private func handleImportedImage(_ result: Result<[URL], Error>) {
+        guard let completion = pendingImagePickerCompletion else {
+            return
+        }
+
+        pendingImagePickerCompletion = nil
+
+        do {
+            let fileURL = try result.get().first
+            guard let fileURL else {
+                throw NSBridgeRuntimeError(code: .handlerError, message: "Image selection cancelled", recoverable: true)
+            }
+
+            let hasAccess = fileURL.startAccessingSecurityScopedResource()
+            defer {
+                if hasAccess {
+                    fileURL.stopAccessingSecurityScopedResource()
+                }
+            }
+
+            let data = try Data(contentsOf: fileURL)
+            let contentType = UTType(filenameExtension: fileURL.pathExtension)
+            let mimeType = contentType?.preferredMIMEType ?? "image/jpeg"
+            let document = try currentOrNewDocument()
+
+            let storedImage = try AttachmentService.storeImageData(
+                data,
+                filename: fileURL.lastPathComponent,
+                mimeType: mimeType,
+                document: document,
+                modelContext: modelContext
+            )
+
+            completion(.success(storedImage))
+        } catch let error as NSBridgeRuntimeError {
+            completion(.failure(error))
+        } catch {
+            completion(.failure(NSBridgeRuntimeError(code: .handlerError, message: error.localizedDescription, recoverable: true)))
+        }
+    }
+    #endif
 
     private func currentOrNewDocument() throws -> Document {
         if let workingDocument {
@@ -500,12 +595,12 @@ struct EditorView: View {
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first
     }
-
 }
 
 #Preview {
 }
 
+#if os(iOS)
 private struct InteractivePopGestureEnabler: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         UIViewController()
@@ -522,3 +617,4 @@ private struct InteractivePopGestureEnabler: UIViewControllerRepresentable {
         }
     }
 }
+#endif

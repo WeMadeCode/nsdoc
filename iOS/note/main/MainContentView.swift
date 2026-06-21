@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct MainContentView: View {
     @State private var showsSplash = true
 
@@ -36,3 +37,4 @@ struct MainContentView: View {
 #Preview {
     MainContentView()
 }
+#endif

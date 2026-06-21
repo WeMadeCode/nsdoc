@@ -8,6 +8,7 @@
 import SwiftData
 import SwiftUI
 
+#if os(iOS)
 struct HomeActionBar: View {
     let documents: [Document]
     @Binding var navigationPath: [HomeRoute]
@@ -107,3 +108,4 @@ private struct FloatingActionButton: View {
             .shadow(color: HomePalette.primaryBlue.opacity(0.35), radius: 18, x: 0, y: 8)
     }
 }
+#endif

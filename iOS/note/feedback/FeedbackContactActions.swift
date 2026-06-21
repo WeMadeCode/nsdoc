@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct FeedbackContactActions: View {
     let onSendMail: () -> Void
     let onCopyWeChat: () -> Void
@@ -72,3 +73,4 @@ private struct FeedbackContactActionRow: View {
         }
     }
 }
+#endif

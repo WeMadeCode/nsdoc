@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 enum FeedbackContactConfig {
     static let email = "wemadecode@gmail.com"
     static let weChatID = "AnyObserver"
@@ -38,6 +39,7 @@ struct FeedbackAlert: Identifiable {
     let title: String
     let message: String
 }
+#endif
 
 enum FeedbackFocusedField {
     case message

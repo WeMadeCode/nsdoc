@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct AppSplashView: View {
     var body: some View {
         GeometryReader { proxy in
@@ -56,3 +57,4 @@ private enum SplashPalette {
 #Preview {
     AppSplashView()
 }
+#endif

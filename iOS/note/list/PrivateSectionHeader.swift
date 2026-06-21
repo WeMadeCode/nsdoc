@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct PrivateSectionHeader: View {
     let title: String
     let documentCount: Int
@@ -41,3 +42,4 @@ struct PrivateSectionHeader: View {
         }
     }
 }
+#endif

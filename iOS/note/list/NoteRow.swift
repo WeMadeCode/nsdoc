@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct NoteRow: View {
     let document: Document
 
@@ -89,3 +90,4 @@ private extension Date {
         return formatter.string(from: self)
     }
 }
+#endif

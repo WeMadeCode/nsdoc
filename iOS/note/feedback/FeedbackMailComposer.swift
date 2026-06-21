@@ -5,6 +5,7 @@
 //  Created by Codex on 2026/6/3.
 //
 
+#if os(iOS)
 import MessageUI
 import SwiftUI
 
@@ -47,3 +48,4 @@ struct FeedbackMailComposer: UIViewControllerRepresentable {
         }
     }
 }
+#endif

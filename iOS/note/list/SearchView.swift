@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct SearchView: View {
     let documents: [Document]
     let onOpenDocument: (Document) -> Void
@@ -98,3 +99,4 @@ private struct SearchResultRow: View {
         .padding(.vertical, 8)
     }
 }
+#endif
