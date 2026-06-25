@@ -67,7 +67,6 @@
     "@tiptap/extensions": "^3.20.5",
     "@tiptap/pm": "^3.20.5",
     "@tiptap/react": "^3.20.5",
-    "@tiptap/starter-kit": "^3.20.5",
     "@tiptap/suggestion": "^3.20.5",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",

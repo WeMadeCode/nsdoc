@@ -55,6 +55,7 @@ struct SLWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
         configuration.userContentController.addUserScript(Self.lightModeUserScript)
+        configuration.userContentController.addUserScript(Self.runtimeConfigUserScript)
 
         let wkWebView = WKWebView(frame: .zero, configuration: configuration)
         context.coordinator.bridge.attach(webView: wkWebView)
@@ -151,6 +152,17 @@ struct SLWebView: UIViewRepresentable {
         if (!colorSchemeMeta.parentNode) {
             document.head.appendChild(colorSchemeMeta);
         }
+        """,
+        injectionTime: .atDocumentStart,
+        forMainFrameOnly: true
+    )
+
+    private static let runtimeConfigUserScript = WKUserScript(
+        source: """
+        window.__NSRuntimeConfig = Object.freeze({
+            hostPlatform: 'iphone',
+            editorMode: 'simple'
+        });
         """,
         injectionTime: .atDocumentStart,
         forMainFrameOnly: true
@@ -795,6 +807,7 @@ struct SLWebView: NSViewRepresentable {
     func makeNSView(context: Context) -> WKWebView {
         let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
         configuration.userContentController.addUserScript(Self.lightModeUserScript)
+        configuration.userContentController.addUserScript(Self.runtimeConfigUserScript)
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         context.coordinator.bridge.attach(webView: webView)
@@ -849,6 +862,17 @@ struct SLWebView: NSViewRepresentable {
         if (!colorSchemeMeta.parentNode) {
             document.head.appendChild(colorSchemeMeta);
         }
+        """,
+        injectionTime: .atDocumentStart,
+        forMainFrameOnly: true
+    )
+
+    private static let runtimeConfigUserScript = WKUserScript(
+        source: """
+        window.__NSRuntimeConfig = Object.freeze({
+            hostPlatform: 'mac',
+            editorMode: 'notion'
+        });
         """,
         injectionTime: .atDocumentStart,
         forMainFrameOnly: true

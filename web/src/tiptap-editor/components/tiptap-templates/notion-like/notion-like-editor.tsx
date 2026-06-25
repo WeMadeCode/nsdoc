@@ -12,28 +12,43 @@ import '@/tiptap-editor/components/tiptap-node/paragraph-node/paragraph-node.scs
 // --- Styles ---
 import '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor.scss'
 
+import Bold from '@tiptap/extension-bold'
+import BulletList from '@tiptap/extension-bullet-list'
+import Code from '@tiptap/extension-code'
 import { Collaboration, isChangeOrigin } from '@tiptap/extension-collaboration'
 import { CollaborationCaret } from '@tiptap/extension-collaboration-caret'
+import Dropcursor from '@tiptap/extension-dropcursor'
 import { Emoji, gitHubEmojis } from '@tiptap/extension-emoji'
+import Gapcursor from '@tiptap/extension-gapcursor'
+import HardBreak from '@tiptap/extension-hard-break'
+import Heading from '@tiptap/extension-heading'
 import { Highlight } from '@tiptap/extension-highlight'
+import History from '@tiptap/extension-history'
+import Italic from '@tiptap/extension-italic'
+import Link from '@tiptap/extension-link'
 import { TaskItem, TaskList } from '@tiptap/extension-list'
+import ListItem from '@tiptap/extension-list-item'
 import { Mathematics } from '@tiptap/extension-mathematics'
 import { Mention } from '@tiptap/extension-mention'
+import OrderedList from '@tiptap/extension-ordered-list'
+import Paragraph from '@tiptap/extension-paragraph'
+import Strike from '@tiptap/extension-strike'
 import { Subscript } from '@tiptap/extension-subscript'
 import { Superscript } from '@tiptap/extension-superscript'
 import { getHierarchicalIndexes, TableOfContents } from '@tiptap/extension-table-of-contents'
+import Text from '@tiptap/extension-text'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Color, TextStyle } from '@tiptap/extension-text-style'
 import { Typography } from '@tiptap/extension-typography'
+import Underline from '@tiptap/extension-underline'
 import { UniqueID } from '@tiptap/extension-unique-id'
 import { Placeholder, Selection } from '@tiptap/extensions'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
-// --- Tiptap Core Extensions ---
-import { StarterKit } from '@tiptap/starter-kit'
 import { useContext, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import type { Doc as YDoc } from 'yjs'
 
+import { setupBridge } from '@/bridge'
 import { Indent } from '@/tiptap-editor/components/tiptap-extension/indent-extension'
 import { ListNormalizationExtension } from '@/tiptap-editor/components/tiptap-extension/list-normalization-extension'
 import { NodeAlignment } from '@/tiptap-editor/components/tiptap-extension/node-alignment-extension'
@@ -70,6 +85,10 @@ import { AiProvider, useAi } from '@/tiptap-editor/contexts/ai-context'
 import { AppProvider } from '@/tiptap-editor/contexts/app-context'
 import { CollabProvider, useCollab } from '@/tiptap-editor/contexts/collab-context'
 import { UserProvider, useUser } from '@/tiptap-editor/contexts/user-context'
+import { Blockquote } from '@/tiptap-editor/extensions/extension-blockquote'
+import { CodeBlockLowlight } from '@/tiptap-editor/extensions/extension-code-block'
+import { Document } from '@/tiptap-editor/extensions/extension-document'
+import { Title } from '@/tiptap-editor/extensions/extension-title'
 // --- Hooks ---
 import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
 // --- Lib ---
@@ -164,15 +183,26 @@ export function EditorProvider(props: EditorProviderProps) {
       },
     },
     extensions: [
-      StarterKit.configure({
-        // In collaborative mode we disable local history; otherwise keep undo/redo available.
-        undoRedo: hasCollab ? false : {},
-        horizontalRule: false,
-        dropcursor: {
-          width: 2,
-        },
-        link: { openOnClick: false },
-      }),
+      Document,
+      Title,
+      Paragraph,
+      Text,
+      Bold,
+      Italic,
+      Strike,
+      Underline,
+      Code,
+      Heading,
+      BulletList,
+      OrderedList,
+      ListItem,
+      Blockquote,
+      CodeBlockLowlight,
+      HardBreak,
+      ...(hasCollab ? [] : [History]),
+      Dropcursor.configure({ width: 2 }),
+      Gapcursor,
+      Link.configure({ openOnClick: false }),
       HorizontalRule,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       ...(hasCollab && provider
@@ -200,7 +230,18 @@ export function EditorProvider(props: EditorProviderProps) {
         },
       }),
       NodeBackground.configure({
-        types: ['paragraph', 'heading', 'blockquote', 'taskList', 'bulletList', 'orderedList', 'tableCell', 'tableHeader', 'tocNode'],
+        types: [
+          'title',
+          'paragraph',
+          'heading',
+          'blockquote',
+          'taskList',
+          'bulletList',
+          'orderedList',
+          'tableCell',
+          'tableHeader',
+          'tocNode',
+        ],
       }),
       NodeAlignment,
       TextStyle,
@@ -230,7 +271,7 @@ export function EditorProvider(props: EditorProviderProps) {
         onError: error => console.error('Upload failed:', error),
       }),
       UniqueID.configure({
-        types: ['table', 'paragraph', 'bulletList', 'orderedList', 'taskList', 'heading', 'blockquote', 'codeBlock', 'tocNode'],
+        types: ['title', 'table', 'paragraph', 'bulletList', 'orderedList', 'taskList', 'heading', 'blockquote', 'codeBlock', 'tocNode'],
         filterTransaction: transaction => !isChangeOrigin(transaction),
       }),
       Typography,
@@ -240,6 +281,10 @@ export function EditorProvider(props: EditorProviderProps) {
       }),
     ],
   })
+
+  useEffect(() => {
+    return setupBridge(editor)
+  }, [editor])
 
   if (!editor) {
     return <LoadingSpinner />

@@ -87,6 +87,15 @@ export type EditorOpenDocParams = {
   focus?: boolean
 }
 
+export type EditorHostPlatform = 'iphone' | 'mac'
+
+export type EditorMode = 'simple' | 'notion'
+
+export type EditorRuntimeConfig = {
+  hostPlatform: EditorHostPlatform
+  editorMode: EditorMode
+}
+
 export type EditorBooleanResult = {
   active?: boolean
   applied?: boolean
@@ -126,6 +135,7 @@ declare global {
     __NSBridge: {
       receiveFromNative(message: BridgeMessage): void
     }
+    __NSRuntimeConfig?: EditorRuntimeConfig
     webkit?: {
       messageHandlers?: {
         nsBridge?: {

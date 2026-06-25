@@ -1,4 +1,4 @@
-import type { Editor } from '@tiptap/core'
+import type { Editor, JSONContent } from '@tiptap/core'
 import type { Level } from '@tiptap/extension-heading'
 import type { ResolvedPos } from '@tiptap/pm/model'
 import debounce from 'lodash.debounce'
@@ -19,6 +19,7 @@ import { BRIDGE_VERSION } from './types'
 import { nsBridge } from './web-bridge'
 
 const capabilities = [
+  'editor.configureRuntime',
   'editor.openDoc',
   'editor.flushContent',
   'editor.focus',
@@ -156,6 +157,31 @@ const createContentSnapshot = (editor: Editor, changeVersion: number, reason: Ed
   reason,
 })
 
+const emptyDocumentContent = (): JSONContent => ({
+  type: 'doc',
+  content: [{ type: 'title' }, { type: 'paragraph' }],
+})
+
+const normalizeDocumentContent = (content?: JSONContent | null): JSONContent => {
+  if (!content) {
+    return emptyDocumentContent()
+  }
+
+  if (content.type !== 'doc') {
+    return content
+  }
+
+  const children = content.content ?? []
+  if (children[0]?.type === 'title') {
+    return content
+  }
+
+  return {
+    ...content,
+    content: [{ type: 'title' }, ...children],
+  }
+}
+
 const emitContentChanged = (editor: Editor, changeVersion: number, reason: EditorContentSnapshot['reason']) => {
   nsBridge.emit('editor', 'contentChanged', createContentSnapshot(editor, changeVersion, reason))
 }
@@ -211,20 +237,18 @@ export const setupEditorBridge = (editor: Editor | null) => {
 
   const cleanupHandlers = [
     nsBridge.register<EditorOpenDocParams, void>('editor', 'openDoc', params => {
-      if (params.content) {
-        isApplyingContent = true
-        try {
-          editor
-            .chain()
-            .setContent(params.content, { emitUpdate: false })
-            .command(({ tr }) => {
-              tr.setMeta('addToHistory', false)
-              return true
-            })
-            .run()
-        } finally {
-          isApplyingContent = false
-        }
+      isApplyingContent = true
+      try {
+        editor
+          .chain()
+          .setContent(normalizeDocumentContent(params.content), { emitUpdate: false })
+          .command(({ tr }) => {
+            tr.setMeta('addToHistory', false)
+            return true
+          })
+          .run()
+      } finally {
+        isApplyingContent = false
       }
 
       if (params.focus) {

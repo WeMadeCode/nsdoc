@@ -239,8 +239,8 @@ struct EditorView: View {
     }
 
     private static var editorURL: URL? {
-        #if os(iOS) && DEBUG && targetEnvironment(simulator)
-        URL(string: "http://localhost:5173/")
+        #if DEBUG && (os(macOS) || (os(iOS) && targetEnvironment(simulator)))
+        URL(string: "http://127.0.0.1:5173/")
         #else
         DocBundleURLSchemeHandler.indexURL
         #endif
