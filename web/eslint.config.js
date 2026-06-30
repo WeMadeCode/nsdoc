@@ -21,6 +21,7 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
+      curly: ['error', 'all'],
       'prettier/prettier': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-refresh/only-export-components': 'off',

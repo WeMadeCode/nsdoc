@@ -62,7 +62,9 @@ export const ListNormalizationExtension = Extension.create({
 
       const listItem = getActiveListItem(editor)
 
-      if (!listItem) return false
+      if (!listItem) {
+        return false
+      }
 
       if (!selection.empty) {
         return true
@@ -80,8 +82,12 @@ export const ListNormalizationExtension = Extension.create({
       const { selection } = state
       const { $from, empty } = selection
 
-      if (!empty) return false
-      if ($from.parentOffset !== 0) return false
+      if (!empty) {
+        return false
+      }
+      if ($from.parentOffset !== 0) {
+        return false
+      }
 
       const currentNode = $from.parent
 
@@ -90,7 +96,9 @@ export const ListNormalizationExtension = Extension.create({
       }
 
       const parentDepth = $from.depth - 1
-      if (parentDepth < 0) return false
+      if (parentDepth < 0) {
+        return false
+      }
 
       const parent = $from.node(parentDepth)
       const indexInParent = $from.index(parentDepth)

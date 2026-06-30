@@ -16,7 +16,9 @@ export function useResizeOverlay(editor: Editor | null, updateSelectionRect: () 
   }, [])
 
   const startLoop = useCallback(() => {
-    if (rafId.current != null) return
+    if (rafId.current != null) {
+      return
+    }
     const tick = () => {
       const st = columnResizingPluginKey.getState(editor!.state)
       const dragging = !!st?.dragging
@@ -33,14 +35,18 @@ export function useResizeOverlay(editor: Editor | null, updateSelectionRect: () 
   }, [editor, updateSelectionRect, stopLoop])
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const onTx = ({ transaction }: { transaction: Transaction }) => {
       // this is for non-resize txs that may affect selection
       updateSelectionRect()
 
       const meta = transaction.getMeta(columnResizingPluginKey)
-      if (!meta) return
+      if (!meta) {
+        return
+      }
 
       // drag start
       if (Object.prototype.hasOwnProperty.call(meta, 'setDragging') && meta.setDragging) {

@@ -83,7 +83,9 @@ function canSplitCell(editor: Editor | null): boolean {
  * Executes the cell merge operation in the editor.
  */
 function tableMergeCells(editor: Editor | null): boolean {
-  if (!canMergeCells(editor) || !editor) return false
+  if (!canMergeCells(editor) || !editor) {
+    return false
+  }
 
   try {
     const { state, view } = editor
@@ -98,7 +100,9 @@ function tableMergeCells(editor: Editor | null): boolean {
  * Executes the cell split operation in the editor.
  */
 function tableSplitCell(editor: Editor | null): boolean {
-  if (!canSplitCell(editor) || !editor) return false
+  if (!canSplitCell(editor) || !editor) {
+    return false
+  }
 
   try {
     const { state, view } = editor
@@ -113,7 +117,9 @@ function tableSplitCell(editor: Editor | null): boolean {
  * Executes the merge/split operation in the editor.
  */
 function tableMergeSplitCell({ editor, action }: { editor: Editor | null; action: MergeSplitAction }): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   try {
     return action === 'merge' ? tableMergeCells(editor) : tableSplitCell(editor)
@@ -136,8 +142,12 @@ function shouldShowButton({
   action: MergeSplitAction
   hideWhenUnavailable: boolean
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   if (hideWhenUnavailable) {
     return action === 'merge' ? canMergeCells(editor) : canSplitCell(editor)

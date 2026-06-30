@@ -36,7 +36,9 @@ export interface UseDeleteNodeConfig {
  * Checks if a node can be deleted based on the current selection
  */
 export function canDeleteNode(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const { state } = editor
   const { selection } = state
@@ -68,7 +70,9 @@ export function deleteNodeAtPosition(editor: Editor, pos: number, nodeSize: numb
   const chain = editor.chain().focus()
   const success = chain.deleteRange({ from: pos, to: pos + nodeSize }).run()
 
-  if (success) return true
+  if (success) {
+    return true
+  }
 
   // Fallback
   return chain.setNodeSelection(pos).deleteSelection().run()
@@ -78,7 +82,9 @@ export function deleteNodeAtPosition(editor: Editor, pos: number, nodeSize: numb
  * Deletes the selected node in the editor using current selection
  */
 export function deleteNode(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   try {
     const { state } = editor
@@ -88,7 +94,9 @@ export function deleteNode(editor: Editor | null): boolean {
       const pos = selection.from
       const selectedNode = selection.node
 
-      if (!selectedNode) return false
+      if (!selectedNode) {
+        return false
+      }
 
       return deleteNodeAtPosition(editor, pos, selectedNode.nodeSize)
     }
@@ -116,13 +124,17 @@ export function deleteNode(editor: Editor | null): boolean {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canDeleteNode(editor)
@@ -175,7 +187,9 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
   const canDeleteNodeState = canDeleteNode(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -191,7 +205,9 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleDeleteNode = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = deleteNode(editor)
     if (success) {

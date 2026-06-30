@@ -63,7 +63,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Fix spelling & grammar',
       value: 'aiFixSpellingAndGrammar',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -85,7 +87,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Make longer',
       value: 'aiExtend',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -107,7 +111,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Make shorter',
       value: 'aiShorten',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -129,7 +135,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Simplify language',
       value: 'simplifyLanguage',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -151,7 +159,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Improve writing',
       value: 'improveWriting',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -173,7 +183,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Emojify',
       value: 'emojify',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -195,7 +207,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Continue writing',
       value: 'continueWriting',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -217,7 +231,9 @@ function initializeEditorMenuActions(): Record<MenuActionIdentifier, EditorMenuA
       label: 'Add a summary',
       value: 'summarize',
       onSelect: ({ editor, options }) => {
-        if (!editor) return
+        if (!editor) {
+          return
+        }
 
         const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
         const newOptions: TextOptions = {
@@ -295,7 +311,9 @@ export function LanguageSelectionSubmenu({ editor }: { editor: Editor | null }) 
 
   const handleLanguageSelection = useCallback(
     (selectedLanguageCode: Language) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
 
@@ -383,7 +401,9 @@ export function ToneSelectionSubmenu({ editor }: { editor: Editor | null }) {
 
   const handleToneSelection = useCallback(
     (selectedTone: string) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const { insertAt, isSelection, context } = getContextAndInsertAt(editor)
 
@@ -518,10 +538,14 @@ export function AiMenuItems({ editor: providedEditor }: { editor?: Editor | null
 
   const wouldActionRenderContent = useCallback(
     (menuItem: Action) => {
-      if (!menuItem.value) return false
+      if (!menuItem.value) {
+        return false
+      }
 
       const editorAction = availableMenuActions[menuItem.value as MenuActionIdentifier]
-      if (!editorAction) return false
+      if (!editorAction) {
+        return false
+      }
 
       // For nested menu items with filterItems=true, check their internal filtering
       if (isNestedMenuItem(editorAction) && editorAction.filterItems && searchValue.trim()) {

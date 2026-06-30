@@ -52,7 +52,9 @@ export const TableDeleteRowColumnButton = forwardRef<HTMLButtonElement, TableDel
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleDelete()
       },
       [handleDelete, onClick]

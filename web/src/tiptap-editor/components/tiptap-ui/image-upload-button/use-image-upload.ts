@@ -4,6 +4,8 @@ import { type Editor } from '@tiptap/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import type { MediaPickImageParams, MediaPickImageResult } from '@/bridge/types'
+import { nsBridge } from '@/bridge/web-bridge'
 // --- Icons ---
 import { ImagePlusIcon } from '@/tiptap-editor/components/tiptap-icons/image-plus-icon'
 import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
@@ -11,8 +13,6 @@ import { useIsBreakpoint } from '@/tiptap-editor/hooks/use-is-breakpoint'
 import { useTiptapEditor } from '@/tiptap-editor/hooks/use-tiptap-editor'
 // --- Lib ---
 import { isExtensionAvailable } from '@/tiptap-editor/lib/tiptap-utils'
-import type { MediaPickImageParams, MediaPickImageResult } from '@/bridge/types'
-import { nsBridge } from '@/bridge/web-bridge'
 
 export const IMAGE_UPLOAD_SHORTCUT_KEY = 'mod+shift+i'
 
@@ -39,8 +39,12 @@ export interface UseImageUploadConfig {
  * Checks if image can be inserted in the current editor state
  */
 export function canInsertImage(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ['image', 'imageUpload'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, ['image', 'imageUpload'])) {
+    return false
+  }
 
   return editor.can().insertContent({ type: isExtensionAvailable(editor, 'image') ? 'image' : 'imageUpload' })
 }
@@ -49,7 +53,9 @@ export function canInsertImage(editor: Editor | null): boolean {
  * Checks if image is currently active
  */
 export function isImageActive(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   return editor.isActive('imageUpload')
 }
 
@@ -57,8 +63,12 @@ export function isImageActive(editor: Editor | null): boolean {
  * Inserts an image in the editor
  */
 export function insertImage(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canInsertImage(editor)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canInsertImage(editor)) {
+    return false
+  }
 
   try {
     return editor
@@ -74,8 +84,12 @@ export function insertImage(editor: Editor | null): boolean {
 }
 
 export async function insertNativeImage(editor: Editor | null): Promise<boolean> {
-  if (!editor || !editor.isEditable) return false
-  if (!canInsertImage(editor)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canInsertImage(editor)) {
+    return false
+  }
 
   if (!window.webkit?.messageHandlers?.nsBridge) {
     return insertImage(editor)
@@ -114,13 +128,17 @@ export async function insertNativeImage(editor: Editor | null): Promise<boolean>
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!isExtensionAvailable(editor, 'imageUpload')) return false
+  if (!isExtensionAvailable(editor, 'imageUpload')) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canInsertImage(editor)
@@ -175,7 +193,9 @@ export function useImageUpload(config?: UseImageUploadConfig) {
   const isActive = isImageActive(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -191,7 +211,9 @@ export function useImageUpload(config?: UseImageUploadConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleImage = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     void insertNativeImage(editor).then(success => {
       if (success) {

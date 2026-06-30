@@ -132,7 +132,9 @@ export function EditorContentArea() {
 
   // Selection based effect to handle AI generation acceptance
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     if (!aiGenerationIsLoading && aiGenerationIsSelection && aiGenerationHasMessage) {
       // AI commands are provided by the private @tiptap-pro/extension-ai package.

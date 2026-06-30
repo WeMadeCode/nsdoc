@@ -125,7 +125,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
       }
 
       return () => {
-        if (!editorRef.current) return null
+        if (!editorRef.current) {
+          return null
+        }
         return getBoundingClientRectRef.current(editorRef.current)
       }
     }, [referenceElement])
@@ -139,10 +141,14 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         escapeKey: true,
         outsidePress(event) {
           const relatedTarget = event.target as Node
-          if (!relatedTarget) return false
+          if (!relatedTarget) {
+            return false
+          }
 
           // Don't close if clicking inside a portaled UI
-          if (isElementWithinExternalPortal(relatedTarget)) return false
+          if (isElementWithinExternalPortal(relatedTarget)) {
+            return false
+          }
 
           return !isElementWithinEditor(editor, relatedTarget)
         },
@@ -151,7 +157,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     })
 
     const updateSelectionState = useCallback(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const newRect = getBoundingClientRect(editor)
 
@@ -170,7 +178,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, getBoundingClientRect, handleOpenChange, shouldShow])
 
     useEffect(() => {
-      if (!editor || !closeOnEscape) return
+      if (!editor || !closeOnEscape) {
+        return
+      }
 
       const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key === 'Escape' && open) {
@@ -187,7 +197,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, open, closeOnEscape, handleOpenChange])
 
     useEffect(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const handleBlur = (event: FocusEvent) => {
         if (preventHideRef.current) {
@@ -196,7 +208,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
         }
 
         const relatedTarget = event.relatedTarget as Node
-        if (!relatedTarget) return
+        if (!relatedTarget) {
+          return
+        }
 
         const isWithinEditor = isElementWithinEditor(editor, relatedTarget)
 
@@ -218,7 +232,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, handleOpenChange, open])
 
     useEffect(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const handleDrag = () => {
         if (open) {
@@ -236,10 +252,14 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, open, handleOpenChange])
 
     useEffect(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       const handleMouseDown = (event: MouseEvent) => {
-        if (event.button !== 0) return
+        if (event.button !== 0) {
+          return
+        }
 
         preventShowRef.current = true
 
@@ -249,12 +269,16 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
           top: event.clientY,
         })
 
-        if (!posCoords || !isValidPosition(posCoords.pos)) return
+        if (!posCoords || !isValidPosition(posCoords.pos)) {
+          return
+        }
 
         const $pos = state.doc.resolve(posCoords.pos)
         const nodeBefore = $pos.nodeBefore
 
-        if (!nodeBefore || nodeBefore.isBlock) return
+        if (!nodeBefore || nodeBefore.isBlock) {
+          return
+        }
 
         const tr = state.tr.setSelection(Selection.near(state.doc.resolve(posCoords.pos)))
         view.dispatch(tr)
@@ -277,7 +301,9 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, updateSelectionState])
 
     useEffect(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       editor.on('selectionUpdate', updateSelectionState)
 
@@ -287,14 +313,18 @@ export const FloatingElement = forwardRef<HTMLDivElement, FloatingElementProps>(
     }, [editor, updateSelectionState])
 
     useEffect(() => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
       updateSelectionState()
     }, [editor, updateSelectionState])
 
     const finalStyle = useMemo(() => (propStyle && Object.keys(propStyle).length > 0 ? propStyle : style), [propStyle, style])
     const mergedRef = useMergeRefs([ref, forwardedRef, floatingElementRef])
 
-    if (!editor || !isMounted || !open) return null
+    if (!editor || !isMounted || !open) {
+      return null
+    }
 
     return (
       <div ref={mergedRef} style={finalStyle} {...props} {...getFloatingProps()}>

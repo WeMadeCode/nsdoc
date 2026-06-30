@@ -70,7 +70,9 @@ const fetchUsers = async (query: string): Promise<User[]> => {
     }),
   }
 
-  if (!query) return userData.users
+  if (!query) {
+    return userData.users
+  }
 
   return userData.users.filter(
     user => user.name.toLowerCase().includes(query.toLowerCase()) || user.position.toLowerCase().includes(query.toLowerCase())
@@ -79,7 +81,9 @@ const fetchUsers = async (query: string): Promise<User[]> => {
 
 export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
   const handleItemSelect = (props: { editor: Editor; range: Range; context?: User }) => {
-    if (!props.editor || !props.range || !props.context) return
+    if (!props.editor || !props.range || !props.context) {
+      return
+    }
 
     props.editor
       .chain()
@@ -130,7 +134,9 @@ const MentionItem = ({ item, isSelected, onSelect }: MentionItemProps) => {
 
   useEffect(() => {
     const menuElement = document.querySelector('[data-selector="tiptap-mention-dropdown-menu"]') as HTMLElement
-    if (!itemRef.current || !isSelected || !menuElement) return
+    if (!itemRef.current || !isSelected || !menuElement) {
+      return
+    }
 
     const overflow = getElementOverflowPosition(itemRef.current, menuElement)
     if (overflow === 'top') {

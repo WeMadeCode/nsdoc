@@ -84,7 +84,9 @@ function canToggleHeader({
   }
 
   const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   return selectionType.index === 0
 }
@@ -104,12 +106,18 @@ function toggleTableHeader({
   orientation?: Orientation
   tablePos?: number
 }): boolean {
-  if (!editor) return false
-  if (!canToggleHeader({ editor, index, orientation, tablePos })) return false
+  if (!editor) {
+    return false
+  }
+  if (!canToggleHeader({ editor, index, orientation, tablePos })) {
+    return false
+  }
 
   try {
     const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
-    if (!selectionType) return false
+    if (!selectionType) {
+      return false
+    }
 
     const isRow = selectionType.orientation === 'row'
 
@@ -117,7 +125,9 @@ function toggleTableHeader({
       return isRow ? editor.commands.toggleHeaderRow() : editor.commands.toggleHeaderColumn()
     }
 
-    if (!isValidPosition(tablePos)) return false
+    if (!isValidPosition(tablePos)) {
+      return false
+    }
 
     const cellCoords = getIndexCoordinates({
       editor,
@@ -125,12 +135,16 @@ function toggleTableHeader({
       orientation: selectionType.orientation,
       tablePos,
     })
-    if (!cellCoords) return false
+    if (!cellCoords) {
+      return false
+    }
 
     const stateWithCellSel = selectCellsByCoords(editor, tablePos, cellCoords, {
       mode: 'state',
     })
-    if (!stateWithCellSel) return false
+    if (!stateWithCellSel) {
+      return false
+    }
 
     const dispatch = (tr: Transaction) => editor.view.dispatch(tr)
     return isRow ? toggleHeader('row')(stateWithCellSel, dispatch) : toggleHeader('column')(stateWithCellSel, dispatch)
@@ -156,8 +170,12 @@ function shouldShowButton({
   hideWhenUnavailable: boolean
   tablePos?: number
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   if (hideWhenUnavailable) {
     return canToggleHeader({ editor, index, orientation, tablePos })
@@ -208,7 +226,9 @@ export function useTableHeaderRowColumn(config: UseTableHeaderRowColumnConfig) {
 
   const handleToggle = useCallback(() => {
     const success = toggleTableHeader({ editor, index, orientation, tablePos })
-    if (success) onToggled?.()
+    if (success) {
+      onToggled?.()
+    }
     return success
   }, [editor, index, orientation, tablePos, onToggled])
 

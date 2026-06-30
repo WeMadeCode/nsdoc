@@ -9,7 +9,9 @@ import type { Action } from '@/tiptap-editor/components/tiptap-ui-primitive/menu
  * @returns Filtered array of actions
  */
 export function filterMenuItems({ items = [], ...group }: Action, searchValue: string): Action[] {
-  if (!searchValue.trim()) return items
+  if (!searchValue.trim()) {
+    return items
+  }
 
   const normalizedSearchValue = searchValue.toLowerCase().trim()
 
@@ -20,7 +22,9 @@ export function filterMenuItems({ items = [], ...group }: Action, searchValue: s
   }
 
   return items.filter(item => {
-    if (item.filterItems) return true
+    if (item.filterItems) {
+      return true
+    }
 
     const itemKeywords = [item.label, item.value, ...(item.keywords || [])].filter(Boolean).join(' ').toLowerCase()
 
@@ -35,7 +39,9 @@ export function filterMenuItems({ items = [], ...group }: Action, searchValue: s
  * @returns Filtered array of action groups
  */
 export function filterMenuGroups(menuGroups: Action[], searchValue: string): Action[] {
-  if (!searchValue.trim()) return menuGroups
+  if (!searchValue.trim()) {
+    return menuGroups
+  }
 
   return menuGroups.reduce<Action[]>((acc, group) => {
     const filteredItems = filterMenuItems(group, searchValue)

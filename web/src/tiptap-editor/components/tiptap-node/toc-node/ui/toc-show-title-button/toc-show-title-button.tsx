@@ -37,7 +37,9 @@ export const TocShowTitleButton = React.forwardRef<HTMLButtonElement, TocShowTit
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleToggle()
       },
       [handleToggle, onClick]

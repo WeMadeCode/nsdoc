@@ -64,13 +64,17 @@ export function getColorByValue(value: string, colorArray: ColorItem[]): ColorIt
 export function shouldShowColorTextPopover(params: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = params
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canColorText(editor) || canColorHighlight(editor)
@@ -194,7 +198,9 @@ export function useColorTextPopover(config?: UseColorTextPopoverConfig) {
   const canToggle = canColorText(editor) || canColorHighlight(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const updateVisibility = () => {
       setIsVisible(

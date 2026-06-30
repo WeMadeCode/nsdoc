@@ -35,8 +35,12 @@ export interface UseBlockquoteConfig {
  * Checks if blockquote can be toggled in the current editor state
  */
 export function canToggleBlockquote(editor: Editor | null, turnInto: boolean = true): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isNodeInSchema('blockquote', editor) || isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isNodeInSchema('blockquote', editor) || isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   if (!turnInto) {
     return editor.can().toggleWrap('blockquote')
@@ -45,8 +49,9 @@ export function canToggleBlockquote(editor: Editor | null, turnInto: boolean = t
   // Ensure selection is in nodes we're allowed to convert
   if (
     !selectionWithinConvertibleTypes(editor, ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock'])
-  )
+  ) {
     return false
+  }
 
   // Either we can wrap in blockquote directly on the selection,
   // or we can clear formatting/nodes to arrive at a blockquote.
@@ -57,8 +62,12 @@ export function canToggleBlockquote(editor: Editor | null, turnInto: boolean = t
  * Toggles blockquote formatting for a specific node or the current selection
  */
 export function toggleBlockquote(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canToggleBlockquote(editor)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canToggleBlockquote(editor)) {
+    return false
+  }
 
   try {
     return editor.chain().focus().toggleBlockquote().run()
@@ -73,15 +82,21 @@ export function toggleBlockquote(editor: Editor | null): boolean {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isNodeInSchema('blockquote', editor)) return false
+  if (!isNodeInSchema('blockquote', editor)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canToggleBlockquote(editor)
@@ -135,7 +150,9 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
   const isActive = editor?.isActive('blockquote') || false
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -151,7 +168,9 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleToggle = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = toggleBlockquote(editor)
     if (success) {

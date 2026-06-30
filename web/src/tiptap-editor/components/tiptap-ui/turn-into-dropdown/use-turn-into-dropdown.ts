@@ -99,7 +99,9 @@ export const blockTypeOptions = [
  * Checks if turn into functionality can be used in the current editor state
  */
 export function canTurnInto(editor: Editor | null, allowedBlockTypes?: string[]): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const blockTypes = allowedBlockTypes || TURN_INTO_BLOCKS
   const { selection } = editor.state
@@ -118,7 +120,9 @@ export function canTurnInto(editor: Editor | null, allowedBlockTypes?: string[])
  * Gets filtered block type options based on available types
  */
 export function getFilteredBlockTypeOptions(blockTypes?: string[]) {
-  if (!blockTypes) return blockTypeOptions
+  if (!blockTypes) {
+    return blockTypeOptions
+  }
 
   return blockTypeOptions.filter(option => {
     return blockTypes.includes(option.type)
@@ -129,7 +133,9 @@ export function getFilteredBlockTypeOptions(blockTypes?: string[]) {
  * Gets the currently active block type from the available options
  */
 export function getActiveBlockType(editor: Editor | null, blockTypes?: string[]) {
-  if (!editor) return getFilteredBlockTypeOptions(blockTypes)[0]
+  if (!editor) {
+    return getFilteredBlockTypeOptions(blockTypes)[0]
+  }
 
   const filteredOptions = getFilteredBlockTypeOptions(blockTypes)
   const activeOption = filteredOptions.find(option => option.isActive(editor))
@@ -142,13 +148,17 @@ export function getActiveBlockType(editor: Editor | null, blockTypes?: string[])
 export function shouldShowTurnInto(params: { editor: Editor | null; hideWhenUnavailable: boolean; blockTypes?: string[] }): boolean {
   const { editor, hideWhenUnavailable, blockTypes } = params
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canTurnInto(editor, blockTypes)
@@ -210,7 +220,9 @@ export function useTurnIntoDropdown(config?: UseTurnIntoDropdownConfig) {
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!editor || !canToggle) return
+      if (!editor || !canToggle) {
+        return
+      }
       setIsOpen(open)
       onOpenChange?.(open)
     },
@@ -218,7 +230,9 @@ export function useTurnIntoDropdown(config?: UseTurnIntoDropdownConfig) {
   )
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(

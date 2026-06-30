@@ -7,7 +7,7 @@ import Foundation
 
 struct NSBridgePermissionGuard {
     private let allowedWebMethods: Set<String> = [
-        "editor.getRuntimeConfig",
+        "editor.getAppInfo",
         "editor.ready",
         "editor.contentChanged",
         "editor.selectionChanged",

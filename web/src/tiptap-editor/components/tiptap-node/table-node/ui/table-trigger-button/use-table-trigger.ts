@@ -45,7 +45,9 @@ export interface UseTableTriggerButtonConfig {
  * Checks if a table can be inserted in the current editor state
  */
 export function canInsertTable(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   return isExtensionAvailable(editor, REQUIRED_EXTENSIONS)
 }
 
@@ -53,7 +55,9 @@ export function canInsertTable(editor: Editor | null): boolean {
  * Inserts a table with the specified dimensions
  */
 export function insertTable(editor: Editor | null, rows: number, cols: number): boolean {
-  if (!editor || !canInsertTable(editor)) return false
+  if (!editor || !canInsertTable(editor)) {
+    return false
+  }
 
   try {
     return editor
@@ -75,10 +79,14 @@ export function insertTable(editor: Editor | null, rows: number, cols: number): 
  * Determines if the table trigger button should be shown
  */
 export function shouldShowButton(editor: Editor | null, hideWhenUnavailable: boolean): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const hasExtension = isExtensionAvailable(editor, REQUIRED_EXTENSIONS)
-  if (!hasExtension) return false
+  if (!hasExtension) {
+    return false
+  }
 
   // If hiding when unavailable, also check if we can actually insert
   return !hideWhenUnavailable || canInsertTable(editor)

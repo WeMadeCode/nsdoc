@@ -75,10 +75,14 @@ function canDeleteRowColumn({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const selectionType = getTableSelectionType(editor, index, orientation)
-    if (!selectionType) return false
+    if (!selectionType) {
+      return false
+    }
 
     return true
   } catch {
@@ -106,7 +110,9 @@ function tableDeleteRowColumn({
 
   try {
     const selectionType = getTableSelectionType(editor, index, orientation)
-    if (!selectionType) return false
+    if (!selectionType) {
+      return false
+    }
 
     const { orientation: finalOrientation, index: finalIndex } = selectionType
 
@@ -119,7 +125,9 @@ function tableDeleteRowColumn({
     }
 
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const cellCoords = isRow ? { row: finalIndex, col: 0 } : { row: 0, col: finalIndex }
 
@@ -127,7 +135,9 @@ function tableDeleteRowColumn({
       mode: 'state',
     })
 
-    if (!cellState) return false
+    if (!cellState) {
+      return false
+    }
 
     return deleteOperation(cellState, dispatch)
   } catch (error) {
@@ -153,8 +163,12 @@ function shouldShowButton({
   hideWhenUnavailable: boolean
   tablePos?: number
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
   return hideWhenUnavailable ? canDeleteRowColumn({ editor, index, orientation, tablePos }) : true
 }
 
@@ -228,7 +242,9 @@ export function useTableDeleteRowColumn(config: UseTableDeleteRowColumnConfig) {
       orientation,
       tablePos,
     })
-    if (success) onDeleted?.()
+    if (success) {
+      onDeleted?.()
+    }
     return success
   }, [editor, index, orientation, tablePos, onDeleted])
 

@@ -47,11 +47,15 @@ export interface LinkHandlerProps {
  * Checks if a link can be set in the current editor state
  */
 export function canSetLink(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   // The third argument 'true' checks whether the current selection is inside an image caption, and prevents setting a link there
   // If the selection is inside an image caption, we can't set a link
-  if (isNodeTypeSelected(editor, ['image'], true)) return false
+  if (isNodeTypeSelected(editor, ['image'], true)) {
+    return false
+  }
   try {
     return editor.can().setMark('link')
   } catch {
@@ -63,7 +67,9 @@ export function canSetLink(editor: Editor | null): boolean {
  * Checks if a link is currently active in the editor
  */
 export function isLinkActive(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   return editor.isActive('link')
 }
 
@@ -73,7 +79,9 @@ export function isLinkActive(editor: Editor | null): boolean {
 export function shouldShowLinkButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const linkInSchema = isMarkInSchema('link', editor)
 
@@ -103,7 +111,9 @@ export function useLinkHandler(props: LinkHandlerProps) {
   const [url, setUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     // Get URL immediately on mount
     const { href } = editor.getAttributes('link')
@@ -114,7 +124,9 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor, url])
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const updateLinkState = () => {
       const { href } = editor.getAttributes('link')
@@ -128,7 +140,9 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor])
 
   const setLink = useCallback(() => {
-    if (!url || !editor) return
+    if (!url || !editor) {
+      return
+    }
 
     const { selection } = editor.state
     const isEmpty = selection.empty
@@ -149,14 +163,18 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor, onSetLink, url])
 
   const removeLink = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.chain().focus().extendMarkRange('link').unsetLink().setMeta('preventAutolink', true).run()
     setUrl('')
   }, [editor])
 
   const openLink = useCallback(
     (target: string = '_blank', features: string = 'noopener,noreferrer') => {
-      if (!url) return
+      if (!url) {
+        return
+      }
 
       const safeUrl = sanitizeUrl(url, window.location.href)
       if (safeUrl !== '#') {
@@ -187,7 +205,9 @@ export function useLinkState(props: { editor: Editor | null; hideWhenUnavailable
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(

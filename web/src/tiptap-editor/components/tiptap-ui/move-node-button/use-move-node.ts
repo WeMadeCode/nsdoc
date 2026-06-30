@@ -44,9 +44,13 @@ export interface UseMoveNodeConfig {
  * Checks if a node can be moved in the specified direction
  */
 export function canMoveNode(editor: Editor | null, direction: 'up' | 'down'): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   const nodeInfo = getAnchorNodeAndPos(editor)
-  if (!nodeInfo) return false
+  if (!nodeInfo) {
+    return false
+  }
 
   try {
     const { pos } = nodeInfo
@@ -64,9 +68,13 @@ export function canMoveNode(editor: Editor | null, direction: 'up' | 'down'): bo
  * Moves a node in the editor
  */
 export function moveNode(editor: Editor | null, direction: 'up' | 'down'): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   const nodeInfo = getAnchorNodeAndPos(editor)
-  if (!nodeInfo) return false
+  if (!nodeInfo) {
+    return false
+  }
 
   try {
     const { pos, node } = nodeInfo
@@ -115,13 +123,17 @@ export function moveNode(editor: Editor | null, direction: 'up' | 'down'): boole
 export function shouldShowButton(props: { editor: Editor | null; direction: 'up' | 'down'; hideWhenUnavailable: boolean }): boolean {
   const { editor, direction, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   const hasNode = !!getAnchorNodeAndPos(editor)
   const movable = canMoveNode(editor, direction)
@@ -141,16 +153,22 @@ export function useMoveNode(config: UseMoveNodeConfig) {
   const [canMoveNodeState, setCanMoveNodeState] = useState(false)
 
   const handleMoveNode = useCallback(() => {
-    if (!canMoveNodeState) return false
+    if (!canMoveNodeState) {
+      return false
+    }
 
     const success = moveNode(editor, direction)
-    if (success) onMoved?.(direction)
+    if (success) {
+      onMoved?.(direction)
+    }
 
     return success
   }, [editor, direction, onMoved, canMoveNodeState])
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const update = () => {
       setIsVisible(shouldShowButton({ editor, direction, hideWhenUnavailable }))

@@ -36,7 +36,9 @@ export const ImageCaptionButton = React.forwardRef<HTMLButtonElement, ImageCapti
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleToggleCaption()
       },
       [handleToggleCaption, onClick]

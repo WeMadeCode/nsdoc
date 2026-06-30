@@ -97,7 +97,9 @@ export const SuggestionMenu = ({
     const ourChar = internalSuggestionPropsRef.current.char ?? '@'
 
     const mentionExtension = editor.extensionManager.extensions.find(ext => {
-      if (ext.name !== 'mention') return false
+      if (ext.name !== 'mention') {
+        return false
+      }
 
       const suggestions = ext.options?.suggestions
       if (suggestions?.length) {
@@ -161,7 +163,9 @@ export const SuggestionMenu = ({
         const { selection } = state
 
         const isMention = editor.extensionManager.extensions.some(extension => {
-          if (extension.name !== 'mention') return false
+          if (extension.name !== 'mention') {
+            return false
+          }
 
           const mentionSuggestions = extension.options?.suggestions
           if (mentionSuggestions?.length) {

@@ -142,18 +142,26 @@ function shouldOutdentAtCursor(
   const { $from } = selection
 
   // Only applies to collapsed cursors (no range selected)
-  if (!selection.empty) return false
+  if (!selection.empty) {
+    return false
+  }
 
   // Lists have their own indent/outdent via sink/lift — skip
-  if (getListItemName(state, listItemTypes) !== null) return false
+  if (getListItemName(state, listItemTypes) !== null) {
+    return false
+  }
 
   const parent = $from.parent
 
   // Must be one of the block types we handle
-  if (!types.includes(parent.type.name)) return false
+  if (!types.includes(parent.type.name)) {
+    return false
+  }
 
   // Must already be indented
-  if ((parent.attrs.indent as number) <= 0) return false
+  if ((parent.attrs.indent as number) <= 0) {
+    return false
+  }
 
   if (options.onlyIfEmpty) {
     // Enter: only outdent if the block has no content
@@ -194,7 +202,9 @@ export const Indent = Extension.create<IndentOptions>({
 
             renderHTML: attributes => {
               const level = Number(attributes.indent) || 0
-              if (level === 0) return {}
+              if (level === 0) {
+                return {}
+              }
 
               const attrs: Record<string, string> = {
                 'data-indent': String(level),
@@ -228,7 +238,9 @@ export const Indent = Extension.create<IndentOptions>({
      */
     const applyIndent = ({ state, tr }: { state: EditorState; tr: Transaction }, resolve: (currentLevel: number) => number) => {
       const targets = getSelectedNodesOfType(state.selection, this.options.types)
-      if (targets.length === 0) return false
+      if (targets.length === 0) {
+        return false
+      }
 
       return updateNodesAttr(tr, targets, 'indent', prev => {
         return clamp(resolve(Number(prev) || 0), this.options.minLevel, this.options.maxLevel)
@@ -280,7 +292,9 @@ export const Indent = Extension.create<IndentOptions>({
          */
         appendTransaction(transactions: readonly Transaction[], _oldState: EditorState, newState: EditorState) {
           const isDrop = transactions.some(tr => tr.getMeta('uiEvent') === 'drop')
-          if (!isDrop) return null
+          if (!isDrop) {
+            return null
+          }
 
           const { doc, selection } = newState
           const { $from, $to } = selection
@@ -318,10 +332,14 @@ export const Indent = Extension.create<IndentOptions>({
           let changed = false
 
           doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
-            if (!types.includes(node.type.name)) return false
+            if (!types.includes(node.type.name)) {
+              return false
+            }
 
             const currentIndent = (node.attrs.indent as number) || 0
-            if (currentIndent === targetIndent) return false
+            if (currentIndent === targetIndent) {
+              return false
+            }
 
             tr.setNodeMarkup(pos, undefined, { ...node.attrs, indent: targetIndent }, node.marks)
             changed = true
@@ -346,7 +364,9 @@ export const Indent = Extension.create<IndentOptions>({
       const state = this.editor.state
 
       // List items use sink/lift — always an indentable context
-      if (getListItemName(state, listItemTypesSet) !== null) return true
+      if (getListItemName(state, listItemTypesSet) !== null) {
+        return true
+      }
 
       // Check if the parent block is one of the configured types
       const { $from } = state.selection
@@ -357,12 +377,16 @@ export const Indent = Extension.create<IndentOptions>({
       // Tab / Shift-Tab — only capture when in an indentable context,
       // otherwise let other extensions handle it (e.g. codeBlock inserts a tab)
       Tab: () => {
-        if (!isIndentableContext()) return false
+        if (!isIndentableContext()) {
+          return false
+        }
         this.editor.commands.indent()
         return true
       },
       'Shift-Tab': () => {
-        if (!isIndentableContext()) return false
+        if (!isIndentableContext()) {
+          return false
+        }
         this.editor.commands.outdent()
         return true
       },

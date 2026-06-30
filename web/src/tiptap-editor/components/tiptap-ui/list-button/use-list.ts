@@ -67,8 +67,12 @@ export const LIST_SHORTCUT_KEYS: Record<ListType, string> = {
  * Checks if a list can be toggled in the current editor state
  */
 export function canToggleList(editor: Editor | null, type: ListType, turnInto: boolean = true): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isNodeInSchema(type, editor) || isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isNodeInSchema(type, editor) || isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   if (!turnInto) {
     switch (type) {
@@ -86,8 +90,9 @@ export function canToggleList(editor: Editor | null, type: ListType, turnInto: b
   // Ensure selection is in nodes we're allowed to convert
   if (
     !selectionWithinConvertibleTypes(editor, ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock'])
-  )
+  ) {
     return false
+  }
 
   // Either we can set list directly on the selection,
   // or we can clear formatting/nodes to arrive at a list.
@@ -107,7 +112,9 @@ export function canToggleList(editor: Editor | null, type: ListType, turnInto: b
  * Checks if list is currently active
  */
 export function isListActive(editor: Editor | null, type: ListType): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   switch (type) {
     case 'bulletList':
@@ -125,8 +132,12 @@ export function isListActive(editor: Editor | null, type: ListType): boolean {
  * Toggles list in the editor
  */
 export function toggleList(editor: Editor | null, type: ListType): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canToggleList(editor, type)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canToggleList(editor, type)) {
+    return false
+  }
 
   try {
     const view = editor.view
@@ -155,7 +166,9 @@ export function toggleList(editor: Editor | null, type: ListType): boolean {
         editor,
         node: state.selection.$anchor.node(1),
       })?.pos
-      if (!isValidPosition(pos)) return false
+      if (!isValidPosition(pos)) {
+        return false
+      }
 
       tr = tr.setSelection(NodeSelection.create(state.doc, pos))
       view.dispatch(tr)
@@ -193,7 +206,9 @@ export function toggleList(editor: Editor | null, type: ListType): boolean {
       }
 
       const toggle = toggleMap[type]
-      if (!toggle) return false
+      if (!toggle) {
+        return false
+      }
 
       toggle().run()
     }
@@ -212,15 +227,21 @@ export function toggleList(editor: Editor | null, type: ListType): boolean {
 export function shouldShowButton(props: { editor: Editor | null; type: ListType; hideWhenUnavailable: boolean }): boolean {
   const { editor, type, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isNodeInSchema(type, editor)) return false
+  if (!isNodeInSchema(type, editor)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canToggleList(editor, type)
@@ -275,7 +296,9 @@ export function useList(config: UseListConfig) {
   const isActive = isListActive(editor, type)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, type, hideWhenUnavailable }))
@@ -291,7 +314,9 @@ export function useList(config: UseListConfig) {
   }, [editor, type, hideWhenUnavailable])
 
   const handleToggle = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = toggleList(editor, type)
     if (success) {

@@ -40,7 +40,9 @@ export function NotionToolbarFloating() {
     extraHideWhen: Boolean(aiGenerationActive || commentInputVisible),
   })
 
-  if (lockDragHandle || isMobile) return null
+  if (lockDragHandle || isMobile) {
+    return null
+  }
 
   return (
     <FloatingElement shouldShow={shouldShow}>
@@ -119,7 +121,9 @@ export function MoreOptions({ editor: providedEditor, hideWhenUnavailable = fals
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setShow(

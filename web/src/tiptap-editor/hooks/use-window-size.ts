@@ -49,10 +49,14 @@ export function useWindowSize(): WindowSizeState {
   })
 
   const handleViewportChange = useThrottledCallback(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      return
+    }
 
     const vp = window.visualViewport
-    if (!vp) return
+    if (!vp) {
+      return
+    }
 
     const { width = 0, height = 0, offsetTop = 0, offsetLeft = 0, scale = 0 } = vp
 
@@ -73,7 +77,9 @@ export function useWindowSize(): WindowSizeState {
 
   useEffect(() => {
     const visualViewport = window.visualViewport
-    if (!visualViewport) return
+    if (!visualViewport) {
+      return
+    }
 
     visualViewport.addEventListener('resize', handleViewportChange)
 

@@ -89,11 +89,9 @@ export type EditorOpenDocParams = {
 
 export type EditorHostPlatform = 'iphone' | 'mac'
 
-export type EditorMode = 'simple' | 'notion'
-
-export type EditorRuntimeConfig = {
+export type EditorAppInfo = {
   hostPlatform: EditorHostPlatform
-  editorMode: EditorMode
+  editorMode?: string
 }
 
 export type EditorBooleanResult = {

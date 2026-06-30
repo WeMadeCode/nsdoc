@@ -60,7 +60,9 @@ export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProp
 
   const startDrag = useCallback(
     (ev: React.MouseEvent) => {
-      if (!state) return
+      if (!state) {
+        return
+      }
 
       const dims = TableMap.get(state.block)
       movedRef.current = false
@@ -78,7 +80,9 @@ export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProp
   )
 
   const handleClick = useCallback(() => {
-    if (movedRef.current || !editor || !state) return
+    if (movedRef.current || !editor || !state) {
+      return
+    }
 
     runPreservingCursor(editor, () => {
       selectLastCell(editor, state.block, state.blockPos, orientation)
@@ -92,7 +96,9 @@ export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProp
   }, [editor, isRowOrientation, orientation, state])
 
   useEffect(() => {
-    if (!dragState || !editor || !state) return
+    if (!dragState || !editor || !state) {
+      return
+    }
 
     const handleMove = (ev: MouseEvent) => {
       movedRef.current = true
@@ -108,7 +114,9 @@ export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProp
       const newCount = Math.max(1, originalCount + marginRound(diff / cellSize, 0.3))
       const delta = newCount - currentCount
 
-      if (delta === 0) return
+      if (delta === 0) {
+        return
+      }
 
       // Add rows/columns
       if (delta > 0) {
@@ -163,7 +171,9 @@ export const TableExtendRowColumnButton: React.FC<TableExtendRowColumnButtonProp
     }
   }, [dragState, editor, isRowOrientation, orientation, onMouseUp, state])
 
-  if (!editor?.isEditable) return null
+  if (!editor?.isEditable) {
+    return null
+  }
 
   return (
     <button
@@ -202,18 +212,24 @@ export const TableExtendRowColumnButtons: React.FC<TableExtendRowColumnButtonsPr
   )
 
   const handleDown = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.freezeHandles()
     onMouseDown?.()
   }, [editor, onMouseDown])
 
   const handleUp = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.unfreezeHandles()
     onMouseUp?.()
   }, [editor, onMouseUp])
 
-  if (!state) return null
+  if (!state) {
+    return null
+  }
 
   return (
     <FloatingPortal root={state.widgetContainer}>

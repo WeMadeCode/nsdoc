@@ -136,7 +136,9 @@ const TransformActionGroup: React.FC = () => {
     preserveMarks: ['inlineThread'],
   })
 
-  if (!actions && !canReset) return null
+  if (!actions && !canReset) {
+    return null
+  }
 
   return (
     <>
@@ -183,7 +185,9 @@ const TocShowTitle: React.FC = () => {
     hideWhenUnavailable: true,
   })
 
-  if (!canToggle) return null
+  if (!canToggle) {
+    return null
+  }
 
   return <BaseMenuItem icon={Icon} label={label} disabled={!canToggle} onClick={handleToggle} />
 }
@@ -193,7 +197,9 @@ const ImageActionGroup: React.FC = () => {
     hideWhenUnavailable: true,
   })
 
-  if (!canDownload) return null
+  if (!canDownload) {
+    return null
+  }
 
   return <BaseMenuItem icon={Icon} label={label} disabled={!canDownload} onClick={handleDownload} />
 }
@@ -239,7 +245,9 @@ const CoreActionGroup: React.FC = () => {
 const AIActionGroup: React.FC = () => {
   const { handleAiAsk, canAiAsk, Icon: AiAskIcon } = useAiAsk()
 
-  if (!canAiAsk) return null
+  if (!canAiAsk) {
+    return null
+  }
 
   return (
     <>
@@ -282,12 +290,16 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
   const [nodePos, setNodePos] = useState<number>(-1)
 
   const handleNodeChange = useCallback((data: NodeChangeData) => {
-    if (data.node) setNode(data.node)
+    if (data.node) {
+      setNode(data.node)
+    }
     setNodePos(data.pos)
   }, [])
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.setLockDragHandle(open)
     editor.commands.setMeta('lockDragHandle', open)
   }, [editor, open])
@@ -321,12 +333,16 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
   }, [editor])
 
   const onElementDragStart = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.setIsDragging(true)
   }, [editor])
 
   const onElementDragEnd = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.setIsDragging(false)
 
     setTimeout(() => {
@@ -335,7 +351,9 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
     }, 0)
   }, [editor])
 
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const nodeName = getNodeDisplayName(editor)
 

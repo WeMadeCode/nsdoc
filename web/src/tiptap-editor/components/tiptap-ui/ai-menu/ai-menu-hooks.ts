@@ -99,7 +99,9 @@ export function useAiContentTracker({
   const rafIdRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!editor || !aiGenerationActive) return
+    if (!editor || !aiGenerationActive) {
+      return
+    }
 
     const cleanupStreamingAnchor = () => {
       resizeObserverRef.current?.disconnect()
@@ -125,13 +127,17 @@ export function useAiContentTracker({
     }
 
     const scheduleStreamingUpdate = (aiElement: HTMLElement) => {
-      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current)
+      }
       rafIdRef.current = requestAnimationFrame(() => updateStreamingAnchor(aiElement))
     }
 
     const handleStreamingMode = () => {
       const lastAiElement = getLastAiElement(editor.view.dom)
-      if (!lastAiElement) return
+      if (!lastAiElement) {
+        return
+      }
 
       scheduleStreamingUpdate(lastAiElement)
 
@@ -155,7 +161,9 @@ export function useAiContentTracker({
         }
       }
 
-      if (!targetElement) return
+      if (!targetElement) {
+        return
+      }
 
       cleanupRef(fallbackAnchorRef)
 
@@ -207,7 +215,9 @@ export function useTextSelectionTracker({
   const selectionAnchorRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (!editor || !aiGenerationActive || prevent) return
+    if (!editor || !aiGenerationActive || prevent) {
+      return
+    }
 
     const showAtAnchor = (anchor: HTMLElement, rect: DOMRect) => {
       setMenuVisible(true)
@@ -217,7 +227,9 @@ export function useTextSelectionTracker({
 
     const handleSelectionAnchored = (editor: Editor) => {
       const selectionRect = getSelectionRangeRect(editor)
-      if (!selectionRect) return false
+      if (!selectionRect) {
+        return false
+      }
 
       const anchorRect = createEditorWidthAnchorRect(editor.view.dom, selectionRect)
 
@@ -242,9 +254,13 @@ export function useTextSelectionTracker({
     }
 
     const handleTransaction = ({ editor, transaction }: { editor: Editor; transaction: Transaction }) => {
-      if (transaction.selection?.empty) return
+      if (transaction.selection?.empty) {
+        return
+      }
 
-      if (anchorToSelection && handleSelectionAnchored(editor)) return
+      if (anchorToSelection && handleSelectionAnchored(editor)) {
+        return
+      }
 
       handleSelectionDefault(editor)
     }

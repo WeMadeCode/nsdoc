@@ -15,15 +15,21 @@ const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
 function getCookie(name: string): string | undefined {
-  if (typeof document === 'undefined') return undefined
+  if (typeof document === 'undefined') {
+    return undefined
+  }
   const value = `; ${document.cookie}`
   const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop()?.split(';').shift()
+  if (parts.length === 2) {
+    return parts.pop()?.split(';').shift()
+  }
   return undefined
 }
 
 function setCookie(name: string, value: string, maxAge = SIDEBAR_COOKIE_MAX_AGE) {
-  if (typeof document === 'undefined') return
+  if (typeof document === 'undefined') {
+    return
+  }
   document.cookie = `${name}=${value}; max-age=${maxAge}; path=/; SameSite=Lax`
 }
 
@@ -104,7 +110,9 @@ function useResizable({ side, minWidth, maxWidth, initialWidth, enabled, onResiz
 
   const handleResizeStart = useCallback(
     (e: React.MouseEvent) => {
-      if (!enabled) return
+      if (!enabled) {
+        return
+      }
 
       e.preventDefault()
       e.stopPropagation()
@@ -127,7 +135,9 @@ function useResizable({ side, minWidth, maxWidth, initialWidth, enabled, onResiz
   )
 
   useEffect(() => {
-    if (!isResizing) return
+    if (!isResizing) {
+      return
+    }
 
     const state = resizeState.current
 
@@ -249,7 +259,9 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
 
     // Open state with cookie persistence
     const [open, setOpenState] = useState(() => {
-      if (controlledOpen !== undefined) return controlledOpen
+      if (controlledOpen !== undefined) {
+        return controlledOpen
+      }
       const cookieValue = getCookie(SIDEBAR_COOKIE_NAME)
       return cookieValue ? cookieValue === 'true' : defaultOpen
     })
@@ -262,7 +274,9 @@ export const SidebarProvider = forwardRef<HTMLDivElement, SidebarProviderProps>(
       const cookieValue = getCookie(SIDEBAR_WIDTH_COOKIE_NAME)
       if (cookieValue) {
         const parsed = parseInt(cookieValue, 10)
-        if (!isNaN(parsed)) return clamp(parsed, minWidth, maxWidth)
+        if (!isNaN(parsed)) {
+          return clamp(parsed, minWidth, maxWidth)
+        }
       }
       return defaultWidth
     })
@@ -417,11 +431,15 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
 
     // Sync controlled props when not using context
     useEffect(() => {
-      if (!context && openProp !== undefined) setLocalOpen(openProp)
+      if (!context && openProp !== undefined) {
+        setLocalOpen(openProp)
+      }
     }, [openProp, context])
 
     useEffect(() => {
-      if (!context && fullsizeProp !== undefined) setLocalFullsize(fullsizeProp)
+      if (!context && fullsizeProp !== undefined) {
+        setLocalFullsize(fullsizeProp)
+      }
     }, [fullsizeProp, context])
 
     // Resize handling

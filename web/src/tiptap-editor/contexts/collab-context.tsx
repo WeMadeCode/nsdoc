@@ -68,7 +68,9 @@ export const useCollaboration = (room: string) => {
   }, [hasCollab])
 
   useEffect(() => {
-    if (!hasCollab || !collabToken) return
+    if (!hasCollab || !collabToken) {
+      return
+    }
 
     const docPrefix = TIPTAP_COLLAB_DOC_PREFIX
     const documentName = room ? `${docPrefix}${room}` : docPrefix

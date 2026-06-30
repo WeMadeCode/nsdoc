@@ -325,15 +325,16 @@ Web 侧规则：
 | `editor.setHorizontalRule` | `{}` | `{ inserted: boolean }` | 插入分割线 |
 | `editor.insertTable` | `{ rows?: number, cols?: number, withHeaderRow?: boolean }` | `{ inserted: boolean }` | 插入表格 |
 
-### 9.2 Web 调 iOS：编辑器事件
+### 9.2 Web 调 iOS：App 信息与编辑器事件
 
-| 完整方法 | 参数 | 说明 |
-| --- | --- | --- |
-| `editor.ready` | `{ editorVersion, supportedBridgeVersion, capabilities }` | 编辑器和 Bridge 已可用 |
-| `editor.contentChanged` | `{ changeVersion, title, content, isEmpty, reason? }` | Web 防抖或 flush 后推送完整保存快照，iOS 收到后直接落库 |
-| `editor.selectionChanged` | `{ activeTools }` | 选区和工具激活状态变化 |
-| `editor.focusChanged` | `{ focused }` | 编辑器聚焦状态变化 |
-| `editor.error` | `{ code, message, detail? }` | 编辑器异常 |
+| 完整方法 | 参数 | 返回 | 说明 |
+| --- | --- | --- | --- |
+| `editor.getAppInfo` | `{}` | `{ hostPlatform: "iphone" | "mac", editorMode: string }` | 获取宿主平台、编辑器模式等 App 层面的信息 |
+| `editor.ready` | `{ editorVersion, supportedBridgeVersion, capabilities }` | `{ ack: true }` | 编辑器和 Bridge 已可用 |
+| `editor.contentChanged` | `{ changeVersion, title, content, isEmpty, reason? }` | `{ ack: true }` | Web 防抖或 flush 后推送完整保存快照，iOS 收到后直接落库 |
+| `editor.selectionChanged` | `{ activeTools }` | `{ ack: true }` | 选区和工具激活状态变化 |
+| `editor.focusChanged` | `{ focused }` | `{ ack: true }` | 编辑器聚焦状态变化 |
+| `editor.error` | `{ code, message, detail? }` | `{ ack: true }` | 编辑器异常 |
 
 `activeTools` 结构：
 

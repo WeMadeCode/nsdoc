@@ -82,7 +82,9 @@ function useTableCellHandleMenu({ editor }: { editor: Editor | null }) {
     (isOpen: boolean) => {
       setIsMenuOpen(isOpen)
 
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       if (isOpen) {
         editor.commands.freezeHandles()

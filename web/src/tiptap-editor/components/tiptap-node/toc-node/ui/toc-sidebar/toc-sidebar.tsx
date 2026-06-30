@@ -105,7 +105,9 @@ export function TocSidebar({ className, maxShowCount = 20, topOffset = 0, ...pro
     }
 
     const hash = window.location.hash.replace(/^#/, '')
-    if (!hash) return
+    if (!hash) {
+      return
+    }
 
     const target = headingList.find(h => h.id === hash)
     if (target?.dom) {
@@ -123,7 +125,9 @@ export function TocSidebar({ className, maxShowCount = 20, topOffset = 0, ...pro
   manualActiveIdRef.current = manualActiveId
 
   useEffect(() => {
-    if (!manualActiveIdRef.current) return
+    if (!manualActiveIdRef.current) {
+      return
+    }
 
     const now = Date.now()
     const lastClickTime = lastClickTimeRef.current
@@ -142,7 +146,9 @@ export function TocSidebar({ className, maxShowCount = 20, topOffset = 0, ...pro
    * programmatic scroll from a click).
    */
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') {
+      return
+    }
 
     const handleScroll = () => {
       const now = Date.now()

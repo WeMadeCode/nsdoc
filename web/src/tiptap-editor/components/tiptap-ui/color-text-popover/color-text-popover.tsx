@@ -116,7 +116,9 @@ interface RecentColorsSectionProps {
 }
 
 function RecentColorsSection({ recentColors, onColorSelected, selectedIndex, editor }: RecentColorsSectionProps) {
-  if (recentColors.length === 0) return null
+  if (recentColors.length === 0) {
+    return null
+  }
 
   return (
     <CardItemGroup>
@@ -198,7 +200,9 @@ export function TextStyleColorPanel({ maxColorsPerGroup = 5, maxRecentColors = 3
 
   const handleColorSelected = useCallback(
     ({ type, label, value }: ColorChangePayload) => {
-      if (!containerRef.current) return false
+      if (!containerRef.current) {
+        return false
+      }
 
       const highlighted = containerRef.current.querySelector('[data-highlighted="true"]') as HTMLElement | null
 
@@ -214,12 +218,13 @@ export function TextStyleColorPanel({ maxColorsPerGroup = 5, maxRecentColors = 3
     containerRef,
     items: menuItems,
     onSelect: item => {
-      if (item)
+      if (item) {
         handleColorSelected({
           type: item.type,
           label: item.label,
           value: item.value,
         })
+      }
     },
     orientation: 'both',
     autoSelectFirstItem: false,
@@ -294,13 +299,17 @@ export function ColorTextPopover({
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event)
-      if (event.defaultPrevented) return
+      if (event.defaultPrevented) {
+        return
+      }
       setIsOpen(prev => !prev)
     },
     [onClick]
   )
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    return null
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

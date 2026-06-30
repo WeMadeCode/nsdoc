@@ -23,7 +23,9 @@ export function useBlurHandler(isEmpty: boolean, onBlur?: () => void, onEmptyBlu
   return useCallback(
     (e: React.FocusEvent<HTMLElement>) => {
       const hasFocus = e.currentTarget.contains(e.relatedTarget as Node)
-      if (hasFocus) return
+      if (hasFocus) {
+        return
+      }
 
       if (isEmpty && onEmptyBlur) {
         onEmptyBlur()

@@ -61,7 +61,9 @@ export const CopyToClipboardButton = forwardRef<HTMLButtonElement, CopyToClipboa
     const handleClick = useCallback(
       async (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         await handleCopyToClipboard()
       },
       [handleCopyToClipboard, onClick]

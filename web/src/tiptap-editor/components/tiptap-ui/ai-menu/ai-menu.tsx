@@ -54,7 +54,9 @@ export function AiMenuContent({
   const tiptapAiPromptInputRef = useRef<HTMLDivElement | null>(null)
 
   const closeAiMenu = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     reset()
     store?.hideAll()
     editor.commands.resetUiState()
@@ -62,7 +64,9 @@ export function AiMenuContent({
 
   const handlePromptSubmit = useCallback(
     (userPrompt: string) => {
-      if (!editor || !userPrompt.trim()) return
+      if (!editor || !userPrompt.trim()) {
+        return
+      }
 
       const { context } = getContextAndInsertAt(editor)
       // if context, add it to the user prompt
@@ -117,19 +121,25 @@ export function AiMenuContent({
   )
 
   const handleOnReject = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.aiReject()
     closeAiMenu()
   }, [closeAiMenu, editor])
 
   const handleOnAccept = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.commands.aiAccept()
     closeAiMenu()
   }, [closeAiMenu, editor])
 
   const handleInputOnClose = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     if (aiGenerationIsLoading) {
       editor.commands.aiReject({ type: 'reset' })
     } else {
@@ -142,7 +152,9 @@ export function AiMenuContent({
     if (!aiGenerationIsLoading) {
       closeAiMenu()
 
-      if (!editor) return
+      if (!editor) {
+        return
+      }
       editor.commands.aiAccept()
     }
   }, [aiGenerationIsLoading, closeAiMenu, editor])
@@ -250,7 +262,9 @@ export function AiMenuProgress({ editor }: { editor: Editor }) {
   const { reset } = useAiMenuState()
 
   const handleStop = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     editor.chain().aiReject({ type: 'reset' }).run()
     reset()

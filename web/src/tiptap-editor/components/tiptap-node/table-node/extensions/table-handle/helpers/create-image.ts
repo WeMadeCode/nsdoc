@@ -59,8 +59,10 @@ function copyComputedStyles(source: HTMLElement, target: HTMLElement) {
   for (const p of STYLE_PROPS) {
     const prop = String(p)
     const val = cs.getPropertyValue(toDash(prop))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (val) (target.style as any)[prop] = val
+
+    if (val) {
+      target.style.setProperty(toDash(prop), val)
+    }
   }
 
   // Ensure long content doesn't overflow the drag image
@@ -125,7 +127,9 @@ function styleDragWrapper(el: HTMLElement, maxWidth: number) {
  */
 function scaleToFit(el: HTMLElement, maxWidth: number): void {
   // Attach once (if not already) so measurements are correct.
-  if (!el.isConnected) document.body.appendChild(el)
+  if (!el.isConnected) {
+    document.body.appendChild(el)
+  }
   const rect = el.getBoundingClientRect()
   if (rect.width > maxWidth && rect.width > 0) {
     const scale = maxWidth / rect.width
@@ -161,10 +165,14 @@ function lockCellWidth(fromCell: HTMLElement, toCell: HTMLElement) {
  */
 function buildRowPreview(tableEl: HTMLTableElement, rowIndex: number): HTMLTableElement | null {
   const body = tableEl.tBodies?.[0] ?? tableEl.querySelector('tbody')
-  if (!body) return null
+  if (!body) {
+    return null
+  }
 
   const row = body.rows?.[rowIndex] as HTMLTableRowElement | undefined
-  if (!row) return null
+  if (!row) {
+    return null
+  }
 
   const tableClone = document.createElement('table')
   const tbodyClone = document.createElement('tbody')
@@ -176,7 +184,9 @@ function buildRowPreview(tableEl: HTMLTableElement, rowIndex: number): HTMLTable
   for (let i = 0; i < row.cells.length; i++) {
     const src = row.cells[i] as HTMLElement
     const dst = rowClone.cells[i] as HTMLElement | undefined
-    if (dst) lockCellWidth(src, dst)
+    if (dst) {
+      lockCellWidth(src, dst)
+    }
   }
 
   tbodyClone.appendChild(rowClone)
@@ -189,7 +199,9 @@ function buildRowPreview(tableEl: HTMLTableElement, rowIndex: number): HTMLTable
  */
 function buildColumnPreview(tableEl: HTMLTableElement, colIndex: number): HTMLTableElement | null {
   const body = tableEl.tBodies?.[0] ?? tableEl.querySelector('tbody')
-  if (!body) return null
+  if (!body) {
+    return null
+  }
 
   const tableClone = document.createElement('table')
   const tbodyClone = document.createElement('tbody')
@@ -199,15 +211,21 @@ function buildColumnPreview(tableEl: HTMLTableElement, colIndex: number): HTMLTa
 
   for (let r = 0; r < body.rows.length; r++) {
     const srcRow = body.rows[r]
-    if (!srcRow) continue
+    if (!srcRow) {
+      continue
+    }
     const srcCell = srcRow.cells?.[colIndex] as HTMLElement | undefined
-    if (!srcCell) continue
+    if (!srcCell) {
+      continue
+    }
 
     const tr = document.createElement('tr')
     const cellClone = cloneWithStyles(srcCell)
 
     const rect = srcCell.getBoundingClientRect()
-    if (!firstCellWidth && rect.width > 0) firstCellWidth = rect.width
+    if (!firstCellWidth && rect.width > 0) {
+      firstCellWidth = rect.width
+    }
     lockCellWidth(srcCell, cellClone)
 
     tr.appendChild(cellClone)

@@ -63,11 +63,15 @@ function canFitTableToWidth(editor: Editor | null): boolean {
  * @returns true if the table width was successfully set, false otherwise
  */
 function setTableAutoWidth(editor: Editor | null): boolean {
-  if (!canFitTableToWidth(editor) || !editor) return false
+  if (!canFitTableToWidth(editor) || !editor) {
+    return false
+  }
 
   try {
     const table = getTable(editor)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     // Calculate the editor width available for the table
     const editorElement = editor.view.dom as HTMLElement
@@ -79,7 +83,9 @@ function setTableAutoWidth(editor: Editor | null): boolean {
     const editorWidth = editorElement.clientWidth - paddingLeft - paddingRight
 
     const columnCount = table.map.width
-    if (columnCount === 0) return false
+    if (columnCount === 0) {
+      return false
+    }
 
     let colWidth = 0
     const availableWidth = editorWidth - columnCount - 8
@@ -136,8 +142,12 @@ function tableFitToWidth({ editor }: { editor: Editor | null }) {
  * state and `hideWhenUnavailable` setting.
  */
 function shouldShowButton({ editor, hideWhenUnavailable }: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   return hideWhenUnavailable ? canFitTableToWidth(editor) : true
 }
@@ -199,7 +209,9 @@ export function useTableFitToWidth(config: UseTableFitToWidthConfig = {}) {
 
   const handleFitToWidth = useCallback(() => {
     const success = tableFitToWidth({ editor })
-    if (success) onWidthAdjusted?.()
+    if (success) {
+      onWidthAdjusted?.()
+    }
     return success
   }, [editor, onWidthAdjusted])
 

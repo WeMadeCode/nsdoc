@@ -69,11 +69,15 @@ export function domCellAround(target: Element): DomCellAroundResult | undefined 
   let current: Element | null = target
 
   while (current && current.tagName !== 'TD' && current.tagName !== 'TH' && !current.classList.contains('tableWrapper')) {
-    if (current.classList.contains('ProseMirror')) return undefined
+    if (current.classList.contains('ProseMirror')) {
+      return undefined
+    }
     current = isHTMLElement(current.parentNode) ? (current.parentNode as Element) : null
   }
 
-  if (!current) return undefined
+  if (!current) {
+    return undefined
+  }
 
   if (current.tagName === 'TD' || current.tagName === 'TH') {
     return {
@@ -118,7 +122,9 @@ function resolveOrientationIndex(state: EditorState, table: TableInfo, orientati
   }
 
   const $cell = cellAround(state.selection.$anchor) ?? selectionCell(state)
-  if (!$cell) return null
+  if (!$cell) {
+    return null
+  }
 
   const rel = $cell.pos - table.start
   const rect = table.map.findCell(rel)
@@ -143,7 +149,9 @@ function createCellInfo(row: number, column: number, cellPos: number, cellNode: 
  * Checks if a cell is merged (has colspan or rowspan > 1)
  */
 export function isCellMerged(node: Node | null): boolean {
-  if (!node) return false
+  if (!node) {
+    return false
+  }
   const colspan = node.attrs.colspan ?? 1
   const rowspan = node.attrs.rowspan ?? 1
   return colspan > 1 || rowspan > 1
@@ -158,18 +166,24 @@ function collectCells(
   index?: number,
   tablePos?: number
 ): { cells: CellInfo[]; mergedCells: CellInfo[] } {
-  if (!editor) return EMPTY_CELLS_RESULT
+  if (!editor) {
+    return EMPTY_CELLS_RESULT
+  }
 
   const { state } = editor
   const table = getTable(editor, tablePos)
-  if (!table) return EMPTY_CELLS_RESULT
+  if (!table) {
+    return EMPTY_CELLS_RESULT
+  }
 
   const tableStart = table.start
   const tableNode = table.node
   const map = table.map
 
   const resolvedIndex = resolveOrientationIndex(state, table, orientation, index)
-  if (resolvedIndex === null) return EMPTY_CELLS_RESULT
+  if (resolvedIndex === null) {
+    return EMPTY_CELLS_RESULT
+  }
 
   // Bounds check
   const maxIndex = orientation === 'row' ? map.height : map.width
@@ -189,11 +203,15 @@ function collectCells(
     const cellIndex = row * map.width + col
     const mapCell = map.map[cellIndex]
 
-    if (mapCell === undefined) continue
+    if (mapCell === undefined) {
+      continue
+    }
 
     const cellPos = tableStart + mapCell
     const cellNode = tableNode.nodeAt(mapCell)
-    if (!cellNode) continue
+    if (!cellNode) {
+      continue
+    }
 
     const cell = createCellInfo(row, col, cellPos, cellNode)
 
@@ -215,7 +233,9 @@ function collectCells(
  */
 function countEmptyCellsFromEnd(editor: Editor, tablePos: number, orientation: Orientation): number {
   const table = getTable(editor, tablePos)
-  if (!table) return 0
+  if (!table) {
+    return 0
+  }
 
   const { doc } = editor.state
   const maxIndex = orientation === 'row' ? table.map.height : table.map.width
@@ -232,12 +252,16 @@ function countEmptyCellsFromEnd(editor: Editor, tablePos: number, orientation: O
       const col = orientation === 'row' ? i : idx
       const rel = table.map.positionAt(row, col, table.node)
 
-      if (seen.has(rel)) continue
+      if (seen.has(rel)) {
+        continue
+      }
       seen.add(rel)
 
       const abs = tablePos + 1 + rel
       const cell = doc.nodeAt(abs)
-      if (!cell) continue
+      if (!cell) {
+        continue
+      }
 
       if (!isCellEmpty(cell)) {
         isLineEmpty = false
@@ -245,8 +269,11 @@ function countEmptyCellsFromEnd(editor: Editor, tablePos: number, orientation: O
       }
     }
 
-    if (isLineEmpty) emptyCount++
-    else break
+    if (isLineEmpty) {
+      emptyCount++
+    } else {
+      break
+    }
   }
 
   return emptyCount
@@ -267,7 +294,9 @@ function countEmptyCellsFromEnd(editor: Editor, tablePos: number, orientation: O
  * If no table is found, returns null.
  */
 export function getTable(editor: Editor | null, tablePos?: number) {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   let table = null
 
@@ -289,10 +318,14 @@ export function getTable(editor: Editor | null, tablePos?: number) {
     table = findTable($from)
   }
 
-  if (!table) return null
+  if (!table) {
+    return null
+  }
 
   const tableMap = TableMap.get(table.node)
-  if (!tableMap) return null
+  if (!tableMap) {
+    return null
+  }
 
   return { ...table, map: tableMap }
 }
@@ -326,14 +359,19 @@ export function cellsOverlapRectangle({ width, height, map }: TableMap, rect: Re
   let indexBottom = (rect.bottom - 1) * width + rect.left,
     indexRight = indexTop + (rect.right - rect.left - 1)
   for (let i = rect.top; i < rect.bottom; i++) {
-    if ((rect.left > 0 && map[indexLeft] == map[indexLeft - 1]) || (rect.right < width && map[indexRight] == map[indexRight + 1]))
+    if ((rect.left > 0 && map[indexLeft] == map[indexLeft - 1]) || (rect.right < width && map[indexRight] == map[indexRight + 1])) {
       return true
+    }
     indexLeft += width
     indexRight += width
   }
   for (let i = rect.left; i < rect.right; i++) {
-    if ((rect.top > 0 && map[indexTop] == map[indexTop - width]) || (rect.bottom < height && map[indexBottom] == map[indexBottom + width]))
+    if (
+      (rect.top > 0 && map[indexTop] == map[indexTop - width]) ||
+      (rect.bottom < height && map[indexBottom] == map[indexBottom + width])
+    ) {
       return true
+    }
     indexTop++
     indexBottom++
   }
@@ -394,7 +432,9 @@ export function runPreservingCursor(editor: Editor, fn: () => void): boolean {
  * @returns true if the cell is empty; false otherwise
  */
 export function isCellEmpty(cellNode: Node): boolean {
-  if (cellNode.childCount === 0) return true
+  if (cellNode.childCount === 0) {
+    return true
+  }
 
   let isEmpty = true
   cellNode.descendants(n => {
@@ -432,12 +472,16 @@ export function getTableSelectionType(
     return { orientation, index }
   }
 
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const { state } = editor
 
   const table = getTable(editor, tablePos)
-  if (!table) return null
+  if (!table) {
+    return null
+  }
 
   if (state.selection instanceof CellSelection) {
     const rect = selectedRect(state)
@@ -503,7 +547,9 @@ export function getRowOrColumnCells(
 
   if (typeof finalIndex !== 'number' || !finalOrientation || !['row', 'column'].includes(finalOrientation)) {
     const selectionType = getTableSelectionType(editor)
-    if (!selectionType) return emptyResult
+    if (!selectionType) {
+      return emptyResult
+    }
 
     finalIndex = selectionType.index
     finalOrientation = selectionType.orientation
@@ -549,7 +595,9 @@ export function getColumnCells(
 export function updateSelectionAfterAction(editor: Editor, orientation: Orientation, newIndex: number, tablePos?: number): void {
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return
+    if (!table) {
+      return
+    }
 
     const { state } = editor
     const { map } = table
@@ -601,7 +649,9 @@ export function setCellAttr(attrs: Record<string, unknown>): Command
 export function setCellAttr(name: string, value: unknown): Command
 export function setCellAttr(nameOrAttrs: string | Record<string, unknown>, value?: unknown): Command {
   return function (state, dispatch) {
-    if (!isInTable(state)) return false
+    if (!isInTable(state)) {
+      return false
+    }
     const $cell = selectionCell(state)
 
     const attrs = typeof nameOrAttrs === 'string' ? { [nameOrAttrs]: value } : nameOrAttrs
@@ -687,8 +737,12 @@ export function marginRound(num: number, margin = 0.3): number {
   const lowerBound = floor + margin
   const upperBound = ceil - margin
 
-  if (num < lowerBound) return floor
-  if (num > upperBound) return ceil
+  if (num < lowerBound) {
+    return floor
+  }
+  if (num > upperBound) {
+    return ceil
+  }
   return Math.round(num)
 }
 
@@ -703,8 +757,12 @@ export function marginRound(num: number, margin = 0.3): number {
  * @returns true if both rects are equal or both are undefined; false otherwise
  */
 export function rectEq(a?: DOMRect | null, b?: DOMRect | null): boolean {
-  if (!a && !b) return true
-  if (!a || !b) return false
+  if (!a && !b) {
+    return true
+  }
+  if (!a || !b) {
+    return false
+  }
   return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height
 }
 
@@ -810,7 +868,9 @@ export function getCellPosition(state: EditorState, tablePosition: number, cellC
   const resolvedColPosition = state.doc.resolve(resolvedRowPosition.posAtIndex(cellCoordinates.col))
 
   const $cell = cellAround(resolvedColPosition)
-  if (!$cell) return null
+  if (!$cell) {
+    return null
+  }
 
   return resolvedColPosition
 }
@@ -852,10 +912,14 @@ export function selectCellsByCoords(
   coords: { row: number; col: number }[],
   options: BaseSelectionOptions | DispatchSelectionOptions = { mode: 'state' }
 ): EditorState | Transaction | void {
-  if (!editor) return
+  if (!editor) {
+    return
+  }
 
   const table = getTable(editor, tablePos)
-  if (!table) return
+  if (!table) {
+    return
+  }
 
   const { state } = editor
   const tableMap = table.map
@@ -886,7 +950,9 @@ export function selectCellsByCoords(
     // TableMap.map is a flat array where each entry represents a cell
     // For merged cells, the same offset appears multiple times
     const cellOffset = tableMap.map[row * tableMap.width + col]
-    if (cellOffset === undefined) return null
+    if (cellOffset === undefined) {
+      return null
+    }
 
     // Convert the relative offset to an absolute position in the document
     // tablePos + 1 skips the table opening tag
@@ -895,11 +961,15 @@ export function selectCellsByCoords(
 
   // Anchor = where the selection starts (top-left of bounding box)
   const anchorPosition = getCellPositionFromMap(topRow, leftCol)
-  if (anchorPosition === null) return
+  if (anchorPosition === null) {
+    return
+  }
 
   // Head = where the selection ends (usually bottom-right of bounding box)
   let headPosition = getCellPositionFromMap(bottomRow, rightCol)
-  if (headPosition === null) return
+  if (headPosition === null) {
+    return
+  }
 
   // --- Handle edge case with merged cells ---
   // If anchor and head point to the same cell, we need to find a different head
@@ -956,11 +1026,15 @@ export function selectCellAt({
   tablePos?: number
   dispatch?: (tr: Transaction) => void
 }): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   const { state, view } = editor
   const found = getTable(editor, tablePos)
-  if (!found) return false
+  if (!found) {
+    return false
+  }
 
   // Bounds check
   if (!isWithinBounds(row, col, found.map)) {
@@ -977,7 +1051,9 @@ export function selectCellAt({
   const sel = CellSelection.create(state.doc, cellPos)
 
   const doDispatch = dispatch ?? view?.dispatch
-  if (!doDispatch) return false
+  if (!doDispatch) {
+    return false
+  }
 
   doDispatch(state.tr.setSelection(sel))
   return true
@@ -1061,17 +1137,27 @@ export function getIndexCoordinates({
   orientation?: Orientation
   tablePos?: number
 }): { row: number; col: number }[] | null {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const table = getTable(editor, tablePos)
-  if (!table) return null
+  if (!table) {
+    return null
+  }
 
   const { map } = table
   const { width, height } = map
 
-  if (index < 0) return null
-  if (orientation === 'row' && index >= height) return null
-  if (orientation === 'column' && index >= width) return null
+  if (index < 0) {
+    return null
+  }
+  if (orientation === 'row' && index >= height) {
+    return null
+  }
+  if (orientation === 'column' && index >= width) {
+    return null
+  }
 
   return orientation === 'row'
     ? Array.from({ length: map.width }, (_, col) => ({ row: index, col }))
@@ -1101,7 +1187,9 @@ export function getCellIndicesFromDOM(
   tableNode: Node | null,
   editor: Editor
 ): { rowIndex: number; colIndex: number } | null {
-  if (!tableNode) return null
+  if (!tableNode) {
+    return null
+  }
 
   try {
     const cellPos = editor.view.posAtDOM(cell, 0)

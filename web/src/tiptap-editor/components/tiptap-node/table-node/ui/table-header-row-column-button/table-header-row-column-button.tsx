@@ -41,7 +41,9 @@ export const TableHeaderRowColumnButton = forwardRef<HTMLButtonElement, TableHea
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleToggle()
       },
       [handleToggle, onClick]

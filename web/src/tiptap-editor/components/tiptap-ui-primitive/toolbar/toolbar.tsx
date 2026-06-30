@@ -19,7 +19,9 @@ const useToolbarNavigation = (toolbarRef: React.RefObject<HTMLDivElement | null>
   const [items, setItems] = useState<HTMLElement[]>([])
 
   const collectItems = useCallback(() => {
-    if (!toolbarRef.current) return []
+    if (!toolbarRef.current) {
+      return []
+    }
     return Array.from(
       toolbarRef.current.querySelectorAll<HTMLElement>(
         'button:not([disabled]), [role="button"]:not([disabled]), [tabindex="0"]:not([disabled])'
@@ -29,7 +31,9 @@ const useToolbarNavigation = (toolbarRef: React.RefObject<HTMLDivElement | null>
 
   useEffect(() => {
     const toolbar = toolbarRef.current
-    if (!toolbar) return
+    if (!toolbar) {
+      return
+    }
 
     const updateItems = () => setItems(collectItems())
 
@@ -50,16 +54,22 @@ const useToolbarNavigation = (toolbarRef: React.RefObject<HTMLDivElement | null>
 
   useEffect(() => {
     const toolbar = toolbarRef.current
-    if (!toolbar) return
+    if (!toolbar) {
+      return
+    }
 
     const handleFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement
-      if (toolbar.contains(target)) target.setAttribute('data-focus-visible', 'true')
+      if (toolbar.contains(target)) {
+        target.setAttribute('data-focus-visible', 'true')
+      }
     }
 
     const handleBlur = (e: FocusEvent) => {
       const target = e.target as HTMLElement
-      if (toolbar.contains(target)) target.removeAttribute('data-focus-visible')
+      if (toolbar.contains(target)) {
+        target.removeAttribute('data-focus-visible')
+      }
     }
 
     toolbar.addEventListener('focus', handleFocus, true)

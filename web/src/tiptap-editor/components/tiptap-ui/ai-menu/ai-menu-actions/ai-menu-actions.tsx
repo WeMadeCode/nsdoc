@@ -25,19 +25,25 @@ export function AiMenuActions({ editor, options, onRegenerate, onAccept, onRejec
   const { aiGenerationIsLoading } = useUiEditorState(editor)
 
   const handleRegenerate = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.chain().focus().aiRegenerate(options).run()
     onRegenerate?.()
   }, [editor, onRegenerate, options])
 
   const handleDiscard = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.chain().focus().aiReject().run()
     onReject?.()
   }, [editor, onReject])
 
   const handleApply = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     editor.chain().focus().aiAccept().run()
     onAccept?.()
   }, [editor, onAccept])

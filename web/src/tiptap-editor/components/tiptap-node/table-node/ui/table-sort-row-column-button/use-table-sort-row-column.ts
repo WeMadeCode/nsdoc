@@ -79,7 +79,9 @@ export const tableSortRowColumnIcons = {
  * Check if a specific cell is a header cell
  */
 function isCellHeader(cellNode: Node | null): boolean {
-  if (!cellNode) return false
+  if (!cellNode) {
+    return false
+  }
 
   return cellNode.type.name === 'tableHeader' || cellNode.type.name === 'table_header' || cellNode.attrs?.header === true
 }
@@ -88,7 +90,9 @@ function isCellHeader(cellNode: Node | null): boolean {
  * Extract text content from a cell node for sorting comparison
  */
 function getCellSortText(cellNode: Node | null): string {
-  if (!cellNode) return ''
+  if (!cellNode) {
+    return ''
+  }
 
   let text = ''
   cellNode.descendants(node => {
@@ -134,15 +138,21 @@ function canSortRowColumn({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const cellData = getRowOrColumnCells(editor, index, orientation, tablePos)
 
     // Need at least 2 items to sort
     if (cellData.orientation === 'row') {
-      if (table.map.width < 2) return false
+      if (table.map.width < 2) {
+        return false
+      }
     } else {
-      if (table.map.height < 2) return false
+      if (table.map.height < 2) {
+        return false
+      }
     }
 
     if (cellData.mergedCells.length > 0) {
@@ -180,7 +190,9 @@ function tableSortRowColumn({
   direction: SortDirection
   tablePos?: number
 }): boolean {
-  if (!canSortRowColumn({ editor, index, orientation, tablePos }) || !editor) return false
+  if (!canSortRowColumn({ editor, index, orientation, tablePos }) || !editor) {
+    return false
+  }
 
   try {
     const { state, view } = editor
@@ -221,9 +233,15 @@ function tableSortRowColumn({
     // Sort data items with special handling for empty cells
     dataItems.sort((a, b) => {
       // Empty cells always go to the end, regardless of sort direction
-      if (a.isEmpty && !b.isEmpty) return 1
-      if (!a.isEmpty && b.isEmpty) return -1
-      if (a.isEmpty && b.isEmpty) return 0
+      if (a.isEmpty && !b.isEmpty) {
+        return 1
+      }
+      if (!a.isEmpty && b.isEmpty) {
+        return -1
+      }
+      if (a.isEmpty && b.isEmpty) {
+        return 0
+      }
 
       // For non-empty cells, sort normally
       const comparison = a.sortText.localeCompare(b.sortText, undefined, {
@@ -239,7 +257,9 @@ function tableSortRowColumn({
       const originalItem = allItems[i]
       const targetCell = cellData.cells[i]
 
-      if (!targetCell || !originalItem) continue
+      if (!targetCell || !originalItem) {
+        continue
+      }
 
       let nodeToPlace: Node | null = null
 
@@ -305,14 +325,22 @@ function shouldShowButton({
   hideWhenUnavailable: boolean
   tablePos: number | undefined
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   const table = getTable(editor, tablePos)
-  if (!table) return false
+  if (!table) {
+    return false
+  }
 
   const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   return hideWhenUnavailable ? canSortRowColumn({ editor, index, orientation, tablePos }) : true
 }
@@ -409,7 +437,9 @@ export function useTableSortRowColumn(config: UseTableSortRowColumnConfig = { di
       direction,
       tablePos,
     })
-    if (success) onSorted?.()
+    if (success) {
+      onSorted?.()
+    }
     return success
   }, [editor, index, orientation, direction, tablePos, onSorted])
 

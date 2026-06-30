@@ -55,8 +55,12 @@ export const historyIcons = {
  * Checks if a history action can be executed
  */
 export function canExecuteUndoRedoAction(editor: Editor | null, action: UndoRedoAction): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   return action === 'undo' ? editor.can().undo() : editor.can().redo()
 }
@@ -65,8 +69,12 @@ export function canExecuteUndoRedoAction(editor: Editor | null, action: UndoRedo
  * Executes a history action on the editor
  */
 export function executeUndoRedoAction(editor: Editor | null, action: UndoRedoAction): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canExecuteUndoRedoAction(editor, action)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canExecuteUndoRedoAction(editor, action)) {
+    return false
+  }
 
   const chain = editor.chain().focus()
   return action === 'undo' ? chain.undo().run() : chain.redo().run()
@@ -78,13 +86,17 @@ export function executeUndoRedoAction(editor: Editor | null, action: UndoRedoAct
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; action: UndoRedoAction }): boolean {
   const { editor, hideWhenUnavailable, action } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canExecuteUndoRedoAction(editor, action)
@@ -137,7 +149,9 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
   const canExecute = canExecuteUndoRedoAction(editor, action)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, action }))
@@ -153,7 +167,9 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
   }, [editor, hideWhenUnavailable, action])
 
   const handleAction = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = executeUndoRedoAction(editor, action)
     if (success) {

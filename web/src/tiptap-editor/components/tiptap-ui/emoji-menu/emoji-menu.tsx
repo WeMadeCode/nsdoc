@@ -30,7 +30,9 @@ export const EmojiMenuItem = <T extends EmojiItem>(props: EmojiMenuItemProps<T>)
 
   useEffect(() => {
     const menuElement = document.querySelector(selector) as HTMLElement
-    if (!itemRef.current || !isSelected || !menuElement) return
+    if (!itemRef.current || !isSelected || !menuElement) {
+      return
+    }
 
     const overflow = getElementOverflowPosition(itemRef.current, menuElement)
     if (overflow === 'top') {
@@ -40,7 +42,9 @@ export const EmojiMenuItem = <T extends EmojiItem>(props: EmojiMenuItemProps<T>)
     }
   }, [isSelected, selector])
 
-  if (!emoji) return null
+  if (!emoji) {
+    return null
+  }
 
   return (
     <Button ref={itemRef} variant="ghost" data-active-state={isSelected ? 'on' : 'off'} onClick={() => onSelect(emoji)}>

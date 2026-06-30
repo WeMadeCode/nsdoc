@@ -55,8 +55,12 @@ export const indentLabels: Record<IndentAction, string> = {
  * Checks if indent action can be performed in the current editor state
  */
 export function canPerformIndent(editor: Editor | null, action: IndentAction): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, 'indent')) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, 'indent')) {
+    return false
+  }
 
   if (action === 'indent') {
     return editor.can().indent()
@@ -69,8 +73,12 @@ export function canPerformIndent(editor: Editor | null, action: IndentAction): b
  * Performs the indent action in the editor
  */
 export function performIndent(editor: Editor | null, action: IndentAction): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canPerformIndent(editor, action)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canPerformIndent(editor, action)) {
+    return false
+  }
 
   if (action === 'indent') {
     return editor.chain().focus().indent().run()
@@ -85,15 +93,21 @@ export function performIndent(editor: Editor | null, action: IndentAction): bool
 export function shouldShowIndentButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; action: IndentAction }): boolean {
   const { editor, hideWhenUnavailable, action } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isExtensionAvailable(editor, 'indent')) return false
+  if (!isExtensionAvailable(editor, 'indent')) {
+    return false
+  }
 
   return canPerformIndent(editor, action)
 }
@@ -143,7 +157,9 @@ export function useIndent(config: UseIndentConfig) {
   const canIndent = canPerformIndent(editor, action)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleUpdate = () => {
       setIsVisible(shouldShowIndentButton({ editor, action, hideWhenUnavailable }))
@@ -161,7 +177,9 @@ export function useIndent(config: UseIndentConfig) {
   }, [editor, hideWhenUnavailable, action])
 
   const handleIndent = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = performIndent(editor, action)
     if (success) {

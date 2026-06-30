@@ -73,8 +73,12 @@ export interface UseImageDownloadConfig {
  * Checks if image can be downloaded in the current editor state
  */
 export function canDownloadImage(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, ['image'])) {
+    return false
+  }
 
   return isNodeTypeSelected(editor, ['image'])
 }
@@ -87,7 +91,9 @@ export function getSelectedImageData(editor: Editor | null): {
   alt?: string
   title?: string
 } | null {
-  if (!editor || !canDownloadImage(editor)) return null
+  if (!editor || !canDownloadImage(editor)) {
+    return null
+  }
 
   const { selection } = editor.state
 
@@ -112,7 +118,9 @@ export function getSelectedImageData(editor: Editor | null): {
 async function tryFetchDownload(url: string, filename: string): Promise<boolean> {
   try {
     const response = await fetch(url)
-    if (!response.ok) return false
+    if (!response.ok) {
+      return false
+    }
 
     const blob = await response.blob()
     const blobUrl = URL.createObjectURL(blob)
@@ -182,10 +190,14 @@ export async function downloadSelectedImage(
   resolveFileUrl?: (url: string) => Promise<string>,
   downloadMethod: 'download' | 'open' | 'auto' = 'auto'
 ): Promise<boolean> {
-  if (!editor || !canDownloadImage(editor)) return false
+  if (!editor || !canDownloadImage(editor)) {
+    return false
+  }
 
   const imageData = getSelectedImageData(editor)
-  if (!imageData?.src) return false
+  if (!imageData?.src) {
+    return false
+  }
 
   try {
     let resolvedUrl = imageData.src
@@ -221,7 +233,9 @@ export async function downloadSelectedImage(
           return tryDirectDownload(sanitizedUrl, generatedFilename)
         } else {
           const fetchSuccess = await tryFetchDownload(sanitizedUrl, generatedFilename)
-          if (fetchSuccess) return true
+          if (fetchSuccess) {
+            return true
+          }
 
           return openInNewTab(sanitizedUrl)
         }
@@ -249,15 +263,21 @@ export async function downloadSelectedImage(
 export function shouldShowDownloadButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isExtensionAvailable(editor, ['image', 'imageUpload'])) return false
+  if (!isExtensionAvailable(editor, ['image', 'imageUpload'])) {
+    return false
+  }
 
   return canDownloadImage(editor)
 }
@@ -274,7 +294,9 @@ export function useImageDownload(config?: UseImageDownloadConfig) {
   const canDownload = canDownloadImage(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowDownloadButton({ editor, hideWhenUnavailable }))
@@ -290,7 +312,9 @@ export function useImageDownload(config?: UseImageDownloadConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleDownload = useCallback(async () => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const imageData = getSelectedImageData(editor)
     const filename = imageData?.alt || imageData?.title

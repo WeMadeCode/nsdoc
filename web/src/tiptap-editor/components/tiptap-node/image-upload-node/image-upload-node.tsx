@@ -118,7 +118,9 @@ function useFileUpload(options: UploadOptions) {
       )
 
       const src = typeof uploadResult === 'string' ? uploadResult : uploadResult.src
-      if (!src) throw new Error('Upload failed: No URL returned')
+      if (!src) {
+        throw new Error('Upload failed: No URL returned')
+      }
 
       if (!abortController.signal.aborted) {
         setFileItems(prev => prev.map(item => (item.id === fileId ? { ...item, status: 'success', uploadResult, progress: 100 } : item)))
@@ -320,7 +322,9 @@ interface ImageUploadPreviewProps {
  */
 const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({ fileItem, onRemove }) => {
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
+    if (bytes === 0) {
+      return '0 Bytes'
+    }
     const k = 1024
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))

@@ -24,7 +24,9 @@ export function useFloatingToolbarVisibility(params: {
 
   // --- TX listener: turn on hide when our meta is present, clear it on new Selection without the flag
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const onTx = ({ transaction }: { transaction: Transaction }) => {
       if (transaction.getMeta(HIDE_FLOATING_META)) {
@@ -47,14 +49,20 @@ export function useFloatingToolbarVisibility(params: {
 
   // --- Re-click same selected node should immediately allow floating
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
     const dom = editor.view.dom
 
     const onPointerDown = (e: PointerEvent) => {
       const sel = editor.state.selection
-      if (!(sel instanceof NodeSelection)) return
+      if (!(sel instanceof NodeSelection)) {
+        return
+      }
       const nodeDom = editor.view.nodeDOM(sel.from) as HTMLElement | null
-      if (!nodeDom) return
+      if (!nodeDom) {
+        return
+      }
       if (nodeDom.contains(e.target as Node)) {
         hideRef.current = false
         // selection won't change, recompute now
@@ -72,7 +80,9 @@ export function useFloatingToolbarVisibility(params: {
 
   // --- Selection-driven visibility
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       const { selection } = editor.state
@@ -101,7 +111,9 @@ export function useFloatingToolbarVisibility(params: {
  * @param pos
  */
 export const selectNodeAndHideFloating = (editor: Editor, pos: number) => {
-  if (!editor) return
+  if (!editor) {
+    return
+  }
   const { state, view } = editor
   view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, pos)).setMeta(HIDE_FLOATING_META, true))
 }
@@ -111,6 +123,8 @@ export const selectNodeAndHideFloating = (editor: Editor, pos: number) => {
  * @param editor
  */
 export const markHideFloatingOnNext = (editor: Editor) => {
-  if (!editor) return
+  if (!editor) {
+    return
+  }
   editor.view.dispatch(editor.state.tr.setMeta(HIDE_FLOATING_META, true))
 }

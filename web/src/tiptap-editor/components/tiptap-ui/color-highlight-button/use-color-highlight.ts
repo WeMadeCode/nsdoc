@@ -127,7 +127,9 @@ export function pickHighlightColorsByValue(values: string[]) {
  * Gets the appropriate color value based on configuration
  */
 export function getHighlightColorValue(color: string, useColorValue: boolean = false): string {
-  if (!useColorValue) return color
+  if (!useColorValue) {
+    return color
+  }
 
   const colorItem = HIGHLIGHT_COLORS.find(c => c.value === color || c.colorValue === color)
   return colorItem?.colorValue || color
@@ -137,14 +139,20 @@ export function getHighlightColorValue(color: string, useColorValue: boolean = f
  * Checks if highlight can be applied based on the mode and current editor state
  */
 export function canColorHighlight(editor: Editor | null, mode: HighlightMode = 'mark'): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   if (mode === 'mark') {
-    if (!isMarkInSchema('highlight', editor) || isNodeTypeSelected(editor, ['image'])) return false
+    if (!isMarkInSchema('highlight', editor) || isNodeTypeSelected(editor, ['image'])) {
+      return false
+    }
 
     return editor.can().setMark('highlight')
   } else {
-    if (!isExtensionAvailable(editor, ['nodeBackground'])) return false
+    if (!isExtensionAvailable(editor, ['nodeBackground'])) {
+      return false
+    }
 
     try {
       return editor.can().toggleNodeBackgroundColor('test')
@@ -158,12 +166,16 @@ export function canColorHighlight(editor: Editor | null, mode: HighlightMode = '
  * Checks if highlight is currently active
  */
 export function isColorHighlightActive(editor: Editor | null, highlightColor?: string, mode: HighlightMode = 'mark'): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   if (mode === 'mark') {
     return highlightColor ? editor.isActive('highlight', { color: highlightColor }) : editor.isActive('highlight')
   } else {
-    if (!highlightColor) return false
+    if (!highlightColor) {
+      return false
+    }
 
     try {
       const { state } = editor
@@ -187,8 +199,12 @@ export function isColorHighlightActive(editor: Editor | null, highlightColor?: s
  * Removes highlight based on the mode
  */
 export function removeHighlight(editor: Editor | null, mode: HighlightMode = 'mark'): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canColorHighlight(editor, mode)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canColorHighlight(editor, mode)) {
+    return false
+  }
 
   if (mode === 'mark') {
     return editor.chain().focus().unsetMark('highlight').run()
@@ -203,19 +219,27 @@ export function removeHighlight(editor: Editor | null, mode: HighlightMode = 'ma
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; mode: HighlightMode }): boolean {
   const { editor, hideWhenUnavailable, mode } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   // hideWhenUnavailable=true: check schema/extension availability
   if (mode === 'mark') {
-    if (!isMarkInSchema('highlight', editor)) return false
+    if (!isMarkInSchema('highlight', editor)) {
+      return false
+    }
   } else {
-    if (!isExtensionAvailable(editor, ['nodeBackground'])) return false
+    if (!isExtensionAvailable(editor, ['nodeBackground'])) {
+      return false
+    }
   }
 
   if (!editor.isActive('code')) {
@@ -244,7 +268,9 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   const isActive = isColorHighlightActive(editor, actualColor, mode)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, mode }))
@@ -260,7 +286,9 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   }, [editor, hideWhenUnavailable, mode])
 
   const handleColorHighlight = useCallback(() => {
-    if (!editor || !canColorHighlightState || !actualColor || !label) return false
+    if (!editor || !canColorHighlightState || !actualColor || !label) {
+      return false
+    }
 
     if (mode === 'mark') {
       if (editor.state.storedMarks) {

@@ -37,7 +37,9 @@ const TocContext = createContext<TocState | undefined>(undefined)
  * @returns Array of normalized depths corresponding to each heading item
  */
 export function normalizeHeadingDepths<T extends { level?: number; originalLevel?: number }>(items: T[]): number[] {
-  if (items.length === 0) return []
+  if (items.length === 0) {
+    return []
+  }
 
   const raw = items.map(h => h.originalLevel ?? h.level ?? 1)
 
@@ -90,7 +92,9 @@ const isElementVisible = (element: HTMLElement, topOffset: number): boolean => {
  * Low-level navigate helper (not exported in context directly)
  */
 const doNavigateToHeading = (item: TableOfContentDataItem, topOffset: number, behavior: ScrollBehavior = 'smooth') => {
-  if (!item.dom || typeof window === 'undefined') return
+  if (!item.dom || typeof window === 'undefined') {
+    return
+  }
 
   // Only scroll if element is not already visible
   if (!isElementVisible(item.dom, topOffset)) {

@@ -65,7 +65,9 @@ export const EmojiTriggerButton = forwardRef<HTMLButtonElement, EmojiTriggerButt
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleAddTrigger()
       },
       [handleAddTrigger, onClick]

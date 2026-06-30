@@ -66,14 +66,18 @@ const useImageLoadingStatus = (src?: string, referrerPolicy?: React.HTMLAttribut
     const image = new window.Image()
 
     const updateStatus = (status: ImageLoadingStatus) => () => {
-      if (!isMounted) return
+      if (!isMounted) {
+        return
+      }
       setLoadingStatus(status)
     }
 
     image.onload = updateStatus('loaded')
     image.onerror = updateStatus('error')
     image.src = src
-    if (referrerPolicy) image.referrerPolicy = referrerPolicy
+    if (referrerPolicy) {
+      image.referrerPolicy = referrerPolicy
+    }
 
     return () => {
       isMounted = false
@@ -126,7 +130,9 @@ export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
       }
     }, [imageLoadingStatus, onLoadingStatusChange, onImageLoadingStatusChange])
 
-    if (imageLoadingStatus !== 'loaded') return null
+    if (imageLoadingStatus !== 'loaded') {
+      return null
+    }
 
     return <img alt="" {...props} ref={ref} src={src} className={`tiptap-avatar-image ${className}`} />
   }
@@ -145,7 +151,9 @@ export const AvatarFallback = forwardRef<HTMLSpanElement, AvatarFallbackProps>((
     }
   }, [delayMs])
 
-  if (!canRender || context.imageLoadingStatus === 'loaded') return null
+  if (!canRender || context.imageLoadingStatus === 'loaded') {
+    return null
+  }
 
   return (
     <>

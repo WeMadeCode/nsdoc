@@ -38,7 +38,9 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
 
   const scrollToNode = useCallback(
     (id: string): boolean => {
-      if (!editor) return false
+      if (!editor) {
+        return false
+      }
 
       const attributeName = getEditorExtension(editor, 'uniqueID')?.options?.attributeName ?? 'data-id'
       let position: number | null = null
@@ -51,7 +53,9 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
         return true
       })
 
-      if (position === null) return false
+      if (position === null) {
+        return false
+      }
 
       selectNodeAndHideFloating(editor, position)
 
@@ -71,7 +75,9 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
   const handleScroll = useCallback(
     (delay = 0) => {
       const hash = window.location.hash?.substring(1)
-      if (!hash) return
+      if (!hash) {
+        return
+      }
 
       setTimeout(() => {
         if (scrollToNode(hash)) {
@@ -85,7 +91,9 @@ export function useScrollToHash(config: UseScrollToHashConfig = {}) {
   )
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     // Handle collaboration sync or immediate scroll
     const provider = editor.extensionManager.extensions.find(ext => ext.name === 'collaborationCaret')?.options?.provider

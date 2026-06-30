@@ -33,12 +33,18 @@ export const AI_EXTENSIONS = ['aiGeneration', 'ai']
 export const EXCLUDED_SELECTION_TYPES = ['codeBlock', 'image', 'imageUpload']
 
 export const canPerformAiAsk = (editor: Editor | null): boolean => {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   // TODO: Wait until AI extensions support for image
-  if (!isExtensionAvailable(editor, AI_EXTENSIONS) || isNodeTypeSelected(editor, ['image', 'horizontalRule', 'tocNode'])) return false
+  if (!isExtensionAvailable(editor, AI_EXTENSIONS) || isNodeTypeSelected(editor, ['image', 'horizontalRule', 'tocNode'])) {
+    return false
+  }
 
   const { selection } = editor.state
-  if (!selection || selection.empty) return false
+  if (!selection || selection.empty) {
+    return false
+  }
 
   if (isNodeSelection(selection)) {
     const selectedNode = selection.node
@@ -53,15 +59,21 @@ export const canPerformAiAsk = (editor: Editor | null): boolean => {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isExtensionAvailable(editor, AI_EXTENSIONS)) return false
+  if (!isExtensionAvailable(editor, AI_EXTENSIONS)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canPerformAiAsk(editor)
@@ -107,7 +119,9 @@ export function useAiAsk(config: UseAiAskConfig = {}) {
   const canAiAsk = canPerformAiAsk(editor)
 
   const handleAiAsk = useCallback((): boolean => {
-    if (!editor || !canAiAsk) return false
+    if (!editor || !canAiAsk) {
+      return false
+    }
 
     const success = editor.chain().focus().aiGenerationShow().run()
     if (success) {

@@ -28,11 +28,21 @@ const parseImageAttributes = (img: Element): Partial<ImageAttributes> => ({
 function buildImageHTMLAttributes(attrs: ImageAttributes): Record<string, string> {
   const result: Record<string, string> = { src: attrs.src || '' }
 
-  if (attrs.attachmentId) result['data-attachment-id'] = attrs.attachmentId
-  if (attrs.alt) result.alt = attrs.alt
-  if (attrs.title) result.title = attrs.title
-  if (attrs.width) result.width = attrs.width
-  if (attrs.height) result.height = attrs.height
+  if (attrs.attachmentId) {
+    result['data-attachment-id'] = attrs.attachmentId
+  }
+  if (attrs.alt) {
+    result.alt = attrs.alt
+  }
+  if (attrs.title) {
+    result.title = attrs.title
+  }
+  if (attrs.width) {
+    result.width = attrs.width
+  }
+  if (attrs.height) {
+    result.height = attrs.height
+  }
 
   return result
 }
@@ -50,7 +60,9 @@ export const Image = TiptapImage.extend<ImageOptions>({
         default: null,
         parseHTML: element => element.getAttribute('data-attachment-id'),
         renderHTML: attributes => {
-          if (!attributes.attachmentId) return {}
+          if (!attributes.attachmentId) {
+            return {}
+          }
           return { 'data-attachment-id': attributes.attachmentId }
         },
       },
@@ -60,7 +72,9 @@ export const Image = TiptapImage.extend<ImageOptions>({
           return element.tagName === 'FIGURE' || element.getAttribute('data-show-caption') === 'true'
         },
         renderHTML: attributes => {
-          if (!attributes.showCaption) return {}
+          if (!attributes.showCaption) {
+            return {}
+          }
           return { 'data-show-caption': 'true' }
         },
       },
@@ -73,7 +87,9 @@ export const Image = TiptapImage.extend<ImageOptions>({
         tag: 'figure',
         getAttrs: node => {
           const img = node.querySelector('img')
-          if (!img) return false
+          if (!img) {
+            return false
+          }
 
           return {
             ...parseImageAttributes(img),
@@ -86,7 +102,9 @@ export const Image = TiptapImage.extend<ImageOptions>({
       {
         tag: 'img[src]',
         getAttrs: node => {
-          if (node.closest('figure')) return false
+          if (node.closest('figure')) {
+            return false
+          }
 
           return {
             ...parseImageAttributes(node),
@@ -117,13 +135,19 @@ export const Image = TiptapImage.extend<ImageOptions>({
       const figureAttrs: Record<string, string> = {
         'data-url': src || '',
       }
-      if (showCaption) figureAttrs['data-show-caption'] = 'true'
-      if (align) figureAttrs['data-align'] = align
+      if (showCaption) {
+        figureAttrs['data-show-caption'] = 'true'
+      }
+      if (align) {
+        figureAttrs['data-align'] = align
+      }
 
       return ['figure', figureAttrs, ['img', imgAttrs], ['figcaption', {}, 0]]
     }
 
-    if (align) imgAttrs['data-align'] = align
+    if (align) {
+      imgAttrs['data-align'] = align
+    }
     return ['img', imgAttrs]
   },
 

@@ -113,28 +113,42 @@ function canAddRowColumn({
   }
 
   const table = getTable(editor, tablePos)
-  if (!table) return false
+  if (!table) {
+    return false
+  }
 
   const selectionType = getTableSelectionType(editor, index, orientation)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   const { map, node } = table
   const selIndex = selectionType.index
   const selOrient = selectionType.orientation
 
   // Bounds check
-  if (typeof selIndex !== 'number' || selIndex < 0) return false
-  if (selOrient === 'column' && selIndex >= map.width) return false
-  if (selOrient === 'row' && selIndex >= map.height) return false
+  if (typeof selIndex !== 'number' || selIndex < 0) {
+    return false
+  }
+  if (selOrient === 'column' && selIndex >= map.width) {
+    return false
+  }
+  if (selOrient === 'row' && selIndex >= map.height) {
+    return false
+  }
 
   // Block inserting to the LEFT of a header column
   if (side === 'left' && selOrient === 'column') {
-    if (safeColumnIsHeader(map, node, selIndex)) return false
+    if (safeColumnIsHeader(map, node, selIndex)) {
+      return false
+    }
   }
 
   // Block inserting ABOVE a header row
   if (side === 'above' && selOrient === 'row') {
-    if (safeRowIsHeader(map, node, selIndex)) return false
+    if (safeRowIsHeader(map, node, selIndex)) {
+      return false
+    }
   }
 
   return true
@@ -176,7 +190,9 @@ function tableAddRowColumn({
   }
 
   const selectionType = getTableSelectionType(editor, index, orientation)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   const { orientation: finalOrientation, index: finalIndex } = selectionType
 
@@ -191,7 +207,9 @@ function tableAddRowColumn({
       success = addOperation(editor.state, dispatch)
     } else {
       const table = getTable(editor, tablePos)
-      if (!table) return false
+      if (!table) {
+        return false
+      }
 
       const cellCoords = finalOrientation === 'row' ? { row: finalIndex, col: 0 } : { row: 0, col: finalIndex }
 
@@ -199,7 +217,9 @@ function tableAddRowColumn({
         mode: 'state',
       })
 
-      if (!cellState) return false
+      if (!cellState) {
+        return false
+      }
 
       success = addOperation(cellState, dispatch)
     }
@@ -235,8 +255,12 @@ function shouldShowButton({
   side: RowSide | ColSide
   hideWhenUnavailable: boolean
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   if (hideWhenUnavailable) {
     return canAddRowColumn({ editor, index, orientation, tablePos, side })
@@ -282,7 +306,9 @@ export function useTableAddRowColumn(config: UseTableAddRowColumnConfig) {
       tablePos,
       side,
     })
-    if (success) onAdded?.()
+    if (success) {
+      onAdded?.()
+    }
     return success
   }, [editor, index, orientation, tablePos, side, onAdded])
 

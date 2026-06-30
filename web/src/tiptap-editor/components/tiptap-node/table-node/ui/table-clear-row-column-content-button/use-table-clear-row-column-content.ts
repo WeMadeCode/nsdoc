@@ -104,13 +104,17 @@ function canClearRowColumnContent({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
 
     if (selectionType) {
       const cellData = getRowOrColumnCells(editor, selectionType.index, selectionType.orientation, tablePos)
-      if (cellData.cells.length === 0) return false
+      if (cellData.cells.length === 0) {
+        return false
+      }
 
       return cellData.cells.some(cellInfo => cellInfo.node && !isCellEmpty(cellInfo.node))
     } else {
@@ -129,7 +133,9 @@ function canClearRowColumnContent({
       // Single cell case
       const { $anchor } = selection
       const cell = cellAround($anchor)
-      if (!cell) return false
+      if (!cell) {
+        return false
+      }
 
       const cellNode = editor.state.doc.nodeAt(cell.pos)
       return cellNode ? !isCellEmpty(cellNode) : false
@@ -159,14 +165,20 @@ function clearSelectedCells(editor: Editor, resetAttrs: boolean = false): boolea
     // Handle single cell
     const { $anchor } = selection
     const cell = cellAround($anchor)
-    if (!cell) return false
+    if (!cell) {
+      return false
+    }
 
     const cellNode = editor.state.doc.nodeAt(cell.pos)
-    if (!cellNode) return false
+    if (!cellNode) {
+      return false
+    }
 
     const from = cell.pos + 1
     const to = cell.pos + cellNode.nodeSize - 1
-    if (from >= to) return false
+    if (from >= to) {
+      return false
+    }
 
     if (resetAttrs) {
       resetCellAttributes(editor)
@@ -295,17 +307,25 @@ function shouldShowButton({
   tablePos?: number
   hideWhenUnavailable: boolean
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   const table = getTable(editor, tablePos)
-  if (!table) return false
+  if (!table) {
+    return false
+  }
 
   const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
   const { selection } = editor.state
   const isInTableCell = selection instanceof CellSelection || cellAround(selection.$anchor)
 
-  if (!selectionType && !isInTableCell) return false
+  if (!selectionType && !isInTableCell) {
+    return false
+  }
 
   return hideWhenUnavailable ? canClearRowColumnContent({ editor, index, orientation, tablePos }) : true
 }
@@ -391,7 +411,9 @@ export function useTableClearRowColumnContent(config: UseTableClearRowColumnCont
       tablePos,
       resetAttrs,
     })
-    if (success) onCleared?.()
+    if (success) {
+      onCleared?.()
+    }
     return success
   }, [editor, index, orientation, tablePos, resetAttrs, onCleared])
 

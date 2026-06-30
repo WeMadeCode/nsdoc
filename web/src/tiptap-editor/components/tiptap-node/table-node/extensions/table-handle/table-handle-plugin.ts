@@ -80,13 +80,17 @@ class TableHandleView implements PluginView {
     this.mouseState = 'down'
 
     const { state, view } = this.editor
-    if (!(state.selection instanceof CellSelection) || this.editor.isFocused) return
+    if (!(state.selection instanceof CellSelection) || this.editor.isFocused) {
+      return
+    }
 
     const posInfo = view.posAtCoords({
       left: event.clientX,
       top: event.clientY,
     })
-    if (!posInfo) return
+    if (!posInfo) {
+      return
+    }
 
     const $pos = state.doc.resolve(posInfo.pos)
     const { nodes } = state.schema
@@ -101,15 +105,21 @@ class TableHandleView implements PluginView {
       if (paraDepth === -1 && node.type === nodes.paragraph) {
         paraDepth = d
       }
-      if (inTableCell && paraDepth !== -1) break
+      if (inTableCell && paraDepth !== -1) {
+        break
+      }
     }
 
-    if (!inTableCell || paraDepth === -1) return
+    if (!inTableCell || paraDepth === -1) {
+      return
+    }
 
     const from = $pos.start(paraDepth)
     const to = $pos.end(paraDepth)
     const nextSel = TextSelection.create(state.doc, from, to)
-    if (state.selection.eq(nextSel)) return
+    if (state.selection.eq(nextSel)) {
+      return
+    }
 
     view.dispatch(state.tr.setSelection(nextSel))
     view.focus()
@@ -121,16 +131,22 @@ class TableHandleView implements PluginView {
   }
 
   private mouseMoveHandler = (event: MouseEvent) => {
-    if (this.menuFrozen || this.mouseState === 'selecting') return
+    if (this.menuFrozen || this.mouseState === 'selecting') {
+      return
+    }
 
     const target = event.target
-    if (!isHTMLElement(target) || !this.editorView.dom.contains(target)) return
+    if (!isHTMLElement(target) || !this.editorView.dom.contains(target)) {
+      return
+    }
 
     this._handleMouseMoveNow(event)
   }
 
   private hideHandles() {
-    if (!this.state?.show) return
+    if (!this.state?.show) {
+      return
+    }
 
     this.state = {
       ...this.state,
@@ -160,14 +176,18 @@ class TableHandleView implements PluginView {
     }
 
     const tbody = around.tbodyNode
-    if (!tbody) return
+    if (!tbody) {
+      return
+    }
 
     const tableRect = tbody.getBoundingClientRect()
     const coords = this.editor.view.posAtCoords({
       left: event.clientX,
       top: event.clientY,
     })
-    if (!coords) return
+    if (!coords) {
+      return
+    }
 
     // Find the table node at this position
     const $pos = this.editor.view.state.doc.resolve(coords.pos)
@@ -179,7 +199,9 @@ class TableHandleView implements PluginView {
         break
       }
     }
-    if (!blockInfo || blockInfo.node.type.name !== 'table') return
+    if (!blockInfo || blockInfo.node.type.name !== 'table') {
+      return
+    }
 
     this.tableElement = this.editor.view.nodeDOM(blockInfo.pos) as HTMLElement | undefined
     this.tablePos = blockInfo.pos
@@ -210,7 +232,9 @@ class TableHandleView implements PluginView {
     } else {
       // Hovering over a cell
       const cellPosition = getCellIndicesFromDOM(around.domNode as HTMLTableCellElement, blockInfo.node, this.editor)
-      if (!cellPosition) return
+      if (!cellPosition) {
+        return
+      }
 
       const { rowIndex, colIndex } = cellPosition
       const cellRect = (around.domNode as HTMLElement).getBoundingClientRect()
@@ -277,7 +301,9 @@ class TableHandleView implements PluginView {
     }
 
     const cellPosition = getCellIndicesFromDOM(tableCellElement as HTMLTableCellElement, this.state.block, this.editor)
-    if (!cellPosition) return
+    if (!cellPosition) {
+      return
+    }
 
     const { rowIndex, colIndex } = cellPosition
 
@@ -317,10 +343,14 @@ class TableHandleView implements PluginView {
     this.mouseState = 'up'
 
     const st = this.state
-    if (!st?.draggingState) return false
+    if (!st?.draggingState) {
+      return false
+    }
 
     const { draggingState, rowIndex, colIndex, blockPos } = st
-    if (!isValidPosition(blockPos)) return false
+    if (!isValidPosition(blockPos)) {
+      return false
+    }
 
     if (
       (draggingState.draggedCellOrientation === 'row' && rowIndex === undefined) ||
@@ -339,10 +369,14 @@ class TableHandleView implements PluginView {
       orientation,
       tablePos: blockPos,
     })
-    if (!cellCoords) return false
+    if (!cellCoords) {
+      return false
+    }
 
     const stateWithCellSel = selectCellsByCoords(this.editor, blockPos, cellCoords, { mode: 'state' })
-    if (!stateWithCellSel) return false
+    if (!stateWithCellSel) {
+      return false
+    }
 
     const dispatch = (tr: Transaction) => this.editor.view.dispatch(tr)
 
@@ -376,7 +410,9 @@ class TableHandleView implements PluginView {
       this.menuFrozen = pluginState
     }
 
-    if (!this.state?.show) return
+    if (!this.state?.show) {
+      return
+    }
 
     if (!this.tableElement?.isConnected) {
       this.hideHandles()
@@ -482,7 +518,9 @@ export function TableHandlePlugin(editor: Editor, emitUpdate: (state: TableHandl
 
     props: {
       decorations: state => {
-        if (!tableHandleView) return null
+        if (!tableHandleView) {
+          return null
+        }
 
         if (
           tableHandleView === undefined ||

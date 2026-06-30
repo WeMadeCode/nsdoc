@@ -36,7 +36,9 @@ export interface UseDuplicateConfig {
  * Checks if a node can be duplicated in the current editor state
  */
 export function canDuplicateNode(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   try {
     const { state } = editor
@@ -58,7 +60,9 @@ export function canDuplicateNode(editor: Editor | null): boolean {
  * Duplicates a node in the editor
  */
 export function duplicateNode(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   try {
     const { state } = editor
@@ -104,13 +108,17 @@ export function duplicateNode(editor: Editor | null): boolean {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canDuplicateNode(editor)
@@ -163,7 +171,9 @@ export function useDuplicate(config?: UseDuplicateConfig) {
   const canDuplicate = canDuplicateNode(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -179,7 +189,9 @@ export function useDuplicate(config?: UseDuplicateConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleDuplicate = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = duplicateNode(editor)
     if (success) {

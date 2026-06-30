@@ -79,7 +79,9 @@ export const TocNode = Node.create<TocNodeOptions>({
           return Number.isFinite(num) ? num : null
         },
         renderHTML: (attrs: TocNodeAttrs) => {
-          if (attrs.topOffset == null) return {}
+          if (attrs.topOffset == null) {
+            return {}
+          }
           return { 'data-top-offset': attrs.topOffset }
         },
       },
@@ -91,7 +93,9 @@ export const TocNode = Node.create<TocNodeOptions>({
           return Number.isFinite(num) ? num : null
         },
         renderHTML: (attrs: TocNodeAttrs) => {
-          if (attrs.maxShowCount == null) return {}
+          if (attrs.maxShowCount == null) {
+            return {}
+          }
           return { 'data-max-show-count': attrs.maxShowCount }
         },
       },
@@ -100,13 +104,19 @@ export const TocNode = Node.create<TocNodeOptions>({
 
         parseHTML: (element: HTMLElement) => {
           const val = element.getAttribute('data-show-title')
-          if (val === 'false') return false
-          if (val === 'true') return true
+          if (val === 'false') {
+            return false
+          }
+          if (val === 'true') {
+            return true
+          }
           return null
         },
 
         renderHTML: (attrs: TocNodeAttrs) => {
-          if (attrs.showTitle == null) return {}
+          if (attrs.showTitle == null) {
+            return {}
+          }
           return { 'data-show-title': String(attrs.showTitle) }
         },
       },
@@ -129,10 +139,14 @@ export const TocNode = Node.create<TocNodeOptions>({
   addNodeView() {
     return ReactNodeViewRenderer(TocNodeComponent, {
       stopEvent: ({ event }) => {
-        if (!(event instanceof MouseEvent)) return false
+        if (!(event instanceof MouseEvent)) {
+          return false
+        }
 
         const el = event.target as HTMLElement | null
-        if (!el) return false
+        if (!el) {
+          return false
+        }
 
         return Boolean(el.closest('.tiptap-table-of-contents-item'))
       },

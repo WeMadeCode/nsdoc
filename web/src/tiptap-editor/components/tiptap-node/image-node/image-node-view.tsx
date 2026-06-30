@@ -116,11 +116,15 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
 
   // Listen to editor selection changes to detect when focus leaves the caption
   useEffect(() => {
-    if (!editor || !showCaption) return
+    if (!editor || !showCaption) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       const pos = getPos()
-      if (!isValidPosition(pos) || !nodeSize) return
+      if (!isValidPosition(pos) || !nodeSize) {
+        return
+      }
 
       const { from, to } = editor.state.selection
       const nodeStart = pos
@@ -144,7 +148,9 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   // We treat the image-node-extension.ts as content: "inline*"
   const handleImageClick = useCallback(
     (event: React.MouseEvent) => {
-      if (!editor || !getPos || resizeParams) return
+      if (!editor || !getPos || resizeParams) {
+        return
+      }
 
       event.preventDefault()
       event.stopPropagation()
@@ -159,7 +165,9 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
 
   const windowMouseMoveHandler = useCallback(
     (event: MouseEvent | TouchEvent): void => {
-      if (!resizeParams || !editor || !isMountedRef.current) return
+      if (!resizeParams || !editor || !isMountedRef.current) {
+        return
+      }
 
       const clientX = 'touches' in event ? (event.touches[0]?.clientX ?? 0) : event.clientX
       const isLeftHandle = resizeParams.handleUsed === 'left'
@@ -183,7 +191,9 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
 
   const windowMouseUpHandler = useCallback(
     (event: MouseEvent | TouchEvent): void => {
-      if (!editor || !isMountedRef.current) return
+      if (!editor || !isMountedRef.current) {
+        return
+      }
 
       const target =
         'touches' in event
@@ -196,7 +206,9 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
         setShowHandles(false)
       }
 
-      if (!resizeParams) return
+      if (!resizeParams) {
+        return
+      }
 
       const wasNodeSelection = editor.state.selection instanceof NodeSelection && editor.state.selection.node.type.name === 'image'
 
@@ -242,7 +254,9 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   const leftResizeHandleTouchStartHandler = (event: React.TouchEvent<HTMLDivElement>) => {
     event.preventDefault()
     const touch = event.touches[0]
-    if (touch) startResize('left', touch.clientX)
+    if (touch) {
+      startResize('left', touch.clientX)
+    }
   }
 
   const rightResizeHandleMouseDownHandler = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -254,23 +268,35 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   const rightResizeHandleTouchStartHandler = (event: React.TouchEvent<HTMLDivElement>) => {
     event.preventDefault()
     const touch = event.touches[0]
-    if (touch) startResize('right', touch.clientX)
+    if (touch) {
+      startResize('right', touch.clientX)
+    }
   }
 
   const wrapperMouseEnterHandler = () => {
-    if (editor?.isEditable && isMountedRef.current) setShowHandles(true)
+    if (editor?.isEditable && isMountedRef.current) {
+      setShowHandles(true)
+    }
   }
 
   const wrapperMouseLeaveHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!isMountedRef.current) return
+    if (!isMountedRef.current) {
+      return
+    }
 
-    if (event.relatedTarget === leftResizeHandleRef.current || event.relatedTarget === rightResizeHandleRef.current || resizeParams) return
+    if (event.relatedTarget === leftResizeHandleRef.current || event.relatedTarget === rightResizeHandleRef.current || resizeParams) {
+      return
+    }
 
-    if (editor?.isEditable) setShowHandles(false)
+    if (editor?.isEditable) {
+      setShowHandles(false)
+    }
   }
 
   const wrapperTouchStartHandler = () => {
-    if (editor?.isEditable && isMountedRef.current) setShowHandles(true)
+    if (editor?.isEditable && isMountedRef.current) {
+      setShowHandles(true)
+    }
   }
 
   useEffect(() => {

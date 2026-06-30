@@ -99,7 +99,9 @@ function useTableHandleMenu(onToggleOtherHandle?: (visible: boolean) => void, on
   const menuPlacement = useMemo(() => MENU_PLACEMENT_MAP[orientation], [orientation])
 
   const selectRowOrColumn = useCallback(() => {
-    if (!editor || !tableNode || !isValidPosition(tablePos) || !isValidPosition(index)) return
+    if (!editor || !tableNode || !isValidPosition(tablePos) || !isValidPosition(index)) {
+      return
+    }
 
     try {
       const { width, height } = TableMap.get(tableNode)
@@ -117,7 +119,9 @@ function useTableHandleMenu(onToggleOtherHandle?: (visible: boolean) => void, on
 
   const handleMenuToggle = useCallback(
     (isOpen: boolean) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       setIsMenuOpen(isOpen)
       onOpenChange?.(isOpen)
@@ -135,7 +139,9 @@ function useTableHandleMenu(onToggleOtherHandle?: (visible: boolean) => void, on
   )
 
   const resetMenu = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     setIsMenuOpen(false)
     onOpenChange?.(false)

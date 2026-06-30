@@ -27,14 +27,18 @@ export const TableHandleExtension = Extension.create({
       freezeHandles:
         () =>
         ({ tr, dispatch }) => {
-          if (dispatch) tr.setMeta(tableHandlePluginKey, true)
+          if (dispatch) {
+            tr.setMeta(tableHandlePluginKey, true)
+          }
           return true
         },
 
       unfreezeHandles:
         () =>
         ({ tr, dispatch }) => {
-          if (dispatch) tr.setMeta(tableHandlePluginKey, false)
+          if (dispatch) {
+            tr.setMeta(tableHandlePluginKey, false)
+          }
           return true
         },
     }

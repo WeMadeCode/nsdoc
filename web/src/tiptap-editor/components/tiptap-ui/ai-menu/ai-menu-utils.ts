@@ -41,7 +41,9 @@ export function getSelectionRangeRect(editor: Editor): DOMRect | null {
   const { state } = editor
   const { selection } = state
 
-  if (selection.empty) return null
+  if (selection.empty) {
+    return null
+  }
 
   const domSelection = window.getSelection()
   const editorDom = editor.view.dom as HTMLElement
@@ -164,7 +166,9 @@ export function getTopMostParentInsideEditor(element: HTMLElement, editorRoot: H
     throw new Error('Both element and editorRoot must be provided')
   }
 
-  if (element === editorRoot) return element
+  if (element === editorRoot) {
+    return element
+  }
 
   if (!editorRoot.contains(element)) {
     throw new Error('Element is not inside the editor root')
@@ -182,7 +186,9 @@ export function findAiMarkedDOMElement(editor: Editor): HTMLElement | null {
   const view = editor.view
   const aiMarkedElements = view.dom.querySelectorAll('.tiptap-ai-insertion') as NodeListOf<HTMLElement>
 
-  if (aiMarkedElements.length === 0) return null
+  if (aiMarkedElements.length === 0) {
+    return null
+  }
 
   const lastAiMarkElement = aiMarkedElements[aiMarkedElements.length - 1]
 

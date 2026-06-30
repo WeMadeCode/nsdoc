@@ -34,8 +34,12 @@ export interface UseImageCaptionConfig {
  * Checks if image caption can be toggled in the current editor state
  */
 export function canToggleImageCaption(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, ['image'])) {
+    return false
+  }
 
   return isNodeTypeSelected(editor, ['image'])
 }
@@ -44,7 +48,9 @@ export function canToggleImageCaption(editor: Editor | null): boolean {
  * Checks if the currently selected image has caption enabled
  */
 export function isImageCaptionActive(editor: Editor | null): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   try {
     const { selection } = editor.state
@@ -102,15 +108,21 @@ export function setImageCaption(editor: Editor | null): boolean {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isExtensionAvailable(editor, ['image'])) return false
+  if (!isExtensionAvailable(editor, ['image'])) {
+    return false
+  }
 
   return canToggleImageCaption(editor)
 }
@@ -160,7 +172,9 @@ export function useImageCaption(config?: UseImageCaptionConfig) {
   const canToggle = canToggleImageCaption(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -177,7 +191,9 @@ export function useImageCaption(config?: UseImageCaptionConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleToggleCaption = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = setImageCaption(editor)
     if (success) {

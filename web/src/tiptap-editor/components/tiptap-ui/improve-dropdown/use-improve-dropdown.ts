@@ -43,7 +43,9 @@ const AI_EXCLUDED_BLOCKS = ['image', 'imageUpload', 'video', 'audio', 'table', '
  * Checks if AI commands can be used with the current selection
  */
 export function canUseAi(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const { selection } = editor.state
 
@@ -71,17 +73,23 @@ export function canUseAi(editor: Editor | null): boolean {
 export function shouldShowImproveDropdown(params: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = params
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   // The third argument 'true' checks whether the current selection is inside an image caption, and prevents showing AI features (improve dropdown) there
   // If the selection is inside an image caption, we can't show the improve dropdown (AI features)
-  if (isNodeTypeSelected(editor, ['image'], true)) return false
+  if (isNodeTypeSelected(editor, ['image'], true)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canUseAi(editor)
@@ -151,7 +159,9 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
 
   const handleOpenChange = useCallback(
     (open: boolean, callback?: (isOpen: boolean) => void) => {
-      if (!editor || isDisabled) return
+      if (!editor || isDisabled) {
+        return
+      }
       setIsOpen(open)
       callback?.(open)
     },
@@ -160,7 +170,9 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
 
   const executeAICommand = useCallback(
     (command: AICommand) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
 
       editor.chain().focus().aiGenerationShow().run()
 
@@ -195,7 +207,9 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
 
   const adjustTone = useCallback(
     (tone: Tone) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
       editor.chain().focus().aiGenerationShow().run()
 
       setTimeout(() => {
@@ -207,7 +221,9 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
 
   const translate = useCallback(
     (language: Language) => {
-      if (!editor) return
+      if (!editor) {
+        return
+      }
       editor.chain().focus().aiGenerationShow().run()
 
       setTimeout(() => {
@@ -218,7 +234,9 @@ export function useImproveDropdown(config?: UseImproveDropdownConfig) {
   )
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(

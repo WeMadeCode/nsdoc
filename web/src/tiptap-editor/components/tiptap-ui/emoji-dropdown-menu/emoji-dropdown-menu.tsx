@@ -41,7 +41,9 @@ const getSuggestionItems = async (props: { query: string; editor: Editor }) => {
       subtext: emoji.shortcodes.join(', '),
       context: emoji,
       onSelect: (props: { editor: Editor; range: Range; context?: EmojiItem }) => {
-        if (!props.editor || !props.range || !props.context) return
+        if (!props.editor || !props.range || !props.context) {
+          return
+        }
         props.editor.chain().focus().setEmoji(props.context.name).run()
       },
     })
@@ -53,7 +55,9 @@ const EmojiList = ({ items, selectedIndex, onSelect }: SuggestionMenuRenderProps
     const rendered: React.ReactElement[] = []
 
     items.forEach((item, index) => {
-      if (!item.context) return
+      if (!item.context) {
+        return
+      }
 
       rendered.push(
         <EmojiMenuItem

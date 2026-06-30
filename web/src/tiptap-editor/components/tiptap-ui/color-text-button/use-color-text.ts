@@ -98,8 +98,12 @@ export interface UseColorTextConfig {
  * Checks if text color can be toggled in the current editor state
  */
 export function canColorText(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isMarkInSchema('textStyle', editor) || isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isMarkInSchema('textStyle', editor) || isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   try {
     return editor.can().setMark('textStyle', { color: 'currentColor' })
@@ -112,7 +116,9 @@ export function canColorText(editor: Editor | null): boolean {
  * Checks if text color is active in the current selection
  */
 export function isColorTextActive(editor: Editor | null, textColor: string): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
   return editor.isActive('textStyle', { color: textColor })
 }
 
@@ -122,15 +128,21 @@ export function isColorTextActive(editor: Editor | null, textColor: string): boo
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isMarkInSchema('textStyle', editor)) return false
+  if (!isMarkInSchema('textStyle', editor)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canColorText(editor)
@@ -197,7 +209,9 @@ export function useColorText(config: UseColorTextConfig) {
   const isActive = isColorTextActive(editor, textColor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -213,7 +227,9 @@ export function useColorText(config: UseColorTextConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleColorText = useCallback(() => {
-    if (!editor || !canColorTextState) return false
+    if (!editor || !canColorTextState) {
+      return false
+    }
 
     if (editor.state.storedMarks) {
       const textStyleMarkType = editor.schema.marks.textStyle

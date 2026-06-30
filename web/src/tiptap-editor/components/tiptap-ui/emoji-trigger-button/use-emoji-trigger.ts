@@ -51,8 +51,12 @@ export interface UseEmojiTriggerConfig {
  * Checks if emoji trigger can be added in the current editor state
  */
 export function canAddEmojiTrigger(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   return true
 }
@@ -144,8 +148,12 @@ function insertTriggerInTextNode(editor: Editor, trigger: string, node?: Node | 
  * Adds an emoji trigger at the current selection or specified node position
  */
 export function addEmojiTrigger(editor: Editor | null, trigger: string = ':', node?: Node | null, nodePos?: number | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canAddEmojiTrigger(editor)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canAddEmojiTrigger(editor)) {
+    return false
+  }
 
   try {
     const { $from } = editor.state.selection
@@ -168,13 +176,17 @@ export function addEmojiTrigger(editor: Editor | null, trigger: string = ':', no
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canAddEmojiTrigger(editor)
@@ -228,7 +240,9 @@ export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
   const canAddTrigger = canAddEmojiTrigger(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -244,7 +258,9 @@ export function useEmojiTrigger(config?: UseEmojiTriggerConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleAddTrigger = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = addEmojiTrigger(editor, trigger, node, nodePos)
     if (success) {

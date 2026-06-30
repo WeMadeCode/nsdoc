@@ -77,8 +77,12 @@ export function canSetImageAlign(
   extensionName: string = 'image',
   attributeName: string = 'data-align'
 ): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, [extensionName])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, [extensionName])) {
+    return false
+  }
 
   return editor.can().updateAttributes(extensionName, { [attributeName]: align })
 }
@@ -92,8 +96,12 @@ export function isImageAlignActive(
   extensionName: string = 'image',
   attributeName: string = 'data-align'
 ): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, [extensionName])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, [extensionName])) {
+    return false
+  }
 
   const attributes = editor.getAttributes(extensionName)
   const currentAlign = attributes[attributeName] || 'left'
@@ -156,13 +164,17 @@ export function shouldShowButton(props: {
 }): boolean {
   const { editor, hideWhenUnavailable, align, extensionName = 'image', attributeName = 'data-align' } = props
 
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!isExtensionAvailable(editor, [extensionName])) return false
+  if (!isExtensionAvailable(editor, [extensionName])) {
+    return false
+  }
 
   return canSetImageAlign(editor, align, extensionName, attributeName)
 }
@@ -222,7 +234,9 @@ export function useImageAlign(config: UseImageAlignConfig) {
   const isActive = isImageAlignActive(editor, align, extensionName, attributeName)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(
@@ -245,7 +259,9 @@ export function useImageAlign(config: UseImageAlignConfig) {
   }, [editor, hideWhenUnavailable, align, extensionName, attributeName])
 
   const handleImageAlign = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = setImageAlign(editor, align, extensionName, attributeName)
     if (success) {

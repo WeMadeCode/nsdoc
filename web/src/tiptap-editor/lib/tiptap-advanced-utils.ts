@@ -18,7 +18,9 @@ export function hasContentAbove(editor: Editor | null): {
   hasContent: boolean
   content: string
 } {
-  if (!editor) return { hasContent: false, content: '' }
+  if (!editor) {
+    return { hasContent: false, content: '' }
+  }
 
   const { state } = editor
   const { $from } = state.selection
@@ -43,7 +45,9 @@ export function hasContentAbove(editor: Editor | null): {
  * @returns The attributes of the active mark, or `null` if the mark is not active.
  */
 export function getActiveMarkAttrs(editor: Editor | null, markName: string): Attrs | null {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const { state } = editor
   const { from, to, empty, $from } = state.selection
@@ -57,7 +61,9 @@ export function getActiveMarkAttrs(editor: Editor | null, markName: string): Att
   let foundAttrs: Attrs | null = null
 
   state.doc.nodesBetween(from, to, node => {
-    if (!node.isText) return
+    if (!node.isText) {
+      return
+    }
 
     for (const mark of node.marks) {
       if (mark.type.name === markName && !seen.has(mark.type.name)) {
@@ -78,15 +84,21 @@ export function getActiveMarkAttrs(editor: Editor | null, markName: string): Att
 export function findSelectionPosition(params: { editor: Editor; node?: Node | null; nodePos?: number | null }): number | null {
   const { editor, node, nodePos } = params
 
-  if (isValidPosition(nodePos)) return nodePos
+  if (isValidPosition(nodePos)) {
+    return nodePos
+  }
 
   if (node) {
     const found = findNodePosition({ editor, node })
-    if (found) return found.pos
+    if (found) {
+      return found.pos
+    }
   }
 
   const { selection } = editor.state
-  if (!selection.empty) return null
+  if (!selection.empty) {
+    return null
+  }
 
   const resolvedPos = selection.$anchor
   const nodeDepth = 1
@@ -144,7 +156,9 @@ export function getClosestNode(
     predicate?: (node: Node) => boolean
   }
 ) {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const { selection } = editor.state
   const { $from } = selection
@@ -184,7 +198,9 @@ export function getClosestNodeByPos(
     predicate?: (node: Node) => boolean
   }
 ) {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const docSize = editor.state.doc.content.size
   if (pos < 0 || pos > docSize) {
@@ -242,7 +258,9 @@ export function getAllMatchingNodes(
     predicate?: (node: Node) => boolean
   }
 ) {
-  if (!editor) return []
+  if (!editor) {
+    return []
+  }
 
   const { selection } = editor.state
   const { nodeName, isBlock = true, predicate } = options || {}
@@ -289,7 +307,9 @@ export function getAllMatchingNodes(
  * @returns An object containing the anchor node and its position, or null if not found
  */
 export function getAnchorNodeAndPos(editor: Editor | null, allowEmptySelection: boolean = true): { node: Node; pos: number } | null {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const { state } = editor
   const { selection } = state
@@ -303,7 +323,9 @@ export function getAnchorNodeAndPos(editor: Editor | null, allowEmptySelection: 
     }
   }
 
-  if (selection.empty && !allowEmptySelection) return null
+  if (selection.empty && !allowEmptySelection) {
+    return null
+  }
 
   const $anchor = selection.$anchor
   const depth = 1 // explicitly use depth 1
@@ -320,12 +342,16 @@ export function getAnchorNodeAndPos(editor: Editor | null, allowEmptySelection: 
  * @returns `true` if the selection contains text, `false` otherwise.
  */
 export function selectionHasText(editor: Editor | null): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   const { state } = editor
   const { selection, doc } = state
 
-  if (selection.empty) return false
+  if (selection.empty) {
+    return false
+  }
 
   const text = doc.textBetween(selection.from, selection.to, '\n', '\0')
   return text.trim().length > 0
@@ -338,7 +364,9 @@ export function selectionHasText(editor: Editor | null): boolean {
  * @returns The extension instance if found, otherwise null
  */
 export function getEditorExtension(editor: Editor | null, extensionName: string) {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const extension = editor.extensionManager.extensions.find(ext => ext.name === extensionName)
 

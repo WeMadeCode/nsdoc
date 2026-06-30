@@ -29,7 +29,9 @@ export type OverflowPosition = 'none' | 'top' | 'bottom' | 'both'
  * Utility function to get URL parameters
  */
 export const getUrlParam = (param: string): string | null => {
-  if (typeof window === 'undefined') return null
+  if (typeof window === 'undefined') {
+    return null
+  }
   const params = new URLSearchParams(window.location.search)
   return params.get(param)
 }
@@ -40,7 +42,9 @@ export const getUrlParam = (param: string): string | null => {
  * @returns The display name of the current node
  */
 export const getNodeDisplayName = (editor: Editor | null): string => {
-  if (!editor) return 'Node'
+  if (!editor) {
+    return 'Node'
+  }
 
   const { selection } = editor.state
 
@@ -78,9 +82,15 @@ export function getElementOverflowPosition(targetElement: Element, containerElem
   const isOverflowingTop = targetBounds.top < containerBounds.top
   const isOverflowingBottom = targetBounds.bottom > containerBounds.bottom
 
-  if (isOverflowingTop && isOverflowingBottom) return 'both'
-  if (isOverflowingTop) return 'top'
-  if (isOverflowingBottom) return 'bottom'
+  if (isOverflowingTop && isOverflowingBottom) {
+    return 'both'
+  }
+  if (isOverflowingTop) {
+    return 'top'
+  }
+  if (isOverflowingBottom) {
+    return 'bottom'
+  }
   return 'none'
 }
 
@@ -92,8 +102,12 @@ export const isSelectionValid = (
   selection?: Selection,
   excludedNodeTypes: string[] = ['imageUpload', 'horizontalRule']
 ): boolean => {
-  if (!editor) return false
-  if (!selection) selection = editor.state.selection
+  if (!editor) {
+    return false
+  }
+  if (!selection) {
+    selection = editor.state.selection
+  }
 
   const { state } = editor
   const { doc } = state
@@ -114,7 +128,9 @@ export const isSelectionValid = (
  * - Not a node selection
  */
 export const isTextSelectionValid = (editor: Editor | null): boolean => {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
   const { state } = editor
   const { selection } = state
   const isValid = isTextSelection(selection) && !selection.empty && !selection.$from.parent.type.spec.code && !isNodeSelection(selection)

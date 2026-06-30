@@ -115,11 +115,15 @@ function canAlignRowColumn({ editor, index, orientation }: { editor: Editor | nu
 
   try {
     const table = getTable(editor)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const cellData = getRowOrColumnCells(editor, index, orientation)
 
-    if (cellData.cells.length === 0) return false
+    if (cellData.cells.length === 0) {
+      return false
+    }
 
     return true
   } catch {
@@ -131,7 +135,9 @@ function canAlignRowColumn({ editor, index, orientation }: { editor: Editor | nu
  * Gets the current alignment value for the active cell.
  */
 function getCurrentAlignment(editor: Editor | null, alignmentType: AlignmentType): TextAlignment | VerticalAlignment | null {
-  if (!canAlignCell(editor) || !editor) return null
+  if (!canAlignCell(editor) || !editor) {
+    return null
+  }
 
   try {
     const { selection } = editor.state
@@ -146,7 +152,9 @@ function getCurrentAlignment(editor: Editor | null, alignmentType: AlignmentType
       }
     }
 
-    if (!cellNode) return null
+    if (!cellNode) {
+      return null
+    }
 
     const attrs = cellNode.attrs || {}
 
@@ -169,15 +177,21 @@ function getCurrentRowColumnAlignment(
   index?: number,
   orientation?: Orientation
 ): TextAlignment | VerticalAlignment | null {
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   try {
     const cellData = getRowOrColumnCells(editor, index, orientation)
 
-    if (cellData.cells.length === 0) return null
+    if (cellData.cells.length === 0) {
+      return null
+    }
 
     const firstCell = cellData.cells[0]
-    if (!firstCell?.node) return null
+    if (!firstCell?.node) {
+      return null
+    }
 
     const attrs = firstCell.node.attrs || {}
 
@@ -195,7 +209,9 @@ function getCurrentRowColumnAlignment(
  * Sets the alignment attribute on the current table cell.
  */
 function setTableCellAlignment(editor: Editor | null, alignmentType: AlignmentType, alignment: TextAlignment | VerticalAlignment): boolean {
-  if (!canAlignCell(editor) || !editor) return false
+  if (!canAlignCell(editor) || !editor) {
+    return false
+  }
 
   try {
     if (alignmentType === 'text') {
@@ -304,7 +320,9 @@ function tableAlignCell({
   index?: number
   orientation?: Orientation
 }): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   try {
     if (typeof index === 'number' && orientation) {
@@ -339,8 +357,12 @@ function shouldShowButton({
   index?: number
   orientation?: Orientation
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   if (hideWhenUnavailable) {
     if (typeof index === 'number' && orientation) {

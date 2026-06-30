@@ -71,7 +71,9 @@ interface GridCellProps {
 }
 
 const isCellSelected = (cell: CellCoordinates, hoveredCell: CellCoordinates | null): boolean => {
-  if (!hoveredCell) return false
+  if (!hoveredCell) {
+    return false
+  }
   return cell.row <= hoveredCell.row && cell.col <= hoveredCell.col
 }
 

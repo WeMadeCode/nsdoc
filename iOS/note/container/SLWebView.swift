@@ -66,7 +66,7 @@ final class SLWebViewCoordinator: NSObject, WKNavigationDelegate {
 
         EditorBridgeHandlers.register(
             on: bridge,
-            runtimeConfig: [
+            appInfo: [
                 "hostPlatform": Self.hostPlatform,
                 "editorMode": Self.editorMode
             ],

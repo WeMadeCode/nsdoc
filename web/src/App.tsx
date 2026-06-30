@@ -1,68 +1,64 @@
 import { useEffect, useState } from 'react'
 
-import type { EditorRuntimeConfig } from '@/bridge/types'
+import type { EditorAppInfo } from '@/bridge/types'
 import { nsBridge } from '@/bridge/web-bridge'
 import { NotionEditor } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor'
 import { SimpleEditor } from '@/tiptap-editor/components/tiptap-templates/simple/simple-editor'
 
-const defaultRuntimeConfig: EditorRuntimeConfig = {
+const defaultAppInfo: EditorAppInfo = {
   hostPlatform: 'iphone',
-  editorMode: 'simple',
 }
 
-const isRuntimeConfig = (value: unknown): value is EditorRuntimeConfig => {
+const isAppInfo = (value: unknown): value is EditorAppInfo => {
   if (!value || typeof value !== 'object') {
     return false
   }
 
-  const config = value as Partial<EditorRuntimeConfig>
+  const appInfo = value as Partial<EditorAppInfo>
 
-  return (
-    (config.hostPlatform === 'iphone' || config.hostPlatform === 'mac') &&
-    (config.editorMode === 'simple' || config.editorMode === 'notion')
-  )
+  return appInfo.hostPlatform === 'iphone' || appInfo.hostPlatform === 'mac'
 }
 
 const App = () => {
-  const [runtimeConfig, setRuntimeConfig] = useState<EditorRuntimeConfig | null>(null)
+  const [appInfo, setAppInfo] = useState<EditorAppInfo | null>(null)
 
   useEffect(() => {
     let active = true
-    const unregister = nsBridge.register<EditorRuntimeConfig, EditorRuntimeConfig>('editor', 'configureRuntime', params => {
-      if (!isRuntimeConfig(params)) {
-        throw new Error('editor.configureRuntime requires a valid runtime config')
-      }
-      setRuntimeConfig(params)
-      return params
-    })
 
-    void nsBridge
-      .call<undefined, EditorRuntimeConfig>('editor', 'getRuntimeConfig')
-      .then(config => {
-        if (!isRuntimeConfig(config)) {
-          throw new Error('editor.getRuntimeConfig returned an invalid runtime config')
+    nsBridge
+      .call<undefined, EditorAppInfo>('editor', 'getAppInfo')
+      .then(info => {
+        if (!isAppInfo(info)) {
+          throw new Error('editor.getAppInfo returned invalid app info')
         }
-        if (active) setRuntimeConfig(config)
+        if (active) {
+          setAppInfo(info)
+        }
       })
       .catch(() => {
-        if (active) setRuntimeConfig(defaultRuntimeConfig)
+        if (active) {
+          setAppInfo(defaultAppInfo)
+        }
       })
 
     return () => {
       active = false
-      unregister()
     }
   }, [])
 
-  if (!runtimeConfig) {
-    return null
+  if (appInfo) {
+    return (
+      <div style={{ width: '100%', height: '100vh' }}>
+        {appInfo.hostPlatform === 'mac' ? <NotionEditor room="local-mac-editor" /> : <SimpleEditor />}
+      </div>
+    )
+  } else {
+    return (
+      <div style={{ width: '100%', height: '100vh' }}>
+        <NotionEditor room="local-mac-editor" />
+      </div>
+    )
   }
-
-  return (
-    <div style={{ width: '100%', height: '100vh' }}>
-      {runtimeConfig.editorMode === 'notion' ? <NotionEditor room="local-mac-editor" /> : <SimpleEditor />}
-    </div>
-  )
 }
 
 export default App

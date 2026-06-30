@@ -43,7 +43,9 @@ function useTableExtendRowColumnButtonPosition(
       size({
         apply({ rects, elements }) {
           const floating = elements.floating
-          if (!floating) return
+          if (!floating) {
+            return
+          }
 
           // Apply size based on orientation
           const sizeValue = `${rects.reference[config.sizeProperty]}px`
@@ -63,7 +65,9 @@ function useTableExtendRowColumnButtonPosition(
   )
 
   useEffect(() => {
-    if (!referencePosTable) return
+    if (!referencePosTable) {
+      return
+    }
 
     refs.setReference(createVirtualReference(referencePosTable))
     update()

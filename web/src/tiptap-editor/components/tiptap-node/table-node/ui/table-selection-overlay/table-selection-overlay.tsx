@@ -37,22 +37,30 @@ const CORNER_DETECTION_TOLERANCE = 5
 
 const getCellAtCoordinates = (state: EditorState, view: EditorView, x: number, y: number) => {
   const pos = view.posAtCoords({ left: x, top: y })?.pos
-  if (pos == null) return null
+  if (pos == null) {
+    return null
+  }
 
   const $pos = state.doc.resolve(pos)
   return cellAround($pos)
 }
 
 const getSelectionBoundingRect = (view: EditorView, selection: Selection): DOMRect | null => {
-  if (!(selection instanceof CellSelection)) return null
+  if (!(selection instanceof CellSelection)) {
+    return null
+  }
 
   const cells: Element[] = []
   selection.forEachCell((_node: Node, pos: number) => {
     const dom = view.nodeDOM(pos) as Element | null
-    if (dom) cells.push(dom)
+    if (dom) {
+      cells.push(dom)
+    }
   })
 
-  if (cells.length === 0) return null
+  if (cells.length === 0) {
+    return null
+  }
 
   const bounds = {
     left: Infinity,
@@ -74,7 +82,9 @@ const getSelectionBoundingRect = (view: EditorView, selection: Selection): DOMRe
 
 const getSingleCellBoundingRect = (view: EditorView, cellPos: number): DOMRect | null => {
   const cellDom = view.nodeDOM(cellPos) as Element | null
-  if (!cellDom) return null
+  if (!cellDom) {
+    return null
+  }
 
   const rect = cellDom.getBoundingClientRect()
   return new DOMRect(rect.left, rect.top, rect.width, rect.height)
@@ -109,7 +119,9 @@ const findCornerCells = (view: EditorView, selection: CellSelection, selectionRe
 
   selection.forEachCell((_node: Node, pos: number) => {
     const dom = view.nodeDOM(pos) as Element | null
-    if (!dom) return
+    if (!dom) {
+      return
+    }
 
     const cellRect = dom.getBoundingClientRect()
 
@@ -143,7 +155,9 @@ const getAnchorCellForHandle = (
   selectionRect: DOMRect,
   handle: ResizeHandle
 ): { pos: number } | null => {
-  if (!handle) return null
+  if (!handle) {
+    return null
+  }
 
   const corners = findCornerCells(view, selection, selectionRect)
 
@@ -238,7 +252,9 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
   }, [selectionRect, refs])
 
   const updateSelectionRect = useCallback(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const { selection } = editor.state
 
@@ -284,7 +300,9 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
 
   const createResizeHandler = useCallback(
     (handle: ResizeHandle) => (event: React.MouseEvent) => {
-      if (!editor || !handle || !selectionRect || isMenuOpen || !showResizeHandles) return
+      if (!editor || !handle || !selectionRect || isMenuOpen || !showResizeHandles) {
+        return
+      }
 
       event.preventDefault()
       event.stopPropagation()
@@ -308,23 +326,33 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
         }
       }
 
-      if (!cellSelection) return
+      if (!cellSelection) {
+        return
+      }
 
       const anchorCell = getAnchorCellForHandle(editor.view, cellSelection, selectionRect, handle)
-      if (!anchorCell) return
+      if (!anchorCell) {
+        return
+      }
 
       setActiveHandle(handle)
       activeHandleRef.current = handle
       anchorCellRef.current = anchorCell.pos
 
       const handleMouseMove = (mouseEvent: MouseEvent) => {
-        if (!editor || anchorCellRef.current == null) return
+        if (!editor || anchorCellRef.current == null) {
+          return
+        }
 
         const target = domCellAround(mouseEvent.target as Element)
-        if (!target || target.type !== 'cell') return
+        if (!target || target.type !== 'cell') {
+          return
+        }
 
         const targetCell = getCellAtCoordinates(editor.state, editor.view, mouseEvent.clientX, mouseEvent.clientY)
-        if (!targetCell) return
+        if (!targetCell) {
+          return
+        }
 
         try {
           const newSelection = CellSelection.create(editor.state.doc, anchorCellRef.current, targetCell.pos)
@@ -379,7 +407,9 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
   )
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       updateSelectionRect()
@@ -404,10 +434,14 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
     return null
   }
 
-  if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
   const renderCellMenu = () => {
-    if (!CellMenu) return null
+    if (!CellMenu) {
+      return null
+    }
 
     return (
       <span onMouseDown={e => e.stopPropagation()} style={{ pointerEvents: 'auto' }}>

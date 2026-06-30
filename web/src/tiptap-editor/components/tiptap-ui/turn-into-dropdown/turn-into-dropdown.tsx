@@ -52,7 +52,9 @@ function renderBlockTypeButton(option: ReturnType<typeof getFilteredBlockTypeOpt
       )
 
     case 'heading':
-      if (!option.level) return null
+      if (!option.level) {
+        return null
+      }
       return (
         <DropdownMenuItem key={key} asChild>
           <HeadingButton editor={editor} level={option.level} showTooltip={false} text={option.label} />
@@ -119,7 +121,9 @@ export const TurnIntoDropdown = forwardRef<HTMLButtonElement, TurnIntoDropdownPr
     onOpenChange,
   })
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    return null
+  }
 
   return (
     <DropdownMenu modal={modal} open={isOpen} onOpenChange={handleOpenChange}>

@@ -50,7 +50,9 @@ export const DuplicateButton = forwardRef<HTMLButtonElement, DuplicateButtonProp
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleDuplicate()
       },
       [handleDuplicate, onClick]

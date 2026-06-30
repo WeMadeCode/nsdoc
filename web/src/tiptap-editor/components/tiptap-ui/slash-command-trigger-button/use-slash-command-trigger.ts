@@ -51,11 +51,17 @@ export interface UseSlashCommandTriggerConfig {
  * Checks if a slash command can be inserted in the current editor state
  */
 export function canInsertSlashCommand(editor: Editor | null, node?: Node | null, nodePos?: number | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (isNodeTypeSelected(editor, ['image'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (isNodeTypeSelected(editor, ['image'])) {
+    return false
+  }
 
   if (node || isValidPosition(nodePos)) {
-    if (isValidPosition(nodePos) && nodePos! >= 0) return true
+    if (isValidPosition(nodePos) && nodePos! >= 0) {
+      return true
+    }
 
     if (node) {
       const foundPos = findNodePosition({ editor, node })
@@ -70,8 +76,12 @@ export function canInsertSlashCommand(editor: Editor | null, node?: Node | null,
  * Inserts a slash command at a specified node position or after the current selection
  */
 export function insertSlashCommand(editor: Editor | null, trigger: string = '/', node?: Node | null, nodePos?: number | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canInsertSlashCommand(editor, node, nodePos)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canInsertSlashCommand(editor, node, nodePos)) {
+    return false
+  }
 
   try {
     if ((node !== undefined && node !== null) || isValidPosition(nodePos)) {
@@ -137,13 +147,17 @@ export function shouldShowButton(props: {
 }): boolean {
   const { editor, hideWhenUnavailable, node, nodePos } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canInsertSlashCommand(editor, node, nodePos)
@@ -197,7 +211,9 @@ export function useSlashCommandTrigger(config?: UseSlashCommandTriggerConfig) {
   const canInsert = canInsertSlashCommand(editor, node, nodePos)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, node, nodePos }))
@@ -213,7 +229,9 @@ export function useSlashCommandTrigger(config?: UseSlashCommandTriggerConfig) {
   }, [editor, hideWhenUnavailable, node, nodePos])
 
   const handleSlashCommand = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = insertSlashCommand(editor, trigger, node, nodePos)
     if (success) {

@@ -34,8 +34,12 @@ export interface UseTocShowTitleConfig {
  * Checks if TOC title can be toggled in the current editor state
  */
 export function canToggleTocTitle(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, ['tocNode'])) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, ['tocNode'])) {
+    return false
+  }
 
   return isNodeTypeSelected(editor, ['tocNode'])
 }
@@ -44,7 +48,9 @@ export function canToggleTocTitle(editor: Editor | null): boolean {
  * Checks if the currently selected TOC node has title enabled
  */
 export function isTocTitleActive(editor: Editor | null): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   try {
     const { selection } = editor.state
@@ -98,9 +104,13 @@ export function shouldShowButton(props: {
 }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
-  if (!isExtensionAvailable(editor, ['tocNode'])) return false
+  if (!isExtensionAvailable(editor, ['tocNode'])) {
+    return false
+  }
 
   if (hideWhenUnavailable) {
     return canToggleTocTitle(editor)
@@ -155,7 +165,9 @@ export function useTocShowTitle(config?: UseTocShowTitleConfig) {
   const canToggle = canToggleTocTitle(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -172,7 +184,9 @@ export function useTocShowTitle(config?: UseTocShowTitleConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleToggle = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = toggleTocTitle(editor)
 

@@ -46,8 +46,12 @@ export interface UseTextConfig {
  * - When `turnInto === true`, it additionally requires the selection to be within convertible types.
  */
 export function canToggleText(editor: Editor | null, turnInto: boolean = true): boolean {
-  if (!editor) return false
-  if (!editor.schema.nodes.paragraph) return false
+  if (!editor) {
+    return false
+  }
+  if (!editor.schema.nodes.paragraph) {
+    return false
+  }
 
   if (!turnInto) {
     return editor.can().setNode('paragraph')
@@ -56,8 +60,9 @@ export function canToggleText(editor: Editor | null, turnInto: boolean = true): 
   // Ensure selection is in nodes we're allowed to convert
   if (
     !selectionWithinConvertibleTypes(editor, ['paragraph', 'heading', 'bulletList', 'orderedList', 'taskList', 'blockquote', 'codeBlock'])
-  )
+  ) {
     return false
+  }
 
   // Either we can set paragraph directly on the selection,
   // or we can clear formatting/nodes to arrive at a paragraph.
@@ -68,7 +73,9 @@ export function canToggleText(editor: Editor | null, turnInto: boolean = true): 
  * Checks if paragraph is currently active
  */
 export function isParagraphActive(editor: Editor | null): boolean {
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
   return editor.isActive('paragraph')
 }
 
@@ -76,8 +83,12 @@ export function isParagraphActive(editor: Editor | null): boolean {
  * Converts the current selection or node to paragraph
  */
 export function toggleParagraph(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!canToggleText(editor)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!canToggleText(editor)) {
+    return false
+  }
 
   try {
     const view = editor.view
@@ -106,7 +117,9 @@ export function toggleParagraph(editor: Editor | null): boolean {
         editor,
         node: state.selection.$anchor.node(1),
       })?.pos
-      if (!isValidPosition(pos)) return false
+      if (!isValidPosition(pos)) {
+        return false
+      }
 
       tr = tr.setSelection(NodeSelection.create(state.doc, pos))
       view.dispatch(tr)
@@ -149,15 +162,21 @@ export function toggleParagraph(editor: Editor | null): boolean {
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
-  if (!isNodeInSchema('paragraph', editor)) return false
+  if (!isNodeInSchema('paragraph', editor)) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canToggleText(editor)
@@ -212,7 +231,9 @@ export function useText(config?: UseTextConfig) {
   const isActive = isParagraphActive(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -228,7 +249,9 @@ export function useText(config?: UseTextConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleToggle = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = toggleParagraph(editor)
     if (success) {

@@ -37,7 +37,9 @@ export function useTableHandleState(config: UseTableHandleStateConfig = {}) {
     (newState: TableHandlesState) => {
       if (watchFields && prevStateRef.current) {
         const shouldUpdate = watchFields.some(field => prevStateRef.current![field] !== newState[field])
-        if (!shouldUpdate) return
+        if (!shouldUpdate) {
+          return
+        }
       }
 
       setState(newState)

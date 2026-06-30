@@ -52,7 +52,9 @@ export const TableClearRowColumnContentButton = forwardRef<HTMLButtonElement, Ta
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleClear()
       },
       [handleClear, onClick]

@@ -65,7 +65,9 @@ export const TableMergeSplitCellButton = forwardRef<HTMLButtonElement, TableMerg
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event)
-        if (event.defaultPrevented) return
+        if (event.defaultPrevented) {
+          return
+        }
         handleExecute()
       },
       [handleExecute, onClick]

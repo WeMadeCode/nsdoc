@@ -67,10 +67,14 @@ function getNodeWithId(editor: Editor | null): {
   nodeId: string | null
   hasNodeId: boolean
 } | null {
-  if (!isEditorReady(editor)) return null
+  if (!isEditorReady(editor)) {
+    return null
+  }
 
   const nodeInfo = getAnchorNodeAndPos(editor!)
-  if (!nodeInfo) return null
+  if (!nodeInfo) {
+    return null
+  }
 
   const attributeName = getAttributeName(editor!)
   const nodeId = extractNodeId(nodeInfo.node, attributeName)
@@ -86,7 +90,9 @@ function getNodeWithId(editor: Editor | null): {
  * Extracts the data-id from a node
  */
 export function extractNodeId(node: Node | null, attributeName: string): string | null {
-  if (!node?.attrs?.[attributeName]) return null
+  if (!node?.attrs?.[attributeName]) {
+    return null
+  }
 
   try {
     return node.attrs[attributeName]
@@ -113,14 +119,18 @@ export async function copyNodeId(
 ): Promise<boolean> {
   const nodeWithId = getNodeWithId(editor)
 
-  if (!nodeWithId) return false
+  if (!nodeWithId) {
+    return false
+  }
 
   const { nodeId, hasNodeId } = nodeWithId
 
   onExtractedNodeId?.(nodeId)
   onNodeIdNotFound?.(!hasNodeId)
 
-  if (!hasNodeId || !nodeId) return false
+  if (!hasNodeId || !nodeId) {
+    return false
+  }
 
   try {
     const currentUrl = new URL(window.location.href)
@@ -142,11 +152,15 @@ export async function copyNodeId(
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!isEditorReady(editor)) return false
+  if (!isEditorReady(editor)) {
+    return false
+  }
 
   const hasNode = !!getAnchorNodeAndPos(editor!)
 
-  if (!hideWhenUnavailable) return hasNode
+  if (!hideWhenUnavailable) {
+    return hasNode
+  }
 
   return canCopyAnchorLink(editor)
 }
@@ -195,7 +209,9 @@ export function useCopyAnchorLink(config?: UseCopyAnchorLinkConfig) {
   const canCopyAnchor = canCopyAnchorLink(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))

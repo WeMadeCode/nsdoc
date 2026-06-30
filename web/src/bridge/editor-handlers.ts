@@ -82,7 +82,9 @@ const isPositionInsideNode = ($pos: ResolvedPos, nodeName: string) => {
 
 const normalizeHexColor = (value?: string | null): string | null => {
   const trimmed = value?.trim()
-  if (!trimmed) return null
+  if (!trimmed) {
+    return null
+  }
 
   if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) {
     return trimmed.toUpperCase()

@@ -64,7 +64,9 @@ export function canCopyContent(tr: Transaction): boolean {
   const { selection } = tr
   const { empty } = selection
 
-  if (empty) return false
+  if (empty) {
+    return false
+  }
 
   return true
 }
@@ -73,7 +75,9 @@ export function canCopyContent(tr: Transaction): boolean {
  * Checks if formatting can be reset for a node
  */
 export function canCopyToClipboard(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const tr = editor.state.tr
   return canCopyContent(tr)
@@ -106,7 +110,9 @@ export function extractContent(editor: Editor, copyWithFormatting: boolean = tru
  * Copies content to clipboard
  */
 export async function copyToClipboard(editor: Editor | null, copyWithFormatting: boolean = true): Promise<boolean> {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   try {
     const { textContent, htmlContent } = extractContent(editor, copyWithFormatting)
@@ -124,13 +130,17 @@ export async function copyToClipboard(editor: Editor | null, copyWithFormatting:
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props
 
-  if (!editor) return false
+  if (!editor) {
+    return false
+  }
 
   if (!hideWhenUnavailable) {
     return true
   }
 
-  if (!editor.isEditable) return false
+  if (!editor.isEditable) {
+    return false
+  }
 
   if (!editor.isActive('code')) {
     return canCopyToClipboard(editor)
@@ -184,7 +194,9 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
   const canCopyToClipboardState = canCopyToClipboard(editor)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }))
@@ -200,7 +212,9 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
   }, [editor, hideWhenUnavailable])
 
   const handleCopyToClipboard = useCallback(async () => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = await copyToClipboard(editor, copyWithFormatting)
 

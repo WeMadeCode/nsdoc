@@ -46,14 +46,18 @@ export function removeAllMarksExcept(tr: Transaction, skip: string[] = []) {
   const { selection } = tr
   const { empty, ranges } = selection
 
-  if (empty) return tr
+  if (empty) {
+    return tr
+  }
 
   ranges.forEach(range => {
     const from = range.$from.pos
     const to = range.$to.pos
 
     tr.doc.nodesBetween(from, to, (node, pos) => {
-      if (!node.isInline) return true
+      if (!node.isInline) {
+        return true
+      }
 
       node.marks.forEach(mark => {
         if (!skip.includes(mark.type.name)) {
@@ -78,7 +82,9 @@ export function canResetMarks(tr: Transaction, skip: string[] = []): boolean {
   const { selection } = tr
   const { empty, ranges } = selection
 
-  if (empty) return false
+  if (empty) {
+    return false
+  }
 
   for (const range of ranges) {
     const from = range.$from.pos
@@ -87,7 +93,9 @@ export function canResetMarks(tr: Transaction, skip: string[] = []): boolean {
     let hasRemovableMarks = false
 
     tr.doc.nodesBetween(from, to, node => {
-      if (!node.isInline) return true
+      if (!node.isInline) {
+        return true
+      }
 
       for (const mark of node.marks) {
         if (!skip.includes(mark.type.name)) {
@@ -111,7 +119,9 @@ export function canResetMarks(tr: Transaction, skip: string[] = []): boolean {
  * Checks if formatting can be reset for a node
  */
 export function canResetFormatting(editor: Editor | null, preserveMarks?: string[]): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const tr = editor.state.tr
   return canResetMarks(tr, preserveMarks)
@@ -121,7 +131,9 @@ export function canResetFormatting(editor: Editor | null, preserveMarks?: string
  * Resets formatting for a node or selection
  */
 export function resetFormatting(editor: Editor | null, preserveMarks?: string[]): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   try {
     const { view, state } = editor
@@ -142,7 +154,9 @@ export function resetFormatting(editor: Editor | null, preserveMarks?: string[])
 export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean; preserveMarks?: string[] }): boolean {
   const { editor, hideWhenUnavailable, preserveMarks } = props
 
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   if (hideWhenUnavailable && !editor.isActive('code')) {
     return canResetFormatting(editor, preserveMarks)
@@ -195,7 +209,9 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
   const canReset = canResetFormatting(editor, preserveMarks)
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) {
+      return
+    }
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, preserveMarks }))
@@ -211,7 +227,9 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
   }, [editor, hideWhenUnavailable, preserveMarks])
 
   const handleResetFormatting = useCallback(() => {
-    if (!editor) return false
+    if (!editor) {
+      return false
+    }
 
     const success = resetFormatting(editor, preserveMarks)
     if (success) {

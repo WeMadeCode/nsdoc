@@ -77,7 +77,9 @@ function canDuplicateRowColumn({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const cellData = getRowOrColumnCells(editor, index, orientation, tablePos)
 
@@ -106,14 +108,18 @@ function duplicateRow({ editor, index, tablePos }: { editor: Editor; index: numb
     if (editor.state.selection instanceof CellSelection) {
       addSuccess = editor.chain().focus().addRowAfter().run()
     } else {
-      if (!tablePos) return false
+      if (!tablePos) {
+        return false
+      }
       const sourceCoords = getIndexCoordinates({
         editor,
         index,
         orientation: 'row',
         tablePos,
       })
-      if (!sourceCoords) return false
+      if (!sourceCoords) {
+        return false
+      }
 
       const state = selectCellsByCoords(editor, tablePos, sourceCoords, {
         mode: 'state',
@@ -121,7 +127,9 @@ function duplicateRow({ editor, index, tablePos }: { editor: Editor; index: numb
       addSuccess = addRowAfter(state, editor.view.dispatch)
     }
 
-    if (!addSuccess) return false
+    if (!addSuccess) {
+      return false
+    }
 
     const newRowCells = getRowOrColumnCells(editor, index + 1, 'row', tablePos)
 
@@ -168,20 +176,26 @@ function duplicateRow({ editor, index, tablePos }: { editor: Editor; index: numb
 function duplicateColumn({ editor, index, tablePos }: { editor: Editor; index: number; tablePos?: number }): boolean {
   try {
     const originalColumnCells = getRowOrColumnCells(editor, index, 'column', tablePos)
-    if (originalColumnCells.cells.length === 0) return false
+    if (originalColumnCells.cells.length === 0) {
+      return false
+    }
 
     let addSuccess = false
     if (editor.state.selection instanceof CellSelection) {
       addSuccess = editor.chain().focus().addColumnAfter().run()
     } else {
-      if (!tablePos) return false
+      if (!tablePos) {
+        return false
+      }
       const sourceCoords = getIndexCoordinates({
         editor,
         index,
         orientation: 'column',
         tablePos,
       })
-      if (!sourceCoords) return false
+      if (!sourceCoords) {
+        return false
+      }
 
       const state = selectCellsByCoords(editor, tablePos, sourceCoords, {
         mode: 'state',
@@ -189,7 +203,9 @@ function duplicateColumn({ editor, index, tablePos }: { editor: Editor; index: n
       addSuccess = addColumnAfter(state, editor.view.dispatch)
     }
 
-    if (!addSuccess) return false
+    if (!addSuccess) {
+      return false
+    }
 
     const newColumnCells = getRowOrColumnCells(editor, index + 1, 'column', tablePos)
 
@@ -249,10 +265,14 @@ function tableDuplicateRowColumn({
   }
 
   const table = getTable(editor, tablePos)
-  if (!table) return false
+  if (!table) {
+    return false
+  }
 
   const selectionType = getTableSelectionType(editor, index, orientation, tablePos)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   try {
     if (selectionType.orientation === 'row') {
@@ -291,8 +311,12 @@ function shouldShowButton({
   orientation?: Orientation
   hideWhenUnavailable: boolean
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
   return hideWhenUnavailable ? canDuplicateRowColumn({ editor, index, orientation }) : true
 }
 
@@ -328,7 +352,9 @@ export function useTableDuplicateRowColumn(config: UseTableDuplicateRowColumnCon
       orientation,
       tablePos,
     })
-    if (success) onDuplicated?.()
+    if (success) {
+      onDuplicated?.()
+    }
     return success
   }, [editor, index, orientation, tablePos, onDuplicated])
 

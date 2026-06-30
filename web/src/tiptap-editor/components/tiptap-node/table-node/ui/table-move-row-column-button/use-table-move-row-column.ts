@@ -136,10 +136,14 @@ function canMoveRowColumn({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const selectionType = getTableSelectionType(editor, index, orientation)
-    if (!selectionType) return false
+    if (!selectionType) {
+      return false
+    }
 
     const { orientation: finalOrientation, index: finalIndex } = selectionType
 
@@ -187,14 +191,20 @@ function canMoveRowColumn({
       orientation: finalOrientation,
       tablePos,
     })
-    if (!sourceCoords || !targetCoords) return false
+    if (!sourceCoords || !targetCoords) {
+      return false
+    }
 
     const sourceSelection = selectCellsByCoords(editor, table.pos, sourceCoords, { mode: 'state' })
-    if (!sourceSelection) return false
+    if (!sourceSelection) {
+      return false
+    }
     const sourceRect = selectedRect(sourceSelection)
 
     const targetSelection = selectCellsByCoords(editor, table.pos, targetCoords, { mode: 'state' })
-    if (!targetSelection) return false
+    if (!targetSelection) {
+      return false
+    }
     const targetRect = selectedRect(targetSelection)
 
     if (cellsOverlapRectangle(table.map, sourceRect) && cellsOverlapRectangle(table.map, targetRect)) {
@@ -235,10 +245,14 @@ function tableMoveRowColumn({
 
   try {
     const table = getTable(editor, tablePos)
-    if (!table) return false
+    if (!table) {
+      return false
+    }
 
     const selectionType = getTableSelectionType(editor, index, orientation)
-    if (!selectionType) return false
+    if (!selectionType) {
+      return false
+    }
 
     const { orientation: finalOrientation, index: from } = selectionType
 
@@ -270,11 +284,15 @@ function tableMoveRowColumn({
         orientation: finalOrientation,
         tablePos,
       })
-      if (!sourceCoords) return false
+      if (!sourceCoords) {
+        return false
+      }
 
       const selectionState = selectCellsByCoords(editor, table.pos, sourceCoords, { mode: 'state' })
 
-      if (!selectionState) return false
+      if (!selectionState) {
+        return false
+      }
 
       return moveOperation({ from, to, select: true, pos: table.start })(selectionState, dispatch)
     }
@@ -303,11 +321,17 @@ function shouldShowButton({
   hideWhenUnavailable: boolean
   tablePos?: number
 }): boolean {
-  if (!editor || !editor.isEditable) return false
-  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
+  if (!isExtensionAvailable(editor, REQUIRED_EXTENSIONS)) {
+    return false
+  }
 
   const selectionType = getTableSelectionType(editor, index, orientation)
-  if (!selectionType) return false
+  if (!selectionType) {
+    return false
+  }
 
   if (!isValidDirectionForOrientation(selectionType.orientation, direction)) {
     return false
@@ -391,7 +415,9 @@ export function useTableMoveRowColumn(config: UseTableMoveRowColumnConfig) {
       direction,
       tablePos,
     })
-    if (success) onMoved?.()
+    if (success) {
+      onMoved?.()
+    }
     return success
   }, [editor, index, orientation, direction, tablePos, onMoved])
 

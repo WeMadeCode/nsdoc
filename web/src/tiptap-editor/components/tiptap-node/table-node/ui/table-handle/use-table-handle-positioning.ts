@@ -113,7 +113,9 @@ export function useTableHandlePosition(
       offset(offsetValue),
       size({
         apply({ rects, elements }) {
-          if (!elements.floating) return
+          if (!elements.floating) {
+            return
+          }
 
           const refWidth =
             (orientation === 'col' ? (referencePosCell?.width ?? referencePosTable?.width) : referencePosTable?.width) ??
@@ -144,10 +146,14 @@ export function useTableHandlePosition(
   // Provide a virtual reference rect to Floating UI
   useEffect(() => {
     // Nothing to reference yet
-    if (!referencePosCell || !referencePosTable) return
+    if (!referencePosCell || !referencePosTable) {
+      return
+    }
 
     // Ignore cell handle while dragging (matches original behavior)
-    if (draggingState && orientation === 'cell') return
+    if (draggingState && orientation === 'cell') {
+      return
+    }
 
     refs.setReference({
       getBoundingClientRect: () => rectFactory(orientation, referencePosCell, referencePosTable, draggingState),

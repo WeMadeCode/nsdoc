@@ -10,7 +10,9 @@ export function useUiEditorState(editor: Editor | null): UiState {
     useEditorState({
       editor,
       selector: ({ editor }) => {
-        if (!editor) return defaultUiState
+        if (!editor) {
+          return defaultUiState
+        }
 
         const state = editor.storage.uiState
         if (!state) {

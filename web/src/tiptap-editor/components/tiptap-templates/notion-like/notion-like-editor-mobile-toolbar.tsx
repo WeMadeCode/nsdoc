@@ -114,7 +114,9 @@ function useToolbarState(isMobile: boolean): ToolbarState {
 }
 
 function hasTextSelection(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor || !editor.isEditable) {
+    return false
+  }
 
   const { selection } = editor.state
   return !selection.empty
@@ -215,7 +217,9 @@ function ColorActionGroup() {
   const { recentColors, isInitialized, addRecentColor } = useRecentColors()
 
   const renderRecentColors = () => {
-    if (!isInitialized || recentColors.length === 0) return null
+    if (!isInitialized || recentColors.length === 0) {
+      return null
+    }
 
     return (
       <>
@@ -442,11 +446,15 @@ interface ToolbarViewsGroupProps {
 
 function ToolbarViewsGroup({ toolbarViews, isMobile, onViewChange, editor }: ToolbarViewsGroupProps) {
   const visibleViews = Object.values(toolbarViews).filter(view => {
-    if (!view.shouldShow) return true
+    if (!view.shouldShow) {
+      return true
+    }
     return view.shouldShow(editor)
   })
 
-  if (visibleViews.length === 0) return null
+  if (visibleViews.length === 0) {
+    return null
+  }
 
   return (
     <>

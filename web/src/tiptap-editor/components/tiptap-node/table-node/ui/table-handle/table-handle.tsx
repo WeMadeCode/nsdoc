@@ -69,7 +69,9 @@ export function TableHandle({ editor: providedEditor, rowButton: CustomRowButton
   const [menuOpen, setMenuOpen] = useState<null | 'row' | 'column'>(null)
 
   const draggingState = useMemo(() => {
-    if (!state?.draggingState) return undefined
+    if (!state?.draggingState) {
+      return undefined
+    }
 
     return {
       draggedCellOrientation: state.draggingState.draggedCellOrientation,
@@ -97,7 +99,9 @@ export function TableHandle({ editor: providedEditor, rowButton: CustomRowButton
     setMenuOpen(open ? type : null)
   }, [])
 
-  if (!editor || !state) return null
+  if (!editor || !state) {
+    return null
+  }
 
   const hasValidRowIndex = typeof state.rowIndex === 'number'
   const hasValidColIndex = typeof state.colIndex === 'number'
