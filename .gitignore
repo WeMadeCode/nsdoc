@@ -56,6 +56,7 @@ lerna-debug.log*
 
 # Node / Vite web editor
 node_modules/
+.pnpm-store/
 web/node_modules/
 dist/
 web/dist/

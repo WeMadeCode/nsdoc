@@ -12,7 +12,7 @@ import SwiftUI
 struct MacMainContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
-    @Query(sort: \Document.accessedAt, order: .reverse) private var documents: [Document]
+    @Query(sort: \Document.updatedAt, order: .reverse) private var documents: [Document]
     @State private var selectedDocumentID: UUID?
     @State private var searchText = ""
 
@@ -101,6 +101,13 @@ struct MacMainContentView: View {
                     ForEach(visibleDocuments) { document in
                         MacDocumentRow(document: document)
                             .tag(document.id)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    deleteDocument(document)
+                                } label: {
+                                    Label("删除", systemImage: "trash")
+                                }
+                            }
                     }
                 } header: {
                     Text(DefaultFolderService.defaultFolderName)
@@ -182,7 +189,14 @@ struct MacMainContentView: View {
             return
         }
 
+        deleteDocument(document)
+    }
+
+    @MainActor
+    private func deleteDocument(_ document: Document) {
         let documentID = document.id
+        let shouldSelectReplacement = selectedDocumentID == documentID
+        let replacementDocumentID = folderDocuments.first { $0.id != documentID }?.id
 
         do {
             let contentDescriptor = FetchDescriptor<DocumentContent>(
@@ -204,7 +218,9 @@ struct MacMainContentView: View {
             }
             modelContext.delete(document)
             try modelContext.save()
-            selectedDocumentID = folderDocuments.first { $0.id != documentID }?.id
+            if shouldSelectReplacement {
+                selectedDocumentID = replacementDocumentID
+            }
         } catch {}
     }
 }

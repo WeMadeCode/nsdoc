@@ -14,9 +14,177 @@ import ObjectiveC.runtime
 import AppKit
 #endif
 
+protocol SLWebViewCoordinatorParent {
+    var url: URL { get }
+    var platformLogName: String { get }
+    var isLoadFinsh: (() -> Void)? { get }
+    var bridgeReady: (() -> Void)? { get }
+    var contentChanged: ((EditorContentSnapshot) -> Void)? { get }
+    var toolsUpdate: (([ToolType: Bool], EditorSelectionContext) -> Void)? { get }
+    var pickImageAttachment: (([String: Any]?, @escaping NSBridgeHandlerCompletion) -> Void)? { get }
+    var resolveImageAttachment: (([String: Any]?) -> Result<Any?, NSBridgeRuntimeError>)? { get }
+
+    func webViewDidFinishLoading(_ webView: WKWebView, bridge: NSBridgeNative)
+}
+
+private enum SLWebViewScripts {
+    static let lightMode = WKUserScript(
+        source: """
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+
+        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]') || document.createElement('meta');
+        colorSchemeMeta.name = 'color-scheme';
+        colorSchemeMeta.content = 'light';
+
+        if (!colorSchemeMeta.parentNode) {
+            document.head.appendChild(colorSchemeMeta);
+        }
+        """,
+        injectionTime: .atDocumentStart,
+        forMainFrameOnly: true
+    )
+
+    static func runtimeConfig(hostPlatform: String, editorMode: String) -> WKUserScript {
+        WKUserScript(
+            source: """
+            window.__NSRuntimeConfig = Object.freeze({
+                hostPlatform: '\(hostPlatform)',
+                editorMode: '\(editorMode)'
+            });
+            """,
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        )
+    }
+}
+
+private func makeEditorWebViewConfiguration(
+    bridge: NSBridgeNative,
+    hostPlatform: String,
+    editorMode: String
+) -> WKWebViewConfiguration {
+    let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: bridge)
+    configuration.userContentController.addUserScript(SLWebViewScripts.lightMode)
+    configuration.userContentController.addUserScript(
+        SLWebViewScripts.runtimeConfig(hostPlatform: hostPlatform, editorMode: editorMode)
+    )
+    return configuration
+}
+
+final class SLWebViewCoordinator: NSObject, WKNavigationDelegate {
+    var parent: any SLWebViewCoordinatorParent
+    let bridge = NSBridgeNative()
+    private var lastExecutedCommandID: UUID?
+
+    init(parent: any SLWebViewCoordinatorParent) {
+        self.parent = parent
+        super.init()
+
+        EditorBridgeHandlers.register(
+            on: bridge,
+            onReady: { [weak self] in
+                self?.parent.bridgeReady?()
+            },
+            onContentChanged: { [weak self] snapshot in
+                self?.parent.contentChanged?(snapshot)
+            },
+            onSelectionChanged: { [weak self] activeTools, selectionContext in
+                self?.parent.toolsUpdate?(activeTools, selectionContext)
+            },
+            onError: { _ in }
+        )
+
+        MediaBridgeHandlers.register(
+            on: bridge,
+            pickImage: { [weak self] params, completion in
+                guard let self, let pickImageAttachment = self.parent.pickImageAttachment else {
+                    completion(.failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.pickImage is not available")))
+                    return
+                }
+
+                pickImageAttachment(params, completion)
+            },
+            resolveImage: { [weak self] params in
+                guard let self, let resolveImageAttachment = self.parent.resolveImageAttachment else {
+                    return .failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.resolveImage is not available"))
+                }
+
+                return resolveImageAttachment(params)
+            }
+        )
+    }
+
+    func execute(_ command: JavaScriptCommand) -> Bool {
+        guard lastExecutedCommandID != command.id else {
+            return false
+        }
+
+        lastExecutedCommandID = command.id
+        bridge.callWeb(
+            namespace: command.namespace,
+            method: command.methodName,
+            params: command.params,
+            timeout: command.timeout
+        ) { result in
+            command.completion?(result)
+        }
+        return true
+    }
+
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        bridge.resetForNavigation()
+        log("开始加载", webView: webView)
+    }
+
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        log("已收到页面内容", webView: webView)
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        log("加载成功", webView: webView)
+        parent.webViewDidFinishLoading(webView, bridge: bridge)
+        parent.isLoadFinsh?()
+    }
+
+    func webView(
+        _ webView: WKWebView,
+        didFailProvisionalNavigation navigation: WKNavigation!,
+        withError error: Error
+    ) {
+        logFailure("建立连接失败", error: error, webView: webView)
+    }
+
+    func webView(
+        _ webView: WKWebView,
+        didFail navigation: WKNavigation!,
+        withError error: Error
+    ) {
+        logFailure("页面加载失败", error: error, webView: webView)
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        log("WebContent 进程已终止", webView: webView)
+    }
+
+    private func log(_ message: String, webView: WKWebView) {
+        let url = webView.url?.absoluteString ?? parent.url.absoluteString
+        print("[EditorWebView][\(parent.platformLogName)] \(message) | URL: \(url)")
+    }
+
+    private func logFailure(_ message: String, error: Error, webView: WKWebView) {
+        let nsError = error as NSError
+        let url = webView.url?.absoluteString ?? parent.url.absoluteString
+        print(
+            "[EditorWebView][\(parent.platformLogName)] \(message) | URL: \(url) | " +
+            "Error: \(nsError.domain)(\(nsError.code)) \(nsError.localizedDescription)"
+        )
+    }
+}
+
 #if os(iOS)
 
-struct SLWebView: UIViewRepresentable {
+struct SLWebView: UIViewRepresentable, SLWebViewCoordinatorParent {
     
     let url: URL
     @Binding var javaScriptCommand: JavaScriptCommand?
@@ -53,9 +221,11 @@ struct SLWebView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> WKWebView {
-        let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
-        configuration.userContentController.addUserScript(Self.lightModeUserScript)
-        configuration.userContentController.addUserScript(Self.runtimeConfigUserScript)
+        let configuration = makeEditorWebViewConfiguration(
+            bridge: context.coordinator.bridge,
+            hostPlatform: "iphone",
+            editorMode: "simple"
+        )
 
         let wkWebView = WKWebView(frame: .zero, configuration: configuration)
         context.coordinator.bridge.attach(webView: wkWebView)
@@ -114,18 +284,8 @@ struct SLWebView: UIViewRepresentable {
         )
 
         if let javaScriptCommand {
-            guard context.coordinator.lastExecutedCommandID != javaScriptCommand.id else {
+            guard context.coordinator.execute(javaScriptCommand) else {
                 return
-            }
-            context.coordinator.lastExecutedCommandID = javaScriptCommand.id
-
-            context.coordinator.bridge.callWeb(
-                namespace: javaScriptCommand.namespace,
-                method: javaScriptCommand.methodName,
-                params: javaScriptCommand.params,
-                timeout: javaScriptCommand.timeout
-            ) { result in
-                javaScriptCommand.completion?(result)
             }
 
             DispatchQueue.main.async {
@@ -136,100 +296,26 @@ struct SLWebView: UIViewRepresentable {
         }
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    func makeCoordinator() -> SLWebViewCoordinator {
+        SLWebViewCoordinator(parent: self)
     }
 
-    private static let lightModeUserScript = WKUserScript(
-        source: """
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.colorScheme = 'light';
+    var platformLogName: String {
+        "iOS"
+    }
 
-        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]') || document.createElement('meta');
-        colorSchemeMeta.name = 'color-scheme';
-        colorSchemeMeta.content = 'light';
-
-        if (!colorSchemeMeta.parentNode) {
-            document.head.appendChild(colorSchemeMeta);
-        }
-        """,
-        injectionTime: .atDocumentStart,
-        forMainFrameOnly: true
-    )
-
-    private static let runtimeConfigUserScript = WKUserScript(
-        source: """
-        window.__NSRuntimeConfig = Object.freeze({
-            hostPlatform: 'iphone',
-            editorMode: 'simple'
-        });
-        """,
-        injectionTime: .atDocumentStart,
-        forMainFrameOnly: true
-    )
-    
-    class Coordinator: NSObject, WKNavigationDelegate {
-        
-        var parent: SLWebView
-        let bridge = NSBridgeNative()
-        var lastExecutedCommandID: UUID?
-        
-        init(_ parent: SLWebView) {
-            self.parent = parent
-            super.init()
-            EditorBridgeHandlers.register(
-                on: bridge,
-                onReady: { [weak self] in
-                    self?.parent.bridgeReady?()
-                },
-                onContentChanged: { [weak self] snapshot in
-                    self?.parent.contentChanged?(snapshot)
-                },
-                onSelectionChanged: { [weak self] activeTools, selectionContext in
-                    self?.parent.toolsUpdate?(activeTools, selectionContext)
-                },
-                onError: { _ in
-                }
-            )
-            MediaBridgeHandlers.register(
-                on: bridge,
-                pickImage: { [weak self] params, completion in
-                    guard let self, let pickImageAttachment = self.parent.pickImageAttachment else {
-                        completion(.failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.pickImage is not available")))
-                        return
-                    }
-
-                    pickImageAttachment(params, completion)
-                },
-                resolveImage: { [weak self] params in
-                    guard let self, let resolveImageAttachment = self.parent.resolveImageAttachment else {
-                        return .failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.resolveImage is not available"))
-                    }
-
-                    return resolveImageAttachment(params)
-                }
-            )
-        }
-
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            bridge.resetForNavigation()
-        }
-        
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.hideKeyboardAccessoryBar()
-            webView.setCustomKeyboard(
-                isEnabled: parent.viewModel.isCustomKeyboardVisible,
-                bridge: bridge,
-                height: parent.customKeyboardHeight,
-                activeTools: parent.viewModel.activeTools,
-                onToolExecuted: { [weak self] in
-                    self?.parent.viewModel.closeCustomKeyboard()
-                },
-                animated: false
-            )
-            parent.isLoadFinsh?()
-        }
-    
+    func webViewDidFinishLoading(_ webView: WKWebView, bridge: NSBridgeNative) {
+        webView.hideKeyboardAccessoryBar()
+        webView.setCustomKeyboard(
+            isEnabled: viewModel.isCustomKeyboardVisible,
+            bridge: bridge,
+            height: customKeyboardHeight,
+            activeTools: viewModel.activeTools,
+            onToolExecuted: {
+                viewModel.closeCustomKeyboard()
+            },
+            animated: false
+        )
     }
     
 }
@@ -768,7 +854,7 @@ private final class EditorInsertKeyboardView: UIView {
 #Preview {
 }
 #elseif os(macOS)
-struct SLWebView: NSViewRepresentable {
+struct SLWebView: NSViewRepresentable, SLWebViewCoordinatorParent {
     let url: URL
     @Binding var javaScriptCommand: JavaScriptCommand?
     @ObservedObject var viewModel: EditorViewModel
@@ -805,9 +891,11 @@ struct SLWebView: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> WKWebView {
-        let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: context.coordinator.bridge)
-        configuration.userContentController.addUserScript(Self.lightModeUserScript)
-        configuration.userContentController.addUserScript(Self.runtimeConfigUserScript)
+        let configuration = makeEditorWebViewConfiguration(
+            bridge: context.coordinator.bridge,
+            hostPlatform: "mac",
+            editorMode: "notion"
+        )
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         context.coordinator.bridge.attach(webView: webView)
@@ -824,18 +912,8 @@ struct SLWebView: NSViewRepresentable {
         context.coordinator.parent = self
 
         if let javaScriptCommand {
-            guard context.coordinator.lastExecutedCommandID != javaScriptCommand.id else {
+            guard context.coordinator.execute(javaScriptCommand) else {
                 return
-            }
-            context.coordinator.lastExecutedCommandID = javaScriptCommand.id
-
-            context.coordinator.bridge.callWeb(
-                namespace: javaScriptCommand.namespace,
-                method: javaScriptCommand.methodName,
-                params: javaScriptCommand.params,
-                timeout: javaScriptCommand.timeout
-            ) { result in
-                javaScriptCommand.completion?(result)
             }
 
             DispatchQueue.main.async {
@@ -846,88 +924,15 @@ struct SLWebView: NSViewRepresentable {
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    func makeCoordinator() -> SLWebViewCoordinator {
+        SLWebViewCoordinator(parent: self)
     }
 
-    private static let lightModeUserScript = WKUserScript(
-        source: """
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.colorScheme = 'light';
+    var platformLogName: String {
+        "macOS"
+    }
 
-        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]') || document.createElement('meta');
-        colorSchemeMeta.name = 'color-scheme';
-        colorSchemeMeta.content = 'light';
-
-        if (!colorSchemeMeta.parentNode) {
-            document.head.appendChild(colorSchemeMeta);
-        }
-        """,
-        injectionTime: .atDocumentStart,
-        forMainFrameOnly: true
-    )
-
-    private static let runtimeConfigUserScript = WKUserScript(
-        source: """
-        window.__NSRuntimeConfig = Object.freeze({
-            hostPlatform: 'mac',
-            editorMode: 'notion'
-        });
-        """,
-        injectionTime: .atDocumentStart,
-        forMainFrameOnly: true
-    )
-
-    final class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: SLWebView
-        let bridge = NSBridgeNative()
-        var lastExecutedCommandID: UUID?
-
-        init(_ parent: SLWebView) {
-            self.parent = parent
-            super.init()
-
-            EditorBridgeHandlers.register(
-                on: bridge,
-                onReady: { [weak self] in
-                    self?.parent.bridgeReady?()
-                },
-                onContentChanged: { [weak self] snapshot in
-                    self?.parent.contentChanged?(snapshot)
-                },
-                onSelectionChanged: { [weak self] activeTools, selectionContext in
-                    self?.parent.toolsUpdate?(activeTools, selectionContext)
-                },
-                onError: { _ in }
-            )
-
-            MediaBridgeHandlers.register(
-                on: bridge,
-                pickImage: { [weak self] params, completion in
-                    guard let self, let pickImageAttachment = self.parent.pickImageAttachment else {
-                        completion(.failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.pickImage is not available")))
-                        return
-                    }
-
-                    pickImageAttachment(params, completion)
-                },
-                resolveImage: { [weak self] params in
-                    guard let self, let resolveImageAttachment = self.parent.resolveImageAttachment else {
-                        return .failure(NSBridgeRuntimeError(code: .methodNotFound, message: "media.resolveImage is not available"))
-                    }
-
-                    return resolveImageAttachment(params)
-                }
-            )
-        }
-
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            bridge.resetForNavigation()
-        }
-
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            parent.isLoadFinsh?()
-        }
+    func webViewDidFinishLoading(_ webView: WKWebView, bridge: NSBridgeNative) {
     }
 }
 #endif

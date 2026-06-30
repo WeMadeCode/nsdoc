@@ -1,10 +1,10 @@
 import { NodeViewContent, type NodeViewProps, NodeViewWrapper } from '@tiptap/react'
-import { memo } from 'react'
 
 import styles from './index.module.scss'
 
 const TitleWrapper = ({ node }: NodeViewProps) => {
   const isEmpty = node.textContent.length === 0
+  console.log('isEmpty = ', isEmpty)
 
   return (
     <NodeViewWrapper data-type="title" className={styles.titleWrapper}>
@@ -14,4 +14,4 @@ const TitleWrapper = ({ node }: NodeViewProps) => {
   )
 }
 
-export default memo(TitleWrapper)
+export default TitleWrapper

@@ -21,7 +21,7 @@ struct ListView: View {
     @State private var navigationPath: [HomeRoute] = []
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.sortOrder, order: .forward) private var folders: [Folder]
-    @Query(sort: \Document.accessedAt, order: .reverse) private var documents: [Document]
+    @Query(sort: \Document.updatedAt, order: .reverse) private var documents: [Document]
     private let rowHeight: CGFloat = 76
     private let rowDeleteAnimation = Animation.easeInOut(duration: 0.24)
 
