@@ -155,7 +155,7 @@ final class NSBridgeNative: NSObject, WKScriptMessageHandler {
         }
 
         DispatchQueue.main.async { [weak self] in
-            self?.webView?.evaluateJavaScript("window.__NSBridge && window.__NSBridge.receiveFromNative(\(json));") { _, error in
+            self?.webView?.evaluateJavaScript("window.NSBridge && window.NSBridge.receiveFromNative(\(json));") { _, error in
                 if let error {
                     completion?(NSBridgeRuntimeError(code: .webUnavailable, message: error.localizedDescription, recoverable: true))
                 } else {

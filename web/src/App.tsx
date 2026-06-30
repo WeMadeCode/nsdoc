@@ -23,28 +23,40 @@ const isRuntimeConfig = (value: unknown): value is EditorRuntimeConfig => {
   )
 }
 
-const getInitialRuntimeConfig = () => {
-  if (isRuntimeConfig(window.__NSRuntimeConfig)) {
-    return window.__NSRuntimeConfig
-  }
-
-  return defaultRuntimeConfig
-}
-
 const App = () => {
-  const [runtimeConfig, setRuntimeConfig] = useState<EditorRuntimeConfig>(getInitialRuntimeConfig)
+  const [runtimeConfig, setRuntimeConfig] = useState<EditorRuntimeConfig | null>(null)
 
   useEffect(() => {
-    return nsBridge.register<EditorRuntimeConfig, EditorRuntimeConfig>('editor', 'configureRuntime', params => {
+    let active = true
+    const unregister = nsBridge.register<EditorRuntimeConfig, EditorRuntimeConfig>('editor', 'configureRuntime', params => {
       if (!isRuntimeConfig(params)) {
         throw new Error('editor.configureRuntime requires a valid runtime config')
       }
-
-      window.__NSRuntimeConfig = params
       setRuntimeConfig(params)
       return params
     })
+
+    void nsBridge
+      .call<undefined, EditorRuntimeConfig>('editor', 'getRuntimeConfig')
+      .then(config => {
+        if (!isRuntimeConfig(config)) {
+          throw new Error('editor.getRuntimeConfig returned an invalid runtime config')
+        }
+        if (active) setRuntimeConfig(config)
+      })
+      .catch(() => {
+        if (active) setRuntimeConfig(defaultRuntimeConfig)
+      })
+
+    return () => {
+      active = false
+      unregister()
+    }
   }, [])
+
+  if (!runtimeConfig) {
+    return null
+  }
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>

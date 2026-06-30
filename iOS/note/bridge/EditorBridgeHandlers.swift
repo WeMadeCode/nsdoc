@@ -49,11 +49,16 @@ struct EditorSelectionContext {
 struct EditorBridgeHandlers {
     static func register(
         on bridge: NSBridgeNative,
+        runtimeConfig: [String: String],
         onReady: @escaping () -> Void,
         onContentChanged: @escaping (EditorContentSnapshot) -> Void,
         onSelectionChanged: @escaping ([ToolType: Bool], EditorSelectionContext) -> Void,
         onError: @escaping (String) -> Void
     ) {
+        bridge.registry.register(namespace: "editor", method: "getRuntimeConfig") { _, completion in
+            completion(.success(runtimeConfig))
+        }
+
         bridge.registry.register(namespace: "editor", method: "ready") { _, completion in
             DispatchQueue.main.async {
                 onReady()

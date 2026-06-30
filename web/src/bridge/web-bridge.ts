@@ -1,5 +1,5 @@
 import { BridgeError, toBridgeError } from './errors'
-import type { BridgeCallOptions, BridgeHandler, BridgeMessage, NSBridgePublicApi } from './types'
+import type { BridgeCallOptions, BridgeHandler, BridgeMessage, NSBridgeAPI } from './types'
 import { BRIDGE_VERSION } from './types'
 
 type PendingRequest = {
@@ -14,7 +14,7 @@ const makeId = (prefix: 'req' | 'evt') => `${prefix}_${Date.now()}_${Math.random
 
 const handlerKey = (namespace: string, method: string) => `${namespace}.${method}`
 
-class NSBridgeWeb implements NSBridgePublicApi {
+class NSBridgeWeb implements NSBridgeAPI {
   private handlers = new Map<string, BridgeHandler>()
   private pending = new Map<string, PendingRequest>()
 
@@ -193,8 +193,3 @@ class NSBridgeWeb implements NSBridgePublicApi {
 export const nsBridge = new NSBridgeWeb()
 
 window.NSBridge = nsBridge
-window.__NSBridge = {
-  receiveFromNative(message) {
-    nsBridge.receiveFromNative(message)
-  },
-}

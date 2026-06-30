@@ -45,30 +45,13 @@ private enum SLWebViewScripts {
         forMainFrameOnly: true
     )
 
-    static func runtimeConfig(hostPlatform: String, editorMode: String) -> WKUserScript {
-        WKUserScript(
-            source: """
-            window.__NSRuntimeConfig = Object.freeze({
-                hostPlatform: '\(hostPlatform)',
-                editorMode: '\(editorMode)'
-            });
-            """,
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: true
-        )
-    }
 }
 
 private func makeEditorWebViewConfiguration(
-    bridge: NSBridgeNative,
-    hostPlatform: String,
-    editorMode: String
+    bridge: NSBridgeNative
 ) -> WKWebViewConfiguration {
     let configuration = NSBridgeWebViewInstaller.makeConfiguration(bridge: bridge)
     configuration.userContentController.addUserScript(SLWebViewScripts.lightMode)
-    configuration.userContentController.addUserScript(
-        SLWebViewScripts.runtimeConfig(hostPlatform: hostPlatform, editorMode: editorMode)
-    )
     return configuration
 }
 
@@ -83,6 +66,10 @@ final class SLWebViewCoordinator: NSObject, WKNavigationDelegate {
 
         EditorBridgeHandlers.register(
             on: bridge,
+            runtimeConfig: [
+                "hostPlatform": Self.hostPlatform,
+                "editorMode": Self.editorMode
+            ],
             onReady: { [weak self] in
                 self?.parent.bridgeReady?()
             },
@@ -113,6 +100,22 @@ final class SLWebViewCoordinator: NSObject, WKNavigationDelegate {
                 return resolveImageAttachment(params)
             }
         )
+    }
+
+    private static var hostPlatform: String {
+        #if os(iOS)
+        "iphone"
+        #elseif os(macOS)
+        "mac"
+        #endif
+    }
+
+    private static var editorMode: String {
+        #if os(iOS)
+        "simple"
+        #elseif os(macOS)
+        "notion"
+        #endif
     }
 
     func execute(_ command: JavaScriptCommand) -> Bool {
@@ -222,9 +225,7 @@ struct SLWebView: UIViewRepresentable, SLWebViewCoordinatorParent {
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = makeEditorWebViewConfiguration(
-            bridge: context.coordinator.bridge,
-            hostPlatform: "iphone",
-            editorMode: "simple"
+            bridge: context.coordinator.bridge
         )
 
         let wkWebView = WKWebView(frame: .zero, configuration: configuration)
@@ -892,9 +893,7 @@ struct SLWebView: NSViewRepresentable, SLWebViewCoordinatorParent {
 
     func makeNSView(context: Context) -> WKWebView {
         let configuration = makeEditorWebViewConfiguration(
-            bridge: context.coordinator.bridge,
-            hostPlatform: "mac",
-            editorMode: "notion"
+            bridge: context.coordinator.bridge
         )
 
         let webView = WKWebView(frame: .zero, configuration: configuration)

@@ -131,11 +131,7 @@ export type MediaResolveImageResult = {
 
 declare global {
   interface Window {
-    NSBridge: NSBridgePublicApi
-    __NSBridge: {
-      receiveFromNative(message: BridgeMessage): void
-    }
-    __NSRuntimeConfig?: EditorRuntimeConfig
+    NSBridge: NSBridgeAPI
     webkit?: {
       messageHandlers?: {
         nsBridge?: {
@@ -149,7 +145,8 @@ declare global {
   }
 }
 
-export type NSBridgePublicApi = {
+export type NSBridgeAPI = {
+  receiveFromNative(message: BridgeMessage): void
   call<TParams = unknown, TResult = unknown>(
     namespace: string,
     method: string,
