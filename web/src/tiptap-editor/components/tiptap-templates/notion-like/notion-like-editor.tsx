@@ -12,63 +12,18 @@ import '@/tiptap-editor/components/tiptap-node/paragraph-node/paragraph-node.scs
 // --- Styles ---
 import '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor.scss'
 
-import Bold from '@tiptap/extension-bold'
-import BulletList from '@tiptap/extension-bullet-list'
-import Code from '@tiptap/extension-code'
-import { Collaboration, isChangeOrigin } from '@tiptap/extension-collaboration'
-import { CollaborationCaret } from '@tiptap/extension-collaboration-caret'
-import Dropcursor from '@tiptap/extension-dropcursor'
-import { Emoji, gitHubEmojis } from '@tiptap/extension-emoji'
-import Gapcursor from '@tiptap/extension-gapcursor'
-import HardBreak from '@tiptap/extension-hard-break'
-import Heading from '@tiptap/extension-heading'
-import { Highlight } from '@tiptap/extension-highlight'
-import History from '@tiptap/extension-history'
-import Italic from '@tiptap/extension-italic'
-import Link from '@tiptap/extension-link'
-import { TaskItem, TaskList } from '@tiptap/extension-list'
-import ListItem from '@tiptap/extension-list-item'
-import { Mathematics } from '@tiptap/extension-mathematics'
-import { Mention } from '@tiptap/extension-mention'
-import OrderedList from '@tiptap/extension-ordered-list'
-import Paragraph from '@tiptap/extension-paragraph'
-import Strike from '@tiptap/extension-strike'
-import { Subscript } from '@tiptap/extension-subscript'
-import { Superscript } from '@tiptap/extension-superscript'
-import { getHierarchicalIndexes, TableOfContents } from '@tiptap/extension-table-of-contents'
-import Text from '@tiptap/extension-text'
-import { TextAlign } from '@tiptap/extension-text-align'
-import { Color, TextStyle } from '@tiptap/extension-text-style'
-import { Typography } from '@tiptap/extension-typography'
-import Underline from '@tiptap/extension-underline'
-import { UniqueID } from '@tiptap/extension-unique-id'
-import { Placeholder, Selection } from '@tiptap/extensions'
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react'
 import { useContext, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import type { Doc as YDoc } from 'yjs'
 
 import { setupBridge } from '@/bridge'
-import { Indent } from '@/tiptap-editor/components/tiptap-extension/indent-extension'
-import { ListNormalizationExtension } from '@/tiptap-editor/components/tiptap-extension/list-normalization-extension'
-import { NodeAlignment } from '@/tiptap-editor/components/tiptap-extension/node-alignment-extension'
-import { NodeBackground } from '@/tiptap-editor/components/tiptap-extension/node-background-extension'
-import { UiState } from '@/tiptap-editor/components/tiptap-extension/ui-state-extension'
-// --- Custom Extensions ---
-import { HorizontalRule } from '@/tiptap-editor/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension'
-import { Image } from '@/tiptap-editor/components/tiptap-node/image-node/image-node-extension'
-// --- Tiptap Node ---
-import { ImageUploadNode } from '@/tiptap-editor/components/tiptap-node/image-upload-node/image-upload-node-extension'
-import { TableHandleExtension } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-handle'
-// --- Table Node ---
-import { TableKit } from '@/tiptap-editor/components/tiptap-node/table-node/extensions/table-node-extension'
 import { TableCellHandleMenu } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-cell-handle-menu'
 import { TableExtendRowColumnButtons } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button'
 import { TableHandle } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/table-handle'
 import { TableSelectionOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay'
 import { TocSidebar } from '@/tiptap-editor/components/tiptap-node/toc-node'
 import { TocProvider, useToc } from '@/tiptap-editor/components/tiptap-node/toc-node/context/toc-context'
-import { TocNode } from '@/tiptap-editor/components/tiptap-node/toc-node/extensions/toc-node-extension'
 // --- Content ---
 import { NotionEditorHeader } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor-header'
 import { MobileToolbar } from '@/tiptap-editor/components/tiptap-templates/notion-like/notion-like-editor-mobile-toolbar'
@@ -85,14 +40,9 @@ import { AiProvider, useAi } from '@/tiptap-editor/contexts/ai-context'
 import { AppProvider } from '@/tiptap-editor/contexts/app-context'
 import { CollabProvider, useCollab } from '@/tiptap-editor/contexts/collab-context'
 import { UserProvider, useUser } from '@/tiptap-editor/contexts/user-context'
-import { Blockquote } from '@/tiptap-editor/extensions/extension-blockquote'
-import { CodeBlockLowlight } from '@/tiptap-editor/extensions/extension-code-block'
-import { Document } from '@/tiptap-editor/extensions/extension-document'
-import { Title } from '@/tiptap-editor/extensions/extension-title'
+import { createEditorExtensions } from '@/tiptap-editor/extensions'
 // --- Hooks ---
 import { useUiEditorState } from '@/tiptap-editor/hooks/use-ui-editor-state'
-// --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from '@/tiptap-editor/lib/tiptap-utils'
 
 export interface NotionEditorProps {
   room: string
@@ -184,104 +134,7 @@ export function EditorProvider(props: EditorProviderProps) {
         class: 'notion-like-editor',
       },
     },
-    extensions: [
-      Document,
-      Title,
-      Paragraph,
-      Text,
-      Bold,
-      Italic,
-      Strike,
-      Underline,
-      Code,
-      Heading,
-      BulletList,
-      OrderedList,
-      ListItem,
-      Blockquote,
-      CodeBlockLowlight,
-      HardBreak,
-      ...(hasCollab ? [] : [History]),
-      Dropcursor.configure({ width: 2 }),
-      Gapcursor,
-      Link.configure({ openOnClick: false }),
-      HorizontalRule,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      ...(hasCollab && provider
-        ? [
-            Collaboration.configure({ document: ydoc }),
-            CollaborationCaret.configure({
-              provider: provider as never,
-              user: { id: user.id, name: user.name, color: user.color },
-            }),
-          ]
-        : []),
-      Placeholder.configure({
-        placeholder,
-        emptyNodeClass: 'is-empty with-slash',
-      }),
-      Mention,
-      Emoji.configure({
-        emojis: gitHubEmojis.filter(emoji => !emoji.name.includes('regional')),
-        forceFallbackImages: true,
-      }),
-      TableKit.configure({
-        table: {
-          resizable: true,
-          cellMinWidth: 120,
-        },
-      }),
-      NodeBackground.configure({
-        types: [
-          'title',
-          'paragraph',
-          'heading',
-          'blockquote',
-          'taskList',
-          'bulletList',
-          'orderedList',
-          'tableCell',
-          'tableHeader',
-          'tocNode',
-        ],
-      }),
-      NodeAlignment,
-      TextStyle,
-      Mathematics,
-      Superscript,
-      Subscript,
-      Indent,
-      Color,
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Selection,
-      Image,
-      TableOfContents.configure({
-        getIndex: getHierarchicalIndexes,
-        onUpdate(content) {
-          setTocContent(content)
-        },
-      }),
-      TableHandleExtension,
-      ListNormalizationExtension,
-      ImageUploadNode.configure({
-        accept: 'image/*',
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: error => console.error('Upload failed:', error),
-      }),
-      UniqueID.configure({
-        types: ['title', 'table', 'paragraph', 'bulletList', 'orderedList', 'taskList', 'heading', 'blockquote', 'codeBlock', 'tocNode'],
-        filterTransaction: transaction => !isChangeOrigin(transaction),
-      }),
-      Typography,
-      UiState,
-      TocNode.configure({
-        topOffset: 48,
-      }),
-    ],
+    extensions: createEditorExtensions({ hasCollab, placeholder, provider, setTocContent, user, ydoc }),
   })
 
   useEffect(() => {

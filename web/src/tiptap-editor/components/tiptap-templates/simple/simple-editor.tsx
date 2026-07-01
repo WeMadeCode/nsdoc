@@ -23,7 +23,7 @@ import { TableCellHandleMenu } from '@/tiptap-editor/components/tiptap-node/tabl
 import { TableExtendRowColumnButtons } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-extend-row-column-button'
 import { TableHandle } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-handle/table-handle'
 import { TableSelectionOverlay } from '@/tiptap-editor/components/tiptap-node/table-node/ui/table-selection-overlay'
-import { extensions as baseExtensions } from '@/tiptap-editor/extensions'
+import { createEditorExtensions } from '@/tiptap-editor/extensions'
 
 // import travelGuideContentJson from './data/travel-guide.json?raw'
 
@@ -44,7 +44,7 @@ export function SimpleEditor() {
         class: 'simple-editor',
       },
     },
-    extensions: baseExtensions,
+    extensions: createEditorExtensions(),
   })
 
   useEffect(() => {
