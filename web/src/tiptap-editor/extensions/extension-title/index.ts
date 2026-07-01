@@ -1,7 +1,6 @@
 import { Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 
-import { createTitlePlugin } from './plugin'
 import TitleWrapper from './title-wrpper'
 
 export const Title = Node.create({
@@ -9,7 +8,6 @@ export const Title = Node.create({
   defining: true,
   isolating: true,
   priority: 1000,
-  group: 'block',
   content: 'text*',
 
   addOptions() {
@@ -30,7 +28,7 @@ export const Title = Node.create({
     return ReactNodeViewRenderer(TitleWrapper)
   },
 
-  addProseMirrorPlugins() {
-    return [createTitlePlugin(this.name)]
-  },
+  // addProseMirrorPlugins() {
+  //   return [createTitlePlugin(this.name)]
+  // },
 })
