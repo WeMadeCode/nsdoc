@@ -1,0 +1,113 @@
+{"kind":"deck","id":"pr/w63k66","name":"Deck"}
+{"kind":"layout","layoutId":"f0cd1e14-d13c-405b-83e1-44124267849c","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"fc8b7b0a-3358-4855-866e-bd7184f55663","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/rc5lgr","slide":1,"title":"一页","textShapes":5}
+{"kind":"shape","id":"sh/b2hwfyxo","slide":1,"name":"cover-page","bbox":[66,54,1148,612]}
+{"kind":"textbox","id":"sh/t83itgfm","slide":1,"name":"cover-title","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[320,360,640,92]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":1,"name":"cover-subtitle","text":"写下只属于你的想法","textPreview":"写下只属于你的想法","textChars":9,"textLines":1,"bbox":[320,456,640,46]}
+{"kind":"shape","id":"sh/bq1oryts","slide":1,"name":"pill-免登录-392","bbox":[392,544,148,42]}
+{"kind":"textbox","id":"sh/4byhgn29","slide":1,"name":"pill-text-免登录-392","text":"免登录","textPreview":"免登录","textChars":3,"textLines":1,"bbox":[392,550,148,28]}
+{"kind":"shape","id":"sh/twra5gbq","slide":1,"name":"pill-本地优先-566","bbox":[566,544,148,42]}
+{"kind":"textbox","id":"sh/m1cfa9w3","slide":1,"name":"pill-text-本地优先-566","text":"本地优先","textPreview":"本地优先","textChars":4,"textLines":1,"bbox":[566,550,148,28]}
+{"kind":"shape","id":"sh/bm58z25k","slide":1,"name":"pill-专注写作-740","bbox":[740,544,148,42]}
+{"kind":"textbox","id":"sh/val87ed8","slide":1,"name":"pill-text-专注写作-740","text":"专注写作","textPreview":"专注写作","textChars":4,"textLines":1,"bbox":[740,550,148,28]}
+{"kind":"image","id":"im/d8bat47y","slide":1,"name":"","geometry":"roundRect","alt":"cover-logo","bbox":[530,118,220,220]}
+{"kind":"notes","id":"nt/rc5lgr","slide":1,"text":""}
+{"kind":"slide","id":"sl/2t8hje","slide":2,"title":"一页","textShapes":8}
+{"kind":"textbox","id":"sh/4zidonyd","slide":2,"name":"brand-name-2","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":2,"name":"page-number-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":2,"name":"hook-kicker","text":"一个很轻的念头","textPreview":"一个很轻的念头","textChars":7,"textLines":1,"bbox":[90,150,440,46]}
+{"kind":"textbox","id":"sh/f6dcbulw","slide":2,"name":"hook-title","text":"不该在注册页面里\n慢慢消失","textPreview":"不该在注册页面里 | 慢慢消失","textChars":13,"textLines":2,"bbox":[90,208,620,170]}
+{"kind":"textbox","id":"sh/4r65wjud","slide":2,"name":"hook-body","text":"记录之前的每一次打断，\n都可能让想法晚一步落地。","textPreview":"记录之前的每一次打断， | 都可能让想法晚一步落地。","textChars":24,"textLines":2,"bbox":[94,418,520,100]}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":2,"name":"friction-words","text":"注册   手机号   验证码\n模板   工作区   新手引导","textPreview":"注册   手机号   验证码 | 模板   工作区   新手引导","textChars":30,"textLines":2,"bbox":[760,178,390,118]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":2,"name":"write-word","text":"写","textPreview":"写","textChars":1,"textLines":1,"bbox":[770,314,370,230]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":2,"name":"write-caption","text":"打开，就开始","textPreview":"打开，就开始","textChars":6,"textLines":1,"bbox":[770,560,370,42]}
+{"kind":"image","id":"im/itgfmlkj","slide":2,"name":"","geometry":"roundRect","alt":"brand-mark-2","bbox":[54,38,42,42]}
+{"kind":"notes","id":"nt/2t8hje","slide":2,"text":""}
+{"kind":"slide","id":"sl/rayrt7","slide":3,"title":"一页","textShapes":6}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":3,"name":"brand-name-3","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":3,"name":"page-number-3","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":3,"name":"pill-免登录-92","bbox":[92,140,128,42]}
+{"kind":"textbox","id":"sh/vixczed8","slide":3,"name":"pill-text-免登录-92","text":"免登录","textPreview":"免登录","textChars":3,"textLines":1,"bbox":[92,146,128,28]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":3,"name":"login-title","text":"第一次打开，\n就已经可以写了","textPreview":"第一次打开， | 就已经可以写了","textChars":14,"textLines":2,"bbox":[92,210,570,158]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":3,"name":"login-body","text":"没有 App 账号，没有手机号，\n也不用再记一个密码。","textPreview":"没有 App 账号，没有手机号， | 也不用再记一个密码。","textChars":27,"textLines":2,"bbox":[96,404,500,94]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":3,"name":"login-line","text":"灵感抵达时，入口只剩一个。","textPreview":"灵感抵达时，入口只剩一个。","textChars":13,"textLines":1,"bbox":[96,548,500,42]}
+{"kind":"shape","id":"sh/vu9knih4","slide":3,"name":"shot1-frame","bbox":[785,82,336,594]}
+{"kind":"image","id":"im/qxs72x4n","slide":3,"name":"","geometry":"roundRect","alt":"brand-mark-3","bbox":[54,38,42,42]}
+{"kind":"image","id":"im/gbq1oryt","slide":3,"name":"","geometry":"roundRect","alt":"一页免登录启动页截图","bbox":[795,92,316,574]}
+{"kind":"notes","id":"nt/rayrt7","slide":3,"text":""}
+{"kind":"slide","id":"sl/zhynbg","slide":4,"title":"一页","textShapes":10}
+{"kind":"textbox","id":"sh/val87ed8","slide":4,"name":"brand-name-4","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":4,"name":"page-number-4","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/donyd0z6","slide":4,"name":"pill-本地优先-92","bbox":[92,132,146,42]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":4,"name":"pill-text-本地优先-92","text":"本地优先","textPreview":"本地优先","textChars":4,"textLines":1,"bbox":[92,138,146,28]}
+{"kind":"textbox","id":"sh/vixczed8","slide":4,"name":"local-title","text":"先让文字落地，\n再让同步发生","textPreview":"先让文字落地， | 再让同步发生","textChars":14,"textLines":2,"bbox":[92,200,620,158]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":4,"name":"local-body","text":"没网也能继续写。网络恢复以后，\nCloudKit 再安静地完成同步。","textPreview":"没网也能继续写。网络恢复以后， | CloudKit 再安静地完成同步。","textChars":34,"textLines":2,"bbox":[96,394,610,94]}
+{"kind":"shape","id":"sh/d0z61032","slide":4,"name":"flow-input","bbox":[748,170,360,88]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":4,"name":"flow-input-text","text":"写下一段文字","textPreview":"写下一段文字","textChars":6,"textLines":1,"bbox":[748,193,360,40]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":4,"name":"flow-arrow-1","text":"↓","textPreview":"↓","textChars":1,"textLines":1,"bbox":[884,270,88,58]}
+{"kind":"shape","id":"sh/r65wjudg","slide":4,"name":"flow-local","bbox":[748,332,360,88]}
+{"kind":"textbox","id":"sh/gr2p8nqx","slide":4,"name":"flow-local-text","text":"本地立即保存","textPreview":"本地立即保存","textChars":6,"textLines":1,"bbox":[748,355,360,40]}
+{"kind":"textbox","id":"sh/9cvixcze","slide":4,"name":"flow-arrow-2","text":"↓","textPreview":"↓","textChars":1,"textLines":1,"bbox":[884,432,88,58]}
+{"kind":"shape","id":"sh/yxobm58z","slide":4,"name":"flow-cloud","bbox":[748,494,360,88]}
+{"kind":"textbox","id":"sh/nih4byhg","slide":4,"name":"flow-cloud-text","text":"CloudKit 后台同步","textPreview":"CloudKit 后台同步","textChars":13,"textLines":1,"bbox":[748,517,360,40]}
+{"kind":"image","id":"im/t83itgfm","slide":4,"name":"","geometry":"roundRect","alt":"brand-mark-4","bbox":[54,38,42,42]}
+{"kind":"notes","id":"nt/zhynbg","slide":4,"text":""}
+{"kind":"slide","id":"sl/pgihw4","slide":5,"title":"一页","textShapes":6}
+{"kind":"textbox","id":"sh/0je9cvix","slide":5,"name":"brand-name-5","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":5,"name":"page-number-5","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/il0rqd4v","slide":5,"name":"pill-隐私优先-92","bbox":[92,132,146,42]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":5,"name":"pill-text-隐私优先-92","text":"隐私优先","textPreview":"隐私优先","textChars":4,"textLines":1,"bbox":[92,138,146,28]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":5,"name":"privacy-title","text":"笔记留在你的\nApple 生态里","textPreview":"笔记留在你的 | Apple 生态里","textChars":16,"textLines":2,"bbox":[92,200,600,160]}
+{"kind":"textbox","id":"sh/tcj6tova","slide":5,"name":"privacy-body","text":"产品方不保存你的笔记正文，\n也不需要建立一套新的账号体系。","textPreview":"产品方不保存你的笔记正文， | 也不需要建立一套新的账号体系。","textChars":29,"textLines":2,"bbox":[96,398,590,94]}
+{"kind":"textbox","id":"sh/ixczed8v","slide":5,"name":"privacy-emphasis","text":"私人笔记，首先应该是私人的。","textPreview":"私人笔记，首先应该是私人的。","textChars":14,"textLines":1,"bbox":[96,548,590,44]}
+{"kind":"shape","id":"sh/bi9s36hc","slide":5,"name":"privacy-frame","bbox":[760,96,410,570]}
+{"kind":"image","id":"im/qpg3ex0n","slide":5,"name":"","geometry":"roundRect","alt":"brand-mark-5","bbox":[54,38,42,42]}
+{"kind":"image","id":"im/4nap4r65","slide":5,"name":"","geometry":"roundRect","alt":"一页 CloudKit 隐私与同步示意","bbox":[770,106,390,550]}
+{"kind":"notes","id":"nt/pgihw4","slide":5,"text":""}
+{"kind":"slide","id":"sl/l967pt","slide":6,"title":"一页","textShapes":6}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":6,"name":"brand-name-6","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/8jqh0fep","slide":6,"name":"page-number-6","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/fa9w3m94","slide":6,"name":"pill-富文本编辑-92","bbox":[92,132,164,42]}
+{"kind":"textbox","id":"sh/qpg3ex0n","slide":6,"name":"pill-text-富文本编辑-92","text":"富文本编辑","textPreview":"富文本编辑","textChars":5,"textLines":1,"bbox":[92,138,164,28]}
+{"kind":"textbox","id":"sh/xczed8v6","slide":6,"name":"editor-title","text":"认真写，\n也安心保存","textPreview":"认真写， | 也安心保存","textChars":10,"textLines":2,"bbox":[92,210,560,150]}
+{"kind":"textbox","id":"sh/8v6psfil","slide":6,"name":"editor-body","text":"标题、段落、引用、图片、列表和代码，\n都能自然编辑，并持续自动保存。","textPreview":"标题、段落、引用、图片、列表和代码， | 都能自然编辑，并持续自动保存。","textChars":34,"textLines":2,"bbox":[96,396,600,94]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":6,"name":"editor-note","text":"编辑能力更强，工具感更轻。","textPreview":"编辑能力更强，工具感更轻。","textChars":13,"textLines":1,"bbox":[96,548,520,44]}
+{"kind":"shape","id":"sh/qtcj6tov","slide":6,"name":"shot4-frame","bbox":[785,82,336,594]}
+{"kind":"image","id":"im/3ex0nuxc","slide":6,"name":"","geometry":"roundRect","alt":"brand-mark-6","bbox":[54,38,42,42]}
+{"kind":"image","id":"im/neloj2t8","slide":6,"name":"","geometry":"roundRect","alt":"一页富文本编辑截图","bbox":[795,92,316,574]}
+{"kind":"notes","id":"nt/l967pt","slide":6,"text":""}
+{"kind":"slide","id":"sl/b1hb0t","slide":7,"title":"一页","textShapes":6}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":7,"name":"brand-name-7","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":7,"name":"page-number-7","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/q5o7qpg3","slide":7,"name":"pill-文档列表-92","bbox":[92,132,146,42]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":7,"name":"pill-text-文档列表-92","text":"文档列表","textPreview":"文档列表","textChars":4,"textLines":1,"bbox":[92,138,146,28]}
+{"kind":"textbox","id":"sh/8bat47y1","slide":7,"name":"list-title","text":"写得越多，\n回来依然很快","textPreview":"写得越多， | 回来依然很快","textChars":12,"textLines":2,"bbox":[92,210,560,150]}
+{"kind":"textbox","id":"sh/1w7mp0bi","slide":7,"name":"list-body","text":"按更新时间整理文档，\n文件夹让不同生活各有位置。","textPreview":"按更新时间整理文档， | 文件夹让不同生活各有位置。","textChars":24,"textLines":2,"bbox":[96,396,520,94]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":7,"name":"list-note","text":"不是知识库，是你的个人文档空间。","textPreview":"不是知识库，是你的个人文档空间。","textChars":16,"textLines":1,"bbox":[96,548,570,44]}
+{"kind":"shape","id":"sh/ji5snelo","slide":7,"name":"shot2-frame","bbox":[785,82,336,594]}
+{"kind":"image","id":"im/2t83itgf","slide":7,"name":"","geometry":"roundRect","alt":"brand-mark-7","bbox":[54,38,42,42]}
+{"kind":"image","id":"im/crmhk3q5","slide":7,"name":"","geometry":"roundRect","alt":"一页文档列表截图","bbox":[795,92,316,574]}
+{"kind":"notes","id":"nt/b1hb0t","slide":7,"text":""}
+{"kind":"slide","id":"sl/k567fd","slide":8,"title":"一页","textShapes":6}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":8,"name":"brand-name-8","text":"一页","textPreview":"一页","textChars":2,"textLines":1,"bbox":[106,43,190,32]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":8,"name":"page-number-8","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1170,45,54,28]}
+{"kind":"shape","id":"sh/crmhk3q5","slide":8,"name":"pill-快速搜索-92","bbox":[92,132,146,42]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":8,"name":"pill-text-快速搜索-92","text":"快速搜索","textPreview":"快速搜索","textChars":4,"textLines":1,"bbox":[92,138,146,28]}
+{"kind":"textbox","id":"sh/ulwval87","slide":8,"name":"search-title","text":"记得一个词，\n就能找回一页","textPreview":"记得一个词， | 就能找回一页","textChars":13,"textLines":2,"bbox":[92,210,560,150]}
+{"kind":"textbox","id":"sh/j6tovaho","slide":8,"name":"search-body","text":"工作清单、旅行草稿、读书摘录，\n输入标题关键词就能回到现场。","textPreview":"工作清单、旅行草稿、读书摘录， | 输入标题关键词就能回到现场。","textChars":30,"textLines":2,"bbox":[96,396,570,94]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":8,"name":"search-note","text":"记录的价值，在于以后还能找到。","textPreview":"记录的价值，在于以后还能找到。","textChars":15,"textLines":1,"bbox":[96,548,560,44]}
+{"kind":"shape","id":"sh/18jqh0fe","slide":8,"name":"shot3-frame","bbox":[785,82,336,594]}
+{"kind":"image","id":"im/g3ex0nux","slide":8,"name":"","geometry":"roundRect","alt":"brand-mark-8","bbox":[54,38,42,42]}
+{"kind":"image","id":"im/65wjudg7","slide":8,"name":"","geometry":"roundRect","alt":"一页快速搜索截图","bbox":[795,92,316,574]}
+{"kind":"notes","id":"nt/k567fd","slide":8,"text":""}
+{"kind":"slide","id":"sl/knesmg","slide":9,"title":"一页 · 个人笔记","textShapes":5}
+{"kind":"shape","id":"sh/lkjm1cfa","slide":9,"name":"close-page","bbox":[66,54,1148,612]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":9,"name":"close-eyebrow","text":"一页 · 个人笔记","textPreview":"一页 · 个人笔记","textChars":9,"textLines":1,"bbox":[286,136,380,42]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":9,"name":"close-title","text":"比系统备忘录更认真，\n比大型知识库更轻。","textPreview":"比系统备忘录更认真， | 比大型知识库更轻。","textChars":20,"textLines":2,"bbox":[118,278,930,156]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":9,"name":"close-body","text":"打开就写，资料归自己，工具别打扰。","textPreview":"打开就写，资料归自己，工具别打扰。","textChars":17,"textLines":1,"bbox":[122,472,800,54]}
+{"kind":"shape","id":"sh/ahoza1gv","slide":9,"name":"pill-从一页开始-118","bbox":[118,568,188,42]}
+{"kind":"textbox","id":"sh/32lszqtc","slide":9,"name":"pill-text-从一页开始-118","text":"从一页开始","textPreview":"从一页开始","textChars":5,"textLines":1,"bbox":[118,574,188,28]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":9,"name":"close-brand","text":"写下只属于你的想法","textPreview":"写下只属于你的想法","textChars":9,"textLines":1,"bbox":[782,584,336,32]}
+{"kind":"image","id":"im/7y1kre1w","slide":9,"name":"","geometry":"roundRect","alt":"close-logo","bbox":[118,116,126,126]}
+{"kind":"notes","id":"nt/knesmg","slide":9,"text":""}

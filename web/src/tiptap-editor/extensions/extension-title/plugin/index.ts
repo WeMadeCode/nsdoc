@@ -36,23 +36,23 @@ const insertParagraphAtDocumentStart = (view: EditorView, titleNodeName: string)
 }
 
 export const createTitlePlugin = (titleNodeName: string) => {
-  let isComposing = false
+  // let isComposing = false
   return new Plugin({
     props: {
       handleKeyDown(view, event) {
-        if (event.key !== 'Enter' || event.isComposing || isComposing || event.keyCode === 229) {
+        if (event.key !== 'Enter' || event.isComposing || view.composing || event.keyCode === 229) {
           return false
         }
         return insertParagraphAtDocumentStart(view, titleNodeName)
       },
-      handleDOMEvents: {
-        compositionend: () => {
-          isComposing = false
-        },
-        compositionstart: () => {
-          isComposing = true
-        },
-      },
+      // handleDOMEvents: {
+      //   compositionend: () => {
+      //     isComposing = false
+      //   },
+      //   compositionstart: () => {
+      //     isComposing = true
+      //   },
+      // },
     },
   })
 }
